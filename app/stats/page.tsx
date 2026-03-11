@@ -29,8 +29,10 @@ export default async function StatsPage() {
   const to = today.endOf("month").format("YYYY-MM-DD");
 
   const [statsResponse, homeData, trainData] = await Promise.all([
-    getStats({ from, to }),
-    getHomeData(today.format("YYYY-MM-DD")),
+    getStats({ from, to, timezoneOffset: today.utcOffset() }),
+    getHomeData(today.format("YYYY-MM-DD"), {
+      timezoneOffset: today.utcOffset(),
+    }),
     getUserTrainData(),
   ]);
 

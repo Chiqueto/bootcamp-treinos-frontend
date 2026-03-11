@@ -16,7 +16,9 @@ interface BottomNavProps {
 
 export async function BottomNav({ activePage = "home" }: BottomNavProps) {
   const today = dayjs();
-  const homeData = await getHomeData(today.format("YYYY-MM-DD"));
+  const homeData = await getHomeData(today.format("YYYY-MM-DD"), {
+    timezoneOffset: today.utcOffset(),
+  });
 
   const calendarHref =
     homeData.status === 200 && homeData.data.activeWorkoutPlanId

@@ -21,7 +21,9 @@ export default async function Home() {
 
   const today = dayjs();
   const [homeData, trainData] = await Promise.all([
-    getHomeData(today.format("YYYY-MM-DD")),
+    getHomeData(today.format("YYYY-MM-DD"), {
+      timezoneOffset: today.utcOffset(),
+    }),
     getUserTrainData(),
   ]);
 
@@ -113,9 +115,12 @@ export default async function Home() {
             <h2 className="font-heading text-lg font-semibold text-foreground">
               Treino de Hoje
             </h2>
-            <button className="font-heading text-xs text-primary">
+            <Link
+              href={`/workout-plans/${homeData.data.activeWorkoutPlanId}`}
+              className="font-heading text-xs text-primary"
+            >
               Ver treinos
-            </button>
+            </Link>
           </div>
 
           <Link
@@ -128,7 +133,7 @@ export default async function Home() {
                 todayWorkoutDay.estimatedDurationInSeconds
               }
               exercisesCount={todayWorkoutDay.exercisesCount}
-              coverImageUrl={todayWorkoutDay.coverImageUrl}
+              coverImageUrl={todayWorkoutDay.coverImageUrl!}
             />
           </Link>
         </div>

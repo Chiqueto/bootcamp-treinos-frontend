@@ -35,9 +35,12 @@ export default async function WorkoutPlanPage({
   if (!session.data?.user) redirect("/auth");
 
   const { id } = await params;
+  const today = dayjs();
   const [workoutPlanData, homeData, trainData] = await Promise.all([
     getWorkoutPlan(id),
-    getHomeData(dayjs().format("YYYY-MM-DD")),
+    getHomeData(today.format("YYYY-MM-DD"), {
+      timezoneOffset: today.utcOffset(),
+    }),
     getUserTrainData(),
   ]);
 

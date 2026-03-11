@@ -14,8 +14,11 @@ export default async function OnboardingPage() {
 
   if (!session.data?.user) redirect("/auth");
 
+  const today = dayjs();
   const [homeData, trainData] = await Promise.all([
-    getHomeData(dayjs().format("YYYY-MM-DD")),
+    getHomeData(today.format("YYYY-MM-DD"), {
+      timezoneOffset: today.utcOffset(),
+    }),
     getUserTrainData(),
   ]);
 

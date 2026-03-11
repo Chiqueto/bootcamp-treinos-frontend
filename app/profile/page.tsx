@@ -17,9 +17,12 @@ export default async function ProfilePage() {
 
   if (!session.data?.user) redirect("/auth");
 
+  const today = dayjs();
   const [trainData, homeData] = await Promise.all([
     getUserTrainData(),
-    getHomeData(dayjs().format("YYYY-MM-DD")),
+    getHomeData(today.format("YYYY-MM-DD"), {
+      timezoneOffset: today.utcOffset(),
+    }),
   ]);
 
   if (trainData.status !== 200) {
