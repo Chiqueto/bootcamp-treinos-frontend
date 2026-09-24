@@ -17,7 +17,7 @@ interface WorkoutDayCardProps {
   weekDay: GetHomeData200TodayWorkoutDayWeekDay;
   estimatedDurationInSeconds: number;
   exercisesCount: number;
-  coverImageUrl?: string;
+  coverImageUrl?: string | null;
 }
 
 export function WorkoutDayCard({

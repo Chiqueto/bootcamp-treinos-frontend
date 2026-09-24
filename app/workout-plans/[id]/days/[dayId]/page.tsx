@@ -73,12 +73,15 @@ export default async function WorkoutDayPage({
 
   const durationInMinutes = Math.round(estimatedDurationInSeconds / 60);
 
+  const todayStr = today.format("YYYY-MM-DD");
   const inProgressSession = sessions.find(
     (s) => s.startedAt && !s.completedAt,
   );
-  const completedSession = sessions.find((s) => s.completedAt);
+  const completedTodaySession = sessions.find(
+    (s) => s.completedAt === todayStr,
+  );
   const hasInProgressSession = !!inProgressSession;
-  const hasCompletedSession = !!completedSession;
+  const hasCompletedSession = !!completedTodaySession;
 
   return (
     <div className="flex min-h-svh flex-col bg-background pb-24">
