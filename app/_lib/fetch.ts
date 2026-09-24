@@ -5,9 +5,9 @@ const getBody = <T>(c: Response | Request): Promise<T> => {
 };
 
 const getUrl = (contextUrl: string): string => {
-  const newUrl = new URL(`${process.env.NEXT_PUBLIC_API_URL}${contextUrl}`);
-  const requestUrl = new URL(`${newUrl}`);
-  return requestUrl.toString();
+  const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
+  const path = contextUrl.startsWith("/") ? contextUrl : `/${contextUrl}`;
+  return new URL(`${baseUrl}${path}`).toString();
 };
 
 const getHeaders = async (headers?: HeadersInit): Promise<HeadersInit> => {

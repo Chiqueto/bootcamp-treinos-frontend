@@ -10,6 +10,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    const backendOrigin = (
+      process.env.BACKEND_ORIGIN || "http://localhost:8080"
+    ).replace(/\/+$/, "");
+
+    return [
+      {
+        source: "/backend/:path*",
+        destination: `${backendOrigin}/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
