@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
   startWorkoutSession,
@@ -10,8 +11,15 @@ export async function startWorkoutAction(
   workoutPlanId: string,
   workoutDayId: string,
 ) {
-  await startWorkoutSession(workoutPlanId, workoutDayId);
+  const response = await startWorkoutSession(workoutPlanId, workoutDayId);
+  if (response.status !== 201) {
+    const errorData = response.data as { error?: string };
+    throw new Error(errorData?.error || "Erro ao iniciar treino");
+  }
+
+  const sessionId = response.data.userWorkoutSessionId;
   revalidatePath(`/workout-plans/${workoutPlanId}/days/${workoutDayId}`);
+  redirect(`/workout-sessions/${sessionId}`);
 }
 
 export async function completeWorkoutAction(

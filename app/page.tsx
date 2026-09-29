@@ -1,11 +1,15 @@
 import { redirect } from "next/navigation";
 import { authClient } from "@/app/_lib/auth-client";
 import { headers } from "next/headers";
-import { getHomeData, getUserTrainData } from "./_lib/api/fetch-generated";
+import {
+  getActiveWorkoutSession,
+  getHomeData,
+  getUserTrainData,
+} from "./_lib/api/fetch-generated";
 import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
-import { Flame } from "lucide-react";
+import { ArrowRight, Flame } from "lucide-react";
 import { BottomNav } from "./_components/bottom-nav";
 import { ConsistencyTracker } from "./_components/consistency-tracker";
 import { WorkoutDayCard } from "./_components/workout-day-card";
@@ -20,12 +24,16 @@ export default async function Home() {
   if (!session.data?.user) redirect("/auth");
 
   const today = dayjs();
-  const [homeData, trainData] = await Promise.all([
+  const [homeData, trainData, activeSessionResponse] = await Promise.all([
     getHomeData(today.format("YYYY-MM-DD"), {
       timezoneOffset: today.utcOffset(),
     }),
     getUserTrainData(),
+    getActiveWorkoutSession().catch(() => null),
   ]);
+
+  const activeSession =
+    activeSessionResponse?.status === 200 ? activeSessionResponse.data : null;
 
   if (homeData.status !== 200) {
     throw new Error("Failed to fetch home data");
@@ -82,6 +90,46 @@ export default async function Home() {
           </div>
         </div>
       </div>
+
+      {activeSession && (
+        <div className="px-5 pt-5">
+          <div className="flex flex-col gap-3 rounded-2xl border border-primary/40 bg-primary/10 p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="relative flex size-2.5">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex size-2.5 rounded-full bg-primary" />
+                </span>
+                <span className="font-heading text-xs font-semibold uppercase tracking-wider text-primary">
+                  Treino em Andamento
+                </span>
+              </div>
+              <span className="font-heading text-xs text-muted-foreground">
+                Iniciado às {dayjs(activeSession.startedAt).format("HH:mm")}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-col">
+                <p className="font-heading text-sm font-semibold text-foreground">
+                  Você tem uma sessão aberta
+                </p>
+                <p className="font-heading text-xs text-muted-foreground">
+                  {activeSession.sessionExercises.length} exercícios na sessão
+                </p>
+              </div>
+
+              <Link
+                href={`/workout-sessions/${activeSession.id}`}
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-heading text-xs font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90"
+              >
+                <span>Continuar treino</span>
+                <ArrowRight className="size-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-3 px-5 pt-5">
         <div className="flex items-center justify-between">
