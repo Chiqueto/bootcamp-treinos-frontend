@@ -14,11 +14,14 @@ export default async function AuthPage() {
         headers: await headers(),
       },
     });
+    if (session?.data?.user) {
+      console.log("[AUTH SERVER] Usuário já autenticado:", session.data.user.email);
+    }
   } catch (error) {
     if (typeof error === "object" && error !== null && "digest" in error) {
       throw error;
     }
-    console.error("Erro ao verificar sessão em /auth:", error);
+    console.error("[AUTH SERVER] Erro ao verificar sessão em /auth:", error);
   }
 
   if (session?.data?.user) redirect("/");

@@ -23,19 +23,32 @@ export const SignInWithGoogle = () => {
               ""
             );
 
-      const { error } = await authClient.signIn.social({
-        provider: "google",
-        callbackURL: `${callbackOrigin}/`,
+      const callbackURL = `${callbackOrigin}/`;
+
+      console.log("[AUTH FRONTEND] Iniciando login com Google:", {
+        callbackURL,
+        origin: typeof window !== "undefined" ? window.location.origin : undefined,
+        href: typeof window !== "undefined" ? window.location.href : undefined,
       });
 
-      if (error) {
-        console.error("Google sign-in error:", error.message);
-        setErrorMessage(error.message || "Erro ao conectar com Google");
+      const result = await authClient.signIn.social({
+        provider: "google",
+        callbackURL,
+      });
+
+      console.log("[AUTH FRONTEND] Resposta de authClient.signIn.social:", result);
+
+      if (result?.error) {
+        console.error("[AUTH FRONTEND] Erro retornado pelo signIn.social:", result.error);
+        setErrorMessage(
+          result.error.message ||
+            `Erro (${result.error.status || "desconhecido"}) ao conectar com Google`
+        );
         setIsLoading(false);
       }
     } catch (err) {
-      console.error("Unexpected sign-in error:", err);
-      setErrorMessage("Erro ao iniciar login. Tente novamente.");
+      console.error("[AUTH FRONTEND] Exceção inesperada no login:", err);
+      setErrorMessage("Erro ao iniciar login. Verifique o console do navegador.");
       setIsLoading(false);
     }
   };
