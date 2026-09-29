@@ -4,14 +4,24 @@ import { authClient } from "@/app/_lib/auth-client";
 import { headers } from "next/headers";
 import { SignInWithGoogle } from "./_components/sign-in-with-google";
 
-export default async function AuthPage() {
-  const session = await authClient.getSession({
-    fetchOptions: {
-      headers: await headers(),
-    },
-  });
+export const dynamic = "force-dynamic";
 
-  if (session.data?.user) redirect("/");
+export default async function AuthPage() {
+  let session = null;
+  try {
+    session = await authClient.getSession({
+      fetchOptions: {
+        headers: await headers(),
+      },
+    });
+  } catch (error) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    console.error("Erro ao verificar sessão em /auth:", error);
+  }
+
+  if (session?.data?.user) redirect("/");
 
   return (
     <div className="relative flex min-h-svh flex-col bg-black">
@@ -26,7 +36,7 @@ export default async function AuthPage() {
       </div>
 
       <div className="relative z-10 flex justify-center pt-12">
-        <Image src="/fit-ai-logo.svg" alt="FIT.AI" width={85} height={38} />
+        <Image src="/fit-ai-logo.svg" alt="Trainvy" width={85} height={38} />
       </div>
 
       <div className="flex-1" />
@@ -41,7 +51,7 @@ export default async function AuthPage() {
         </div>
 
         <p className="font-heading text-xs leading-[1.4] text-primary-foreground/70">
-          ©2026 Copyright FIT.AI. Todos os direitos reservados
+          ©2026 Copyright Trainvy. Todos os direitos reservados
         </p>
       </div>
     </div>

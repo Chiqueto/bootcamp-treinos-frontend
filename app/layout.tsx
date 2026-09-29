@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Anton, Geist, Geist_Mono, Inter_Tight } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Chat } from "@/app/_components/chat";
 import "./globals.css";
 
@@ -27,7 +29,7 @@ const anton = Anton({
 });
 
 export const metadata: Metadata = {
-  title: "FIT.AI",
+  title: "Trainvy",
   description: "O app que vai transformar a forma como você treina.",
 };
 
@@ -47,6 +49,8 @@ export default function RootLayout({
             <Chat />
           </Suspense>
         </NuqsAdapter>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

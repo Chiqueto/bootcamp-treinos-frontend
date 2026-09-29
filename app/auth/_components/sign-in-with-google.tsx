@@ -1,34 +1,76 @@
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
+import { Loader2 } from "lucide-react";
 import { authClient } from "@/app/_lib/auth-client";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 export const SignInWithGoogle = () => {
-  const handleGoogleLogin = async () => {
-    const { error } = await authClient.signIn.social({
-      provider: "google",
-      callbackURL: `${process.env.NEXT_PUBLIC_BASE_URL}/`,
-    });
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    if (error) {
-      console.error(error.message);
+  const handleGoogleLogin = async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage(null);
+
+      const callbackOrigin =
+        typeof window !== "undefined" && window.location.origin
+          ? window.location.origin
+          : (process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace(
+              /\/+$/,
+              ""
+            );
+
+      const { error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: `${callbackOrigin}/`,
+      });
+
+      if (error) {
+        console.error("Google sign-in error:", error.message);
+        setErrorMessage(error.message || "Erro ao conectar com Google");
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.error("Unexpected sign-in error:", err);
+      setErrorMessage("Erro ao iniciar login. Tente novamente.");
+      setIsLoading(false);
     }
   };
 
   return (
-    <Button
-      onClick={handleGoogleLogin}
-      className="h-[38px] rounded-full bg-white px-6 text-black hover:bg-white/90"
-    >
-      <Image
-        src="/google-icon.svg"
-        alt=""
-        width={16}
-        height={16}
-        className="shrink-0"
-      />
-      Fazer login com Google
-    </Button>
+    <div className="flex w-full flex-col items-center gap-3">
+      <Button
+        onClick={handleGoogleLogin}
+        disabled={isLoading}
+        className="h-[38px] cursor-pointer rounded-full bg-white px-6 text-black hover:bg-white/90 disabled:opacity-75"
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin text-black" />
+            Conectando com Google...
+          </>
+        ) : (
+          <>
+            <Image
+              src="/google-icon.svg"
+              alt=""
+              width={16}
+              height={16}
+              className="shrink-0"
+            />
+            Fazer login com Google
+          </>
+        )}
+      </Button>
+
+      {errorMessage && (
+        <p className="max-w-xs text-center text-xs font-medium text-red-200">
+          {errorMessage}
+        </p>
+      )}
+    </div>
   );
 };
