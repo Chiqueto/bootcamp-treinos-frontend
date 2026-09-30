@@ -15,6 +15,19 @@ const PLANNING_ERROR_MESSAGES: Record<string, string> = {
   NO_OPEN_BLOCK: "Não há uma etapa em andamento nesta periodização.",
   INCONSISTENT_PLANNING_STATE:
     "Não foi possível alterar o planejamento porque seu estado está inconsistente. Tente novamente ou entre em contato com o suporte.",
+  PLAN_ALREADY_IN_PERIODIZATION: "Este plano já faz parte de uma periodização.",
+  ACTIVE_PLAN_CANNOT_BE_ATTACHED:
+    "Desative o plano antes de adicioná-lo a uma periodização.",
+  ACTIVE_BLOCK_CANNOT_BE_REMOVED:
+    "A etapa em andamento não pode ser removida da periodização.",
+  COMPLETED_BLOCK_CANNOT_BE_REMOVED:
+    "Uma etapa concluída não pode ser removida da periodização.",
+  COMPLETED_BLOCK_IMMUTABLE:
+    "Uma etapa concluída não pode ter sua estrutura alterada.",
+  INVALID_REORDER_BLOCKS:
+    "A nova ordem contém etapas inválidas. Atualize a página e tente novamente.",
+  PERIODIZATION_ALREADY_STARTED:
+    "Uma periodização já iniciada não pode ser excluída.",
 };
 
 export function getPlanningErrorMessage(code?: string): string {

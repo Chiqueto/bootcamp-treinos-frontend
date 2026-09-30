@@ -1,31 +1,21 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Calendar,
-  CheckCircle2,
-  ChevronRight,
-  Circle,
-  Dumbbell,
-  PlayCircle,
-} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { authClient } from "@/app/_lib/auth-client";
-import { getPeriodization } from "@/app/_lib/api/fetch-generated";
+import {
+  getPeriodization,
+  getPlanningOverview,
+} from "@/app/_lib/api/fetch-generated";
 import { BottomNav } from "@/app/_components/bottom-nav";
 import { Badge } from "@/components/ui/badge";
 import { PeriodizationActions } from "../../_components/periodization-actions";
+import { PeriodizationManagement } from "../../_components/periodization-management";
+import { PeriodizationStructureEditor } from "../../_components/periodization-structure-editor";
 
 interface PeriodizationDetailPageProps {
   params: Promise<{ id: string }>;
-}
-
-function formatDate(dateStr: string | null): string | null {
-  if (!dateStr) return null;
-  const parts = dateStr.split("T")[0].split("-");
-  if (parts.length < 3) return dateStr;
-  return `${parts[2]}/${parts[1]}`;
 }
 
 export const dynamic = "force-dynamic";
@@ -42,16 +32,24 @@ export default async function PeriodizationDetailPage({
   if (!session.data?.user) redirect("/auth");
 
   const { id } = await params;
-  const response = await getPeriodization(id).catch((err) => {
-    console.error("Failed to fetch periodization:", err);
-    return null;
-  });
+  const [response, overviewResponse] = await Promise.all([
+    getPeriodization(id).catch((err) => {
+      console.error("Failed to fetch periodization:", err);
+      return null;
+    }),
+    getPlanningOverview().catch((err) => {
+      console.error("Failed to fetch planning overview:", err);
+      return null;
+    }),
+  ]);
 
   if (!response || response.status !== 200 || !response.data) {
     redirect("/planning");
   }
 
   const periodization = response.data;
+  const availablePlans =
+    overviewResponse?.status === 200 ? overviewResponse.data.plans : [];
   const sortedPlans = [...periodization.plans].sort(
     (a, b) => a.order - b.order,
   );
@@ -144,6 +142,15 @@ export default async function PeriodizationDetailPage({
           </div>
         </section>
 
+        <PeriodizationManagement
+          id={periodization.id}
+          status={periodization.status}
+          name={periodization.name}
+          goal={periodization.goal}
+          notes={periodization.notes}
+          plans={availablePlans}
+        />
+
         <PeriodizationActions
           id={periodization.id}
           status={periodization.status}
@@ -155,133 +162,14 @@ export default async function PeriodizationDetailPage({
           }
         />
 
-        {/* Timeline dos Blocos */}
-        <section
-          className="flex flex-col gap-3"
-          aria-labelledby="section-blocks-timeline"
-        >
-          <div className="flex items-center justify-between">
-            <h2
-              id="section-blocks-timeline"
-              className="font-heading text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-            >
-              Sequência de Blocos ({totalBlocks})
-            </h2>
-          </div>
-
-          {sortedPlans.length === 0 ? (
-            <div className="flex flex-col gap-1 rounded-2xl border border-dashed border-border bg-card/40 p-5 text-center">
-              <p className="font-heading text-sm font-medium text-foreground">
-                Nenhum bloco cadastrado nesta periodização.
-              </p>
-            </div>
-          ) : (
-            <div className="relative flex flex-col gap-3 pl-3">
-              {/* Linha vertical contínua da timeline */}
-              <div
-                className="absolute left-6.5 top-5 bottom-5 w-0.5 bg-border/80"
-                aria-hidden="true"
-              />
-
-              {sortedPlans.map((planItem) => {
-                const isCompleted = planItem.completedAt !== null;
-                const isActive =
-                  planItem.activatedAt !== null &&
-                  planItem.completedAt === null;
-                const isPlanned =
-                  planItem.activatedAt === null &&
-                  planItem.completedAt === null;
-
-                const startFormatted = formatDate(planItem.plannedStartDate);
-                const endFormatted = formatDate(planItem.plannedEndDate);
-                const hasDates = startFormatted || endFormatted;
-
-                return (
-                  <div
-                    key={planItem.id}
-                    className="relative flex items-start gap-4"
-                  >
-                    {/* Indicador / Marcador da Timeline */}
-                    <div className="relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full bg-background">
-                      {isCompleted && (
-                        <CheckCircle2 className="size-6 text-primary fill-primary/10" />
-                      )}
-                      {isActive && (
-                        <span className="relative flex size-6 items-center justify-center">
-                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60" />
-                          <PlayCircle className="relative size-6 text-primary fill-primary/10" />
-                        </span>
-                      )}
-                      {isPlanned && (
-                        <Circle className="size-5 text-muted-foreground/60 stroke-[1.5]" />
-                      )}
-                    </div>
-
-                    {/* Card clicável do Bloco */}
-                    <Link
-                      href={`/workout-plans/${planItem.workoutPlan.id}`}
-                      className="group flex-1 rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-xs"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-heading text-xs font-bold text-muted-foreground">
-                              {planItem.order}.
-                            </span>
-                            <h3 className="font-heading text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                              {planItem.workoutPlan.name}
-                            </h3>
-                          </div>
-
-                          {hasDates && (
-                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground pl-4">
-                              <Calendar className="size-3 shrink-0" />
-                              <span>
-                                {startFormatted ?? "Início"} →{" "}
-                                {endFormatted ?? "Fim"}
-                              </span>
-                            </div>
-                          )}
-
-                          {planItem.notes && (
-                            <p className="text-xs text-muted-foreground pl-4 line-clamp-2">
-                              {planItem.notes}
-                            </p>
-                          )}
-                        </div>
-
-                        <Badge
-                          variant={
-                            isActive
-                              ? "default"
-                              : isCompleted
-                                ? "outline"
-                                : "secondary"
-                          }
-                          className="rounded-full px-2 py-0 text-[10px] font-semibold shrink-0"
-                        >
-                          {isActive
-                            ? "Em andamento"
-                            : isCompleted
-                              ? "Concluído"
-                              : "Planejado"}
-                        </Badge>
-                      </div>
-
-                      <div className="mt-2 flex items-center justify-between border-t border-border/40 pt-2 text-[11px] text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Dumbbell className="size-3 text-muted-foreground" />
-                          <span>Ver treinos do bloco</span>
-                        </span>
-                        <ChevronRight className="size-3.5 transition group-hover:translate-x-0.5 group-hover:text-foreground" />
-                      </div>
-                    </Link>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
+        <PeriodizationStructureEditor
+          key={sortedPlans
+            .map((plan) => `${plan.id}:${plan.order}:${plan.updatedAt}`)
+            .join("|")}
+          periodizationId={periodization.id}
+          status={periodization.status}
+          initialPlans={sortedPlans}
+        />
       </main>
 
       <BottomNav activePage="planning" />

@@ -50,6 +50,15 @@ vi.mock("@/app/planning/_actions", () => ({
   deactivatePeriodizationAction: vi.fn(),
   advancePeriodizationAction: vi.fn(),
   completePeriodizationAction: vi.fn(),
+  createPeriodizationAction: vi.fn(),
+  updatePeriodizationAction: vi.fn(),
+  deletePeriodizationAction: vi.fn(),
+  addWorkoutPlanToPeriodizationAction: vi.fn(),
+  createWorkoutPlanInPeriodizationAction: vi.fn(),
+  updatePeriodizationPlanAction: vi.fn(),
+  removeWorkoutPlanFromPeriodizationAction: vi.fn(),
+  reorderPeriodizationPlansAction: vi.fn(),
+  createStandaloneWorkoutPlanAction: vi.fn(),
 }));
 
 // Mock auth client
