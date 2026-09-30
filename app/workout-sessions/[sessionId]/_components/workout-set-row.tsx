@@ -86,7 +86,7 @@ export function WorkoutSetRow({
 
   // Salvar no blur se houver alteração
   const handleBlur = () => {
-    if (isReadOnly || isPending) return;
+    if (isReadOnly) return;
 
     const data = parseCurrentData();
 
@@ -118,7 +118,7 @@ export function WorkoutSetRow({
 
   // Alternar entre WARMUP e WORKING
   const handleToggleType = () => {
-    if (isReadOnly || isPending) return;
+    if (isReadOnly) return;
 
     const nextType = setType === "WORKING" ? "WARMUP" : "WORKING";
     setSetType(nextType);
@@ -148,7 +148,7 @@ export function WorkoutSetRow({
 
   // Concluir ou Desfazer conclusão
   const handleToggleComplete = () => {
-    if (isReadOnly || isPending) return;
+    if (isReadOnly) return;
 
     // Se já estiver concluída -> desfazer
     if (isCompleted) {
@@ -218,7 +218,7 @@ export function WorkoutSetRow({
 
   // Excluir série
   const handleDelete = () => {
-    if (isReadOnly || isPending) return;
+    if (isReadOnly) return;
 
     onMutationStart?.();
     startTransition(async () => {
@@ -323,7 +323,6 @@ export function WorkoutSetRow({
           <button
             type="button"
             onClick={handleToggleType}
-            disabled={isPending}
             title="Alternar entre Aquecimento e Trabalho"
             className={`rounded-full px-2.5 py-1 font-heading text-[11px] font-semibold uppercase transition-colors ${
               isWarmup
@@ -342,7 +341,6 @@ export function WorkoutSetRow({
             variant="ghost"
             size="icon"
             onClick={handleDelete}
-            disabled={isPending}
             className="size-8 text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10"
             title="Remover série"
           >
@@ -353,7 +351,6 @@ export function WorkoutSetRow({
           <button
             type="button"
             onClick={handleToggleComplete}
-            disabled={isPending}
             aria-label={isCompleted ? "Desfazer conclusão" : "Concluir série"}
             className={`flex size-10 shrink-0 items-center justify-center rounded-full border transition-all ${
               isCompleted
@@ -380,7 +377,6 @@ export function WorkoutSetRow({
             value={weightText}
             onChange={(e) => setWeightText(e.target.value)}
             onBlur={handleBlur}
-            disabled={isPending}
             className="h-11 w-full rounded-lg border border-input bg-background px-2 text-center font-heading text-base font-bold text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
@@ -399,7 +395,6 @@ export function WorkoutSetRow({
                 value={repsText}
                 onChange={(e) => setRepsText(e.target.value)}
                 onBlur={handleBlur}
-                disabled={isPending}
                 className="h-11 w-full rounded-lg border border-input bg-background px-2 text-center font-heading text-base font-bold text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
@@ -415,7 +410,6 @@ export function WorkoutSetRow({
                 value={rirText}
                 onChange={(e) => setRirText(e.target.value)}
                 onBlur={handleBlur}
-                disabled={isPending}
                 className="h-11 w-full rounded-lg border border-input bg-background px-2 text-center font-heading text-base font-bold text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
@@ -432,7 +426,6 @@ export function WorkoutSetRow({
               value={durationText}
               onChange={(e) => setDurationText(e.target.value)}
               onBlur={handleBlur}
-              disabled={isPending}
               className="h-11 w-full rounded-lg border border-input bg-background px-2 text-center font-heading text-base font-bold text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
