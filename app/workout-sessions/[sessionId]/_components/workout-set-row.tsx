@@ -23,6 +23,8 @@ interface WorkoutSetRowProps {
   ) => void;
   onDeleteSet: (setId: string) => void;
   onError: (errorMsg: string) => void;
+  onMutationStart?: () => void;
+  onMutationEnd?: () => void;
 }
 
 export function WorkoutSetRow({
@@ -33,6 +35,8 @@ export function WorkoutSetRow({
   onUpdateSet,
   onDeleteSet,
   onError,
+  onMutationStart,
+  onMutationEnd,
 }: WorkoutSetRowProps) {
   const [weightText, setWeightText] = useState(() =>
     gramsToKgString(set.weightInGrams),
@@ -86,23 +90,28 @@ export function WorkoutSetRow({
 
     const data = parseCurrentData();
 
+    onMutationStart?.();
     startTransition(async () => {
-      const res = await updateWorkoutSetAction(sessionId, set.id, {
-        type: data.type,
-        weightInGrams: data.weightInGrams,
-        reps: data.reps,
-        rir: data.rir,
-        durationInSeconds: data.durationInSeconds,
-      });
-
-      if (!res.success) {
-        onError(res.error);
-      } else {
-        onUpdateSet({
-          ...set,
-          ...data,
-          completedAt: res.data.completedAt,
+      try {
+        const res = await updateWorkoutSetAction(sessionId, set.id, {
+          type: data.type,
+          weightInGrams: data.weightInGrams,
+          reps: data.reps,
+          rir: data.rir,
+          durationInSeconds: data.durationInSeconds,
         });
+
+        if (!res.success) {
+          onError(res.error);
+        } else {
+          onUpdateSet({
+            ...set,
+            ...data,
+            completedAt: res.data.completedAt,
+          });
+        }
+      } finally {
+        onMutationEnd?.();
       }
     });
   };
@@ -114,20 +123,25 @@ export function WorkoutSetRow({
     const nextType = setType === "WORKING" ? "WARMUP" : "WORKING";
     setSetType(nextType);
 
+    onMutationStart?.();
     startTransition(async () => {
-      const res = await updateWorkoutSetAction(sessionId, set.id, {
-        type: nextType,
-      });
-
-      if (!res.success) {
-        // Reverte estado local se falhar
-        setSetType(setType);
-        onError(res.error);
-      } else {
-        onUpdateSet({
-          ...set,
+      try {
+        const res = await updateWorkoutSetAction(sessionId, set.id, {
           type: nextType,
         });
+
+        if (!res.success) {
+          // Reverte estado local se falhar
+          setSetType(setType);
+          onError(res.error);
+        } else {
+          onUpdateSet({
+            ...set,
+            type: nextType,
+          });
+        }
+      } finally {
+        onMutationEnd?.();
       }
     });
   };
@@ -138,20 +152,25 @@ export function WorkoutSetRow({
 
     // Se já estiver concluída -> desfazer
     if (isCompleted) {
+      onMutationStart?.();
       startTransition(async () => {
-        const res = await updateWorkoutSetAction(sessionId, set.id, {
-          completed: false,
-        });
-
-        if (!res.success) {
-          onError(res.error);
-        } else {
-          setIsCompleted(false);
-          setCompletedAt(null);
-          onUpdateSet({
-            ...set,
-            completedAt: null,
+        try {
+          const res = await updateWorkoutSetAction(sessionId, set.id, {
+            completed: false,
           });
+
+          if (!res.success) {
+            onError(res.error);
+          } else {
+            setIsCompleted(false);
+            setCompletedAt(null);
+            onUpdateSet({
+              ...set,
+              completedAt: null,
+            });
+          }
+        } finally {
+          onMutationEnd?.();
         }
       });
       return;
@@ -168,26 +187,31 @@ export function WorkoutSetRow({
       return;
     }
 
+    onMutationStart?.();
     startTransition(async () => {
-      const res = await updateWorkoutSetAction(sessionId, set.id, {
-        type: data.type,
-        weightInGrams: data.weightInGrams,
-        reps: data.reps,
-        rir: data.rir,
-        durationInSeconds: data.durationInSeconds,
-        completed: true,
-      });
-
-      if (!res.success) {
-        onError(res.error);
-      } else {
-        setIsCompleted(true);
-        setCompletedAt(res.data.completedAt);
-        onUpdateSet({
-          ...set,
-          ...data,
-          completedAt: res.data.completedAt,
+      try {
+        const res = await updateWorkoutSetAction(sessionId, set.id, {
+          type: data.type,
+          weightInGrams: data.weightInGrams,
+          reps: data.reps,
+          rir: data.rir,
+          durationInSeconds: data.durationInSeconds,
+          completed: true,
         });
+
+        if (!res.success) {
+          onError(res.error);
+        } else {
+          setIsCompleted(true);
+          setCompletedAt(res.data.completedAt);
+          onUpdateSet({
+            ...set,
+            ...data,
+            completedAt: res.data.completedAt,
+          });
+        }
+      } finally {
+        onMutationEnd?.();
       }
     });
   };
@@ -196,12 +220,17 @@ export function WorkoutSetRow({
   const handleDelete = () => {
     if (isReadOnly || isPending) return;
 
+    onMutationStart?.();
     startTransition(async () => {
-      const res = await deleteWorkoutSetAction(sessionId, set.id);
-      if (!res.success) {
-        onError(res.error);
-      } else {
-        onDeleteSet(set.id);
+      try {
+        const res = await deleteWorkoutSetAction(sessionId, set.id);
+        if (!res.success) {
+          onError(res.error);
+        } else {
+          onDeleteSet(set.id);
+        }
+      } finally {
+        onMutationEnd?.();
       }
     });
   };

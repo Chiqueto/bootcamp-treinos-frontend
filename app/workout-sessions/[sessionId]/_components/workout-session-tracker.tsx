@@ -1,17 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 import {
   AlertCircle,
   Calendar,
   CheckCircle2,
   Dumbbell,
+  Loader2,
+  Plus,
   X,
 } from "lucide-react";
 import dayjs from "dayjs";
 
-import type { GetWorkoutSession200 } from "@/app/_lib/api/fetch-generated";
+import type {
+  GetWorkoutSession200,
+  GetWorkoutSession200SessionExercisesItem,
+} from "@/app/_lib/api/fetch-generated";
+import { Button } from "@/components/ui/button";
 
+import {
+  addExerciseToWorkoutSessionAction,
+  completeWorkoutSessionAction,
+  removeExerciseFromWorkoutSessionAction,
+} from "../_actions";
+import { ExerciseSelectorModal } from "./exercise-selector-modal";
 import { SessionExerciseCard } from "./session-exercise-card";
 
 interface WorkoutSessionTrackerProps {
@@ -19,25 +31,129 @@ interface WorkoutSessionTrackerProps {
 }
 
 export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
+  const [sessionData, setSessionData] = useState(() => session);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showExerciseSelector, setShowExerciseSelector] = useState(false);
+  const [pendingMutationsCount, setPendingMutationsCount] = useState(0);
 
-  const isReadOnly = !!session.completedAt;
-  const startedAtFormatted = dayjs(session.startedAt).format(
+  const [isFinishing, startFinishTransition] = useTransition();
+
+  const handleMutationStart = useCallback(() => {
+    setPendingMutationsCount((c) => c + 1);
+  }, []);
+
+  const handleMutationEnd = useCallback(() => {
+    setPendingMutationsCount((c) => Math.max(0, c - 1));
+  }, []);
+
+  const isReadOnly = !!sessionData.completedAt;
+  const isFreeWorkout = sessionData.workoutDayId === null;
+  const startedAtFormatted = dayjs(sessionData.startedAt).format(
     "DD/MM/YYYY [às] HH:mm",
   );
-  const completedAtFormatted = session.completedAt
-    ? dayjs(session.completedAt).format("DD/MM/YYYY [às] HH:mm")
+  const completedAtFormatted = sessionData.completedAt
+    ? dayjs(sessionData.completedAt).format("DD/MM/YYYY [às] HH:mm")
     : null;
 
-  const exercises = [...session.sessionExercises].sort(
+  const exercises = [...sessionData.sessionExercises].sort(
     (a, b) => a.order - b.order,
   );
+
+  const handleAddExercise = async (exerciseId: string) => {
+    handleMutationStart();
+    try {
+      const res = await addExerciseToWorkoutSessionAction(
+        sessionData.id,
+        exerciseId,
+      );
+      if (!res.success) {
+        setErrorMessage(res.error);
+        throw new Error(res.error);
+      } else {
+        const newExercise: GetWorkoutSession200SessionExercisesItem = {
+          id: res.data.id,
+          exerciseNameSnapshot: res.data.exerciseNameSnapshot,
+          order: res.data.order,
+          plannedSets: res.data.plannedSets,
+          plannedReps: res.data.plannedReps,
+          plannedRestTimeInSeconds: res.data.plannedRestTimeInSeconds,
+          notes: res.data.notes,
+          sets: [],
+        };
+        setSessionData((prev) => ({
+          ...prev,
+          sessionExercises: [...prev.sessionExercises, newExercise],
+        }));
+      }
+    } finally {
+      handleMutationEnd();
+    }
+  };
+
+  const handleRemoveExercise = async (sessionExerciseId: string) => {
+    handleMutationStart();
+    try {
+      const res = await removeExerciseFromWorkoutSessionAction(
+        sessionData.id,
+        sessionExerciseId,
+      );
+      if (!res.success) {
+        setErrorMessage(res.error);
+        throw new Error(res.error);
+      } else {
+        setSessionData((prev) => ({
+          ...prev,
+          sessionExercises: prev.sessionExercises.filter(
+            (e) => e.id !== sessionExerciseId,
+          ),
+        }));
+      }
+    } finally {
+      handleMutationEnd();
+    }
+  };
+
+  const handleOpenFinishModal = () => {
+    if (isReadOnly || isFinishing) return;
+
+    // Dispara blur no elemento atualmente em foco para acionar persistência do draft
+    if (
+      typeof document !== "undefined" &&
+      document.activeElement instanceof HTMLElement
+    ) {
+      document.activeElement.blur();
+    }
+
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmFinish = () => {
+    if (isReadOnly || isFinishing || pendingMutationsCount > 0) return;
+
+    startFinishTransition(async () => {
+      const res = await completeWorkoutSessionAction(sessionData.id);
+      if (!res.success) {
+        setErrorMessage(res.error);
+        setShowConfirmModal(false);
+      } else {
+        setSessionData((prev) => ({
+          ...prev,
+          completedAt: res.data.completedAt,
+        }));
+        setShowConfirmModal(false);
+      }
+    });
+  };
 
   return (
     <div className="flex flex-col gap-5 p-5">
       {/* Toast / Banner de Erro Inline (Preserva dados do formulário) */}
       {errorMessage && (
-        <div className="flex items-center justify-between rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-destructive animate-in fade-in slide-in-from-top-2">
+        <div
+          role="alert"
+          className="flex items-center justify-between rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-destructive animate-in fade-in slide-in-from-top-2"
+        >
           <div className="flex items-center gap-2">
             <AlertCircle className="size-4 shrink-0" />
             <p className="font-heading text-xs font-semibold">{errorMessage}</p>
@@ -56,9 +172,17 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
       {/* Card de Informações e Status da Sessão */}
       <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm">
         <div className="flex items-center justify-between">
-          <span className="font-heading text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            ID #{session.id.slice(0, 8)}
-          </span>
+          <div className="flex items-center gap-2">
+            {isFreeWorkout ? (
+              <span className="rounded-full bg-secondary px-2.5 py-0.5 font-heading text-xs font-bold uppercase tracking-wider text-secondary-foreground">
+                Treino avulso
+              </span>
+            ) : (
+              <span className="font-heading text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                ID #{sessionData.id.slice(0, 8)}
+              </span>
+            )}
+          </div>
 
           {isReadOnly ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 font-heading text-xs font-semibold text-primary">
@@ -104,32 +228,165 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
             <Dumbbell className="size-5 text-primary" />
             Exercícios ({exercises.length})
           </h2>
+
+          {isFreeWorkout && !isReadOnly && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowExerciseSelector(true)}
+              className="rounded-xl border-dashed font-heading text-xs font-semibold hover:border-primary/50 hover:bg-primary/5"
+            >
+              <Plus className="mr-1.5 size-3.5 text-primary" />
+              Adicionar exercício
+            </Button>
+          )}
         </div>
 
         {exercises.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border p-8 text-center">
             <Dumbbell className="size-8 text-muted-foreground/60 mb-2" />
             <p className="font-heading text-sm font-semibold text-foreground">
-              Dia de descanso
+              {isFreeWorkout ? "Nenhum exercício adicionado" : "Dia de descanso"}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Não há exercícios prescritos para esta sessão.
+              {isFreeWorkout
+                ? "Adicione exercícios para começar seu treino avulso."
+                : "Não há exercícios prescritos para esta sessão."}
             </p>
+            {isFreeWorkout && !isReadOnly && (
+              <Button
+                type="button"
+                onClick={() => setShowExerciseSelector(true)}
+                className="mt-4 rounded-full px-5 py-2 font-heading text-xs font-semibold"
+              >
+                <Plus className="mr-1.5 size-3.5" />
+                Adicionar exercício
+              </Button>
+            )}
           </div>
         ) : (
           <div className="flex flex-col gap-4">
             {exercises.map((exercise) => (
               <SessionExerciseCard
                 key={exercise.id}
-                sessionId={session.id}
+                sessionId={sessionData.id}
                 exercise={exercise}
                 isReadOnly={isReadOnly}
+                isFreeWorkout={isFreeWorkout}
+                onRemoveExercise={handleRemoveExercise}
                 onError={(msg) => setErrorMessage(msg)}
+                onMutationStart={handleMutationStart}
+                onMutationEnd={handleMutationEnd}
               />
             ))}
+
+            {isFreeWorkout && !isReadOnly && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowExerciseSelector(true)}
+                className="h-11 w-full rounded-2xl border-dashed font-heading text-xs font-semibold hover:border-primary/50 hover:bg-primary/5 active:scale-[0.99]"
+              >
+                <Plus className="mr-1.5 size-4 text-primary" />
+                Adicionar exercício
+              </Button>
+            )}
           </div>
         )}
       </div>
+
+      {/* Ação Principal: Botão Finalizar Treino (apenas enquanto ativa) */}
+      {!isReadOnly && (
+        <div className="mt-2 flex flex-col gap-2">
+          <Button
+            type="button"
+            size="lg"
+            disabled={pendingMutationsCount > 0 || isFinishing}
+            onClick={handleOpenFinishModal}
+            className="w-full rounded-2xl py-6 font-heading text-base font-bold shadow-md active:scale-[0.99]"
+          >
+            {pendingMutationsCount > 0 ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="size-5 animate-spin" />
+                Salvando alterações...
+              </span>
+            ) : isFinishing ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="size-5 animate-spin" />
+                Finalizando treino...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="size-5" />
+                Finalizar treino
+              </span>
+            )}
+          </Button>
+        </div>
+      )}
+
+      {/* Modal de Confirmação Simples e Não-Alarmista */}
+      {showConfirmModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="finish-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in"
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl flex flex-col gap-4 animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col gap-2">
+              <h3
+                id="finish-modal-title"
+                className="font-heading text-lg font-bold text-foreground"
+              >
+                Finalizar treino?
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Depois disso, esta sessão ficará somente para leitura.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowConfirmModal(false)}
+                disabled={isFinishing}
+                className="rounded-xl font-heading text-sm"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                onClick={handleConfirmFinish}
+                disabled={isFinishing || pendingMutationsCount > 0}
+                className="rounded-xl font-heading text-sm font-semibold"
+              >
+                {isFinishing ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="size-4 animate-spin" />
+                    Finalizando...
+                  </span>
+                ) : (
+                  "Finalizar treino"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Seleção de Exercícios */}
+      <ExerciseSelectorModal
+        isOpen={showExerciseSelector}
+        onClose={() => setShowExerciseSelector(false)}
+        onSelectExercise={handleAddExercise}
+      />
     </div>
   );
 }
+

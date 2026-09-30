@@ -12,6 +12,7 @@ import Link from "next/link";
 import { ArrowRight, Flame } from "lucide-react";
 import { BottomNav } from "./_components/bottom-nav";
 import { ConsistencyTracker } from "./_components/consistency-tracker";
+import { StartFreeWorkoutButton } from "./_components/start-free-workout-button";
 import { WorkoutDayCard } from "./_components/workout-day-card";
 
 export default async function Home() {
@@ -130,6 +131,10 @@ export default async function Home() {
           </div>
         </div>
       )}
+
+      <div className="px-5 pt-4">
+        <StartFreeWorkoutButton hasActiveSession={!!activeSession} />
+      </div>
 
       <div className="flex flex-col gap-3 px-5 pt-5">
         <div className="flex items-center justify-between">

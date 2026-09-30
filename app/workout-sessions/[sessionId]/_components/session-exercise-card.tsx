@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { Dumbbell, Plus, Zap } from "lucide-react";
+import { Dumbbell, Loader2, Plus, Trash2, Zap } from "lucide-react";
 
 import type {
   GetWorkoutSession200SessionExercisesItem,
@@ -16,15 +16,25 @@ interface SessionExerciseCardProps {
   sessionId: string;
   exercise: GetWorkoutSession200SessionExercisesItem;
   isReadOnly: boolean;
+  isFreeWorkout?: boolean;
+  onRemoveExercise?: (sessionExerciseId: string) => Promise<void>;
   onError: (errorMsg: string) => void;
+  onMutationStart?: () => void;
+  onMutationEnd?: () => void;
 }
 
 export function SessionExerciseCard({
   sessionId,
   exercise,
   isReadOnly,
+  isFreeWorkout = false,
+  onRemoveExercise,
   onError,
+  onMutationStart,
+  onMutationEnd,
 }: SessionExerciseCardProps) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isRemoving, startRemoveTransition] = useTransition();
   // Inicializa a lista local de séries
   const [sets, setSets] = useState<
     GetWorkoutSession200SessionExercisesItemSetsItem[]
@@ -66,31 +76,62 @@ export function SessionExerciseCard({
     setSets((prev) => prev.filter((s) => s.id !== setId));
   };
 
+  // Remoção de exercício avulso
+  const handleRemoveClick = () => {
+    if (isReadOnly || isRemoving) return;
+    if (sets.length > 0) {
+      setShowDeleteConfirm(true);
+    } else {
+      handleConfirmRemove();
+    }
+  };
+
+  const handleConfirmRemove = () => {
+    if (isReadOnly || isRemoving || !onRemoveExercise) return;
+    onMutationStart?.();
+    startRemoveTransition(async () => {
+      try {
+        await onRemoveExercise(exercise.id);
+        setShowDeleteConfirm(false);
+      } catch (err: unknown) {
+        onError((err as Error)?.message || "Erro ao remover exercício");
+        setShowDeleteConfirm(false);
+      } finally {
+        onMutationEnd?.();
+      }
+    });
+  };
+
   // Adicionar nova série
   const handleAddSet = () => {
     if (isReadOnly || isPending) return;
 
+    onMutationStart?.();
     startTransition(async () => {
-      const res = await createWorkoutSetAction(sessionId, exercise.id, {
-        type: "WORKING",
-      });
+      try {
+        const res = await createWorkoutSetAction(sessionId, exercise.id, {
+          type: "WORKING",
+        });
 
-      if (!res.success) {
-        onError(res.error);
-      } else {
-        const newSet: GetWorkoutSession200SessionExercisesItemSetsItem = {
-          id: res.data.id,
-          order: res.data.order,
-          type: res.data.type,
-          weightInGrams: res.data.weightInGrams,
-          reps: res.data.reps,
-          rir: res.data.rir,
-          durationInSeconds: res.data.durationInSeconds,
-          notes: res.data.notes,
-          completedAt: res.data.completedAt,
-        };
+        if (!res.success) {
+          onError(res.error);
+        } else {
+          const newSet: GetWorkoutSession200SessionExercisesItemSetsItem = {
+            id: res.data.id,
+            order: res.data.order,
+            type: res.data.type,
+            weightInGrams: res.data.weightInGrams,
+            reps: res.data.reps,
+            rir: res.data.rir,
+            durationInSeconds: res.data.durationInSeconds,
+            notes: res.data.notes,
+            completedAt: res.data.completedAt,
+          };
 
-        setSets((prev) => [...prev, newSet].sort((a, b) => a.order - b.order));
+          setSets((prev) => [...prev, newSet].sort((a, b) => a.order - b.order));
+        }
+      } finally {
+        onMutationEnd?.();
       }
     });
   };
@@ -137,33 +178,53 @@ export function SessionExerciseCard({
             )}
         </div>
 
-        {/* Seletor de Modo: Reps vs Tempo (habilitado apenas se editável) */}
-        {!isReadOnly && (
-          <div className="flex items-center rounded-lg border border-border bg-muted/40 p-0.5 text-[11px] font-heading font-semibold">
+        <div className="flex items-center gap-2">
+          {/* Seletor de Modo: Reps vs Tempo (habilitado apenas se editável) */}
+          {!isReadOnly && (
+            <div className="flex items-center rounded-lg border border-border bg-muted/40 p-0.5 text-[11px] font-heading font-semibold">
+              <button
+                type="button"
+                onClick={() => setMode("reps")}
+                className={`rounded-md px-2 py-1 transition-colors ${
+                  mode === "reps"
+                    ? "bg-background text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Reps
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("duration")}
+                className={`rounded-md px-2 py-1 transition-colors ${
+                  mode === "duration"
+                    ? "bg-background text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Tempo
+              </button>
+            </div>
+          )}
+
+          {/* Botão de Excluir Exercício (Apenas em treino avulso aberto) */}
+          {isFreeWorkout && !isReadOnly && onRemoveExercise && (
             <button
               type="button"
-              onClick={() => setMode("reps")}
-              className={`rounded-md px-2 py-1 transition-colors ${
-                mode === "reps"
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              onClick={handleRemoveClick}
+              disabled={isRemoving}
+              title="Remover exercício"
+              aria-label="Remover exercício"
+              className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors disabled:opacity-50"
             >
-              Reps
+              {isRemoving ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Trash2 className="size-4" />
+              )}
             </button>
-            <button
-              type="button"
-              onClick={() => setMode("duration")}
-              className={`rounded-md px-2 py-1 transition-colors ${
-                mode === "duration"
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Tempo
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {exercise.notes && (
@@ -192,6 +253,8 @@ export function SessionExerciseCard({
               onUpdateSet={handleUpdateSet}
               onDeleteSet={handleDeleteSet}
               onError={onError}
+              onMutationStart={onMutationStart}
+              onMutationEnd={onMutationEnd}
             />
           ))
         )}
@@ -209,6 +272,64 @@ export function SessionExerciseCard({
           <Plus className="mr-1.5 size-4 text-primary" />
           <span>Adicionar série</span>
         </Button>
+      )}
+
+      {/* Modal de Confirmação para Excluir Exercício com Séries */}
+      {showDeleteConfirm && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={`delete-exercise-title-${exercise.id}`}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in"
+          onClick={() => setShowDeleteConfirm(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl flex flex-col gap-4 animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col gap-2">
+              <h3
+                id={`delete-exercise-title-${exercise.id}`}
+                className="font-heading text-lg font-bold text-foreground"
+              >
+                Remover exercício?
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Este exercício possui {sets.length}{" "}
+                {sets.length === 1 ? "série registrada" : "séries registradas"}. Ao
+                remover, {sets.length === 1 ? "ela será excluída" : "todas serão excluídas"} permanentemente.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isRemoving}
+                className="rounded-xl font-heading text-sm"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleConfirmRemove}
+                disabled={isRemoving}
+                className="rounded-xl font-heading text-sm font-semibold"
+              >
+                {isRemoving ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="size-4 animate-spin" />
+                    Removendo...
+                  </span>
+                ) : (
+                  "Remover"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
