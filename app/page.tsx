@@ -36,14 +36,19 @@ export default async function Home() {
   const activeSession =
     activeSessionResponse?.status === 200 ? activeSessionResponse.data : null;
 
-  if (homeData.status !== 200) {
-    throw new Error("Failed to fetch home data");
-  }
-
   const needsOnboarding =
-    !homeData.data.activeWorkoutPlanId ||
+    homeData.status === 404 ||
+    (homeData.status === 200 && !homeData.data.activeWorkoutPlanId) ||
     (trainData.status === 200 && !trainData.data);
   if (needsOnboarding) redirect("/onboarding");
+
+  if (homeData.status !== 200) {
+    console.error("Failed to fetch home data:", {
+      status: homeData.status,
+      data: homeData.data,
+    });
+    throw new Error(`Failed to fetch home data (status ${homeData.status})`);
+  }
 
   const { todayWorkoutDay, workoutStreak, consistencyByDay } = homeData.data;
   const userName = session.data.user.name?.split(" ")[0] ?? "";

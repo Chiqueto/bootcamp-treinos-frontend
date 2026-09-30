@@ -37,6 +37,7 @@ export default async function StatsPage() {
   ]);
 
   const needsOnboarding =
+    homeData.status === 404 ||
     (homeData.status === 200 && !homeData.data.activeWorkoutPlanId) ||
     (trainData.status === 200 && !trainData.data);
   if (needsOnboarding) redirect("/onboarding");

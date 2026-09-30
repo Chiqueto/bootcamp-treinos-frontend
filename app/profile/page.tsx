@@ -30,6 +30,7 @@ export default async function ProfilePage() {
   }
 
   const needsOnboarding =
+    homeData.status === 404 ||
     (homeData.status === 200 && !homeData.data.activeWorkoutPlanId) ||
     !trainData.data;
   if (needsOnboarding) redirect("/onboarding");
