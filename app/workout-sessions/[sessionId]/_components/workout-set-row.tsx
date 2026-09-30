@@ -60,7 +60,7 @@ export function WorkoutSetRow({
     () => set.completedAt,
   );
 
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   // Parse current inputs
   const parseCurrentData = () => {

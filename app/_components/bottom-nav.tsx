@@ -1,33 +1,25 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import {
   House,
-  Calendar,
+  CalendarDays,
   ChartNoAxesColumn,
   UserRound,
 } from "lucide-react";
-import dayjs from "dayjs";
-import { getHomeData } from "@/app/_lib/api/fetch-generated";
 import { cn } from "@/lib/utils";
 import { ChatOpenButton } from "@/app/_components/chat-open-button";
 
 interface BottomNavProps {
-  activePage?: "home" | "calendar" | "stats" | "profile";
+  activePage?: "home" | "planning" | "calendar" | "stats" | "profile";
 }
 
-export async function BottomNav({ activePage = "home" }: BottomNavProps) {
-  const today = dayjs();
-  const homeData = await getHomeData(today.format("YYYY-MM-DD"), {
-    timezoneOffset: today.utcOffset(),
-  });
-
-  const calendarHref =
-    homeData.status === 200 && homeData.data.activeWorkoutPlanId
-      ? `/workout-plans/${homeData.data.activeWorkoutPlanId}`
-      : null;
+export function BottomNav({ activePage = "home" }: BottomNavProps) {
+  const isPlanningActive =
+    activePage === "planning" || activePage === "calendar";
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-center gap-6 rounded-t-[20px] border border-border bg-background px-6 py-4">
-      <Link href="/" className="p-3">
+      <Link href="/" className="p-3" aria-label="Início">
         <House
           className={cn(
             "size-6",
@@ -35,31 +27,18 @@ export async function BottomNav({ activePage = "home" }: BottomNavProps) {
           )}
         />
       </Link>
-      {calendarHref ? (
-        <Link href={calendarHref} className="p-3">
-          <Calendar
-            className={cn(
-              "size-6",
-              activePage === "calendar"
-                ? "text-foreground"
-                : "text-muted-foreground"
-            )}
-          />
-        </Link>
-      ) : (
-        <button className="p-3">
-          <Calendar
-            className={cn(
-              "size-6",
-              activePage === "calendar"
-                ? "text-foreground"
-                : "text-muted-foreground"
-            )}
-          />
-        </button>
-      )}
-      <ChatOpenButton />
-      <Link href="/stats" className="p-3">
+      <Link href="/planning" className="p-3" aria-label="Planejamento">
+        <CalendarDays
+          className={cn(
+            "size-6",
+            isPlanningActive ? "text-foreground" : "text-muted-foreground"
+          )}
+        />
+      </Link>
+      <Suspense fallback={<div className="size-11" />}>
+        <ChatOpenButton />
+      </Suspense>
+      <Link href="/stats" className="p-3" aria-label="Estatísticas">
         <ChartNoAxesColumn
           className={cn(
             "size-6",
@@ -69,7 +48,7 @@ export async function BottomNav({ activePage = "home" }: BottomNavProps) {
           )}
         />
       </Link>
-      <Link href="/profile" className="p-3">
+      <Link href="/profile" className="p-3" aria-label="Perfil">
         <UserRound
           className={cn(
             "size-6",
@@ -82,3 +61,4 @@ export async function BottomNav({ activePage = "home" }: BottomNavProps) {
     </nav>
   );
 }
+

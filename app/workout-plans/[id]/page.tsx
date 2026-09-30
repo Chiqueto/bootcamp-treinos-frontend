@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 import { authClient } from "@/app/_lib/auth-client";
 import { headers } from "next/headers";
-import { getWorkoutPlan, getHomeData, getUserTrainData } from "@/app/_lib/api/fetch-generated";
-import dayjs from "dayjs";
+import { getWorkoutPlan, getUserTrainData } from "@/app/_lib/api/fetch-generated";
 import Image from "next/image";
 import Link from "next/link";
 import { Goal } from "lucide-react";
@@ -35,19 +34,13 @@ export default async function WorkoutPlanPage({
   if (!session.data?.user) redirect("/auth");
 
   const { id } = await params;
-  const today = dayjs();
-  const [workoutPlanData, homeData, trainData] = await Promise.all([
+  const [workoutPlanData, trainData] = await Promise.all([
     getWorkoutPlan(id),
-    getHomeData(today.format("YYYY-MM-DD"), {
-      timezoneOffset: today.utcOffset(),
-    }),
     getUserTrainData(),
   ]);
 
   const needsOnboarding =
-    homeData.status === 404 ||
-    (homeData.status === 200 && !homeData.data.activeWorkoutPlanId) ||
-    (trainData.status === 200 && !trainData.data);
+    (trainData.status === 200 && !trainData.data) || trainData.status === 404;
   if (needsOnboarding) redirect("/onboarding");
 
   if (workoutPlanData.status !== 200) redirect("/");
@@ -83,7 +76,7 @@ export default async function WorkoutPlanPage({
           className="relative text-[22px] uppercase leading-[1.15] text-background"
           style={{ fontFamily: "var(--font-anton)" }}
         >
-          Fit.ai
+          Trainvy
         </p>
 
         <div className="relative flex w-full items-end justify-between">
@@ -120,7 +113,7 @@ export default async function WorkoutPlanPage({
         )}
       </div>
 
-      <BottomNav activePage="calendar" />
+      <BottomNav activePage="planning" />
     </div>
   );
 }

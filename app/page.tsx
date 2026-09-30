@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import {
   getActiveWorkoutSession,
   getHomeData,
+  GetHomeData200TodayWorkoutDay,
   getUserTrainData,
 } from "./_lib/api/fetch-generated";
 import dayjs from "dayjs";
@@ -37,12 +38,23 @@ export default async function Home() {
     activeSessionResponse?.status === 200 ? activeSessionResponse.data : null;
 
   const needsOnboarding =
-    homeData.status === 404 ||
-    (homeData.status === 200 && !homeData.data.activeWorkoutPlanId) ||
-    (trainData.status === 200 && !trainData.data);
+    (trainData.status === 200 && !trainData.data) || trainData.status === 404;
   if (needsOnboarding) redirect("/onboarding");
 
-  if (homeData.status !== 200) {
+  let activeWorkoutPlanId: string | null = null;
+  let todayWorkoutDay: GetHomeData200TodayWorkoutDay | undefined = undefined;
+  let workoutStreak = 0;
+  let consistencyByDay: Record<
+    string,
+    { workoutDayCompleted: boolean; workoutDayStarted: boolean }
+  > = {};
+
+  if (homeData.status === 200) {
+    activeWorkoutPlanId = homeData.data.activeWorkoutPlanId;
+    todayWorkoutDay = homeData.data.todayWorkoutDay;
+    workoutStreak = homeData.data.workoutStreak;
+    consistencyByDay = homeData.data.consistencyByDay;
+  } else if (homeData.status !== 404) {
     console.error("Failed to fetch home data:", {
       status: homeData.status,
       data: homeData.data,
@@ -50,7 +62,6 @@ export default async function Home() {
     throw new Error(`Failed to fetch home data (status ${homeData.status})`);
   }
 
-  const { todayWorkoutDay, workoutStreak, consistencyByDay } = homeData.data;
   const userName = session.data.user.name?.split(" ")[0] ?? "";
 
   return (
@@ -77,7 +88,7 @@ export default async function Home() {
           className="relative text-[22px] uppercase leading-[1.15] text-background"
           style={{ fontFamily: "var(--font-anton)" }}
         >
-          Fit.ai
+          Trainvy
         </p>
 
         <div className="relative flex w-full items-end justify-between">
@@ -167,18 +178,20 @@ export default async function Home() {
         </div>
       </div>
 
-      {todayWorkoutDay && (
+      {todayWorkoutDay ? (
         <div className="flex flex-col gap-3 p-5">
           <div className="flex items-center justify-between">
             <h2 className="font-heading text-lg font-semibold text-foreground">
               Treino de Hoje
             </h2>
-            <Link
-              href={`/workout-plans/${homeData.data.activeWorkoutPlanId}`}
-              className="font-heading text-xs text-primary"
-            >
-              Ver treinos
-            </Link>
+            {activeWorkoutPlanId && (
+              <Link
+                href={`/workout-plans/${activeWorkoutPlanId}`}
+                className="font-heading text-xs text-primary"
+              >
+                Ver treinos
+              </Link>
+            )}
           </div>
 
           <Link
@@ -195,7 +208,27 @@ export default async function Home() {
             />
           </Link>
         </div>
-      )}
+      ) : !activeWorkoutPlanId ? (
+        <div className="flex flex-col gap-3 p-5">
+          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card p-6 text-center">
+            <div className="flex flex-col gap-1">
+              <h2 className="font-heading text-base font-semibold text-foreground">
+                Nenhum plano ativo
+              </h2>
+              <p className="font-heading text-xs text-muted-foreground">
+                Você pode iniciar um treino avulso ou organizar seu planejamento.
+              </p>
+            </div>
+            <Link
+              href="/planning"
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-heading text-xs font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90"
+            >
+              <span>Ir para Planejamento</span>
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </div>
+        </div>
+      ) : null}
 
       <BottomNav />
     </div>

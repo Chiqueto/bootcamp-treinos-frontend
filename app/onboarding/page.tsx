@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
-import { authClient } from "@/app/_lib/auth-client";
 import { headers } from "next/headers";
-import { getHomeData, getUserTrainData } from "@/app/_lib/api/fetch-generated";
-import dayjs from "dayjs";
+import { authClient } from "@/app/_lib/auth-client";
+import { getUserTrainData } from "@/app/_lib/api/fetch-generated";
 import { Chat } from "@/app/_components/chat";
 
 export default async function OnboardingPage() {
@@ -14,20 +13,9 @@ export default async function OnboardingPage() {
 
   if (!session.data?.user) redirect("/auth");
 
-  const today = dayjs();
-  const [homeData, trainData] = await Promise.all([
-    getHomeData(today.format("YYYY-MM-DD"), {
-      timezoneOffset: today.utcOffset(),
-    }),
-    getUserTrainData(),
-  ]);
+  const trainData = await getUserTrainData();
 
-  if (
-    homeData.status === 200 &&
-    trainData.status === 200 &&
-    homeData.data.activeWorkoutPlanId &&
-    trainData.data
-  ) {
+  if (trainData.status === 200 && trainData.data) {
     redirect("/");
   }
 

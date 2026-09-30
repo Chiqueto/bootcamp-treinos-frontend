@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { authClient } from "@/app/_lib/auth-client";
-import { getUserTrainData, getHomeData } from "@/app/_lib/api/fetch-generated";
-import dayjs from "dayjs";
+import { getUserTrainData } from "@/app/_lib/api/fetch-generated";
 import { BottomNav } from "@/app/_components/bottom-nav";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Weight, Ruler, BicepsFlexed, User } from "lucide-react";
@@ -17,22 +16,13 @@ export default async function ProfilePage() {
 
   if (!session.data?.user) redirect("/auth");
 
-  const today = dayjs();
-  const [trainData, homeData] = await Promise.all([
-    getUserTrainData(),
-    getHomeData(today.format("YYYY-MM-DD"), {
-      timezoneOffset: today.utcOffset(),
-    }),
-  ]);
+  const trainData = await getUserTrainData();
 
   if (trainData.status !== 200) {
     throw new Error("Failed to fetch user train data");
   }
 
-  const needsOnboarding =
-    homeData.status === 404 ||
-    (homeData.status === 200 && !homeData.data.activeWorkoutPlanId) ||
-    !trainData.data;
+  const needsOnboarding = !trainData.data;
   if (needsOnboarding) redirect("/onboarding");
 
   const user = session.data.user;
@@ -50,7 +40,7 @@ export default async function ProfilePage() {
           className="text-[22px] uppercase leading-[1.15] text-foreground"
           style={{ fontFamily: "var(--font-anton)" }}
         >
-          Fit.ai
+          Trainvy
         </p>
       </div>
 

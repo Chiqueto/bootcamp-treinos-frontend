@@ -118,7 +118,9 @@ export type CreateWorkoutPlanBodyWorkoutDaysItem = {
 export type CreateWorkoutPlanBody = {
   /** @minLength 1 */
   name: string;
+  isActive?: boolean;
   workoutDays: CreateWorkoutPlanBodyWorkoutDaysItem[];
+  activate?: boolean;
 };
 
 export type CreateWorkoutPlan201WorkoutDaysItemWeekDay =
@@ -164,6 +166,7 @@ export type CreateWorkoutPlan201 = {
   id: string;
   /** @minLength 1 */
   name: string;
+  isActive?: boolean;
   workoutDays: CreateWorkoutPlan201WorkoutDaysItem[];
 };
 
@@ -178,6 +181,11 @@ export type CreateWorkoutPlan401 = {
 };
 
 export type CreateWorkoutPlan404 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutPlan409 = {
   error: string;
   code: string;
 };
@@ -307,6 +315,137 @@ export type GetWorkoutDay500 = {
   code: string;
 };
 
+export type ActivateWorkoutPlan200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  isActive: boolean;
+};
+
+export type ActivateWorkoutPlan401 = {
+  error: string;
+  code: string;
+};
+
+export type ActivateWorkoutPlan404 = {
+  error: string;
+  code: string;
+};
+
+export type ActivateWorkoutPlan409 = {
+  error: string;
+  code: string;
+};
+
+export type ActivateWorkoutPlan500 = {
+  error: string;
+  code: string;
+};
+
+export type DeactivateWorkoutPlan200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  isActive: boolean;
+};
+
+export type DeactivateWorkoutPlan401 = {
+  error: string;
+  code: string;
+};
+
+export type DeactivateWorkoutPlan404 = {
+  error: string;
+  code: string;
+};
+
+export type DeactivateWorkoutPlan409 = {
+  error: string;
+  code: string;
+};
+
+export type DeactivateWorkoutPlan500 = {
+  error: string;
+  code: string;
+};
+
+export type DuplicateWorkoutPlanBody = {
+  /** @minLength 1 */
+  name?: string;
+};
+
+export type DuplicateWorkoutPlan201WorkoutDaysItemWeekDay =
+  (typeof DuplicateWorkoutPlan201WorkoutDaysItemWeekDay)[keyof typeof DuplicateWorkoutPlan201WorkoutDaysItemWeekDay];
+
+export const DuplicateWorkoutPlan201WorkoutDaysItemWeekDay = {
+  MONDAY: "MONDAY",
+  TUESDAY: "TUESDAY",
+  WEDNESDAY: "WEDNESDAY",
+  THURSDAY: "THURSDAY",
+  FRIDAY: "FRIDAY",
+  SATURDAY: "SATURDAY",
+  SUNDAY: "SUNDAY",
+} as const;
+
+export type DuplicateWorkoutPlan201WorkoutDaysItemExercisesItem = {
+  /** @minimum 0 */
+  order: number;
+  /** @minLength 1 */
+  name: string;
+  /** @minimum 1 */
+  sets: number;
+  /** @minimum 1 */
+  reps: number;
+  /** @minimum 1 */
+  restTimeInSeconds: number;
+};
+
+export type DuplicateWorkoutPlan201WorkoutDaysItem = {
+  /** @minLength 1 */
+  name: string;
+  weekDay: DuplicateWorkoutPlan201WorkoutDaysItemWeekDay;
+  isRest: boolean;
+  /** @minimum 0 */
+  estimatedDurationInSeconds: number;
+  /** @nullable */
+  coverImageUrl?: string | null;
+  exercises: DuplicateWorkoutPlan201WorkoutDaysItemExercisesItem[];
+};
+
+export type DuplicateWorkoutPlan201 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @minLength 1 */
+  name: string;
+  isActive?: boolean;
+  workoutDays: DuplicateWorkoutPlan201WorkoutDaysItem[];
+};
+
+export type DuplicateWorkoutPlan400 = {
+  error: string;
+  code: string;
+};
+
+export type DuplicateWorkoutPlan401 = {
+  error: string;
+  code: string;
+};
+
+export type DuplicateWorkoutPlan404 = {
+  error: string;
+  code: string;
+};
+
+export type DuplicateWorkoutPlan409 = {
+  error: string;
+  code: string;
+};
+
+export type DuplicateWorkoutPlan500 = {
+  error: string;
+  code: string;
+};
+
 export type StartWorkoutSession201ExercisesItem = {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   id: string;
@@ -386,6 +525,1065 @@ export type UpdateWorkoutSession404 = {
 };
 
 export type UpdateWorkoutSession500 = {
+  error: string;
+  code: string;
+};
+
+export type CreatePeriodizationBody = {
+  /** @minLength 1 */
+  name: string;
+  /**
+   * @minLength 1
+   * @nullable
+   */
+  goal?: string | null;
+  /**
+   * @minLength 1
+   * @nullable
+   */
+  notes?: string | null;
+};
+
+export type CreatePeriodization201Status =
+  (typeof CreatePeriodization201Status)[keyof typeof CreatePeriodization201Status];
+
+export const CreatePeriodization201Status = {
+  DRAFT: "DRAFT",
+  ACTIVE: "ACTIVE",
+  PAUSED: "PAUSED",
+  COMPLETED: "COMPLETED",
+} as const;
+
+export type CreatePeriodization201 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  /** @nullable */
+  goal: string | null;
+  /** @nullable */
+  notes: string | null;
+  isActive: boolean;
+  /** @nullable */
+  startedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  status: CreatePeriodization201Status;
+};
+
+export type CreatePeriodization400 = {
+  error: string;
+  code: string;
+};
+
+export type CreatePeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type CreatePeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type ListPeriodizations200ItemStatus =
+  (typeof ListPeriodizations200ItemStatus)[keyof typeof ListPeriodizations200ItemStatus];
+
+export const ListPeriodizations200ItemStatus = {
+  DRAFT: "DRAFT",
+  ACTIVE: "ACTIVE",
+  PAUSED: "PAUSED",
+  COMPLETED: "COMPLETED",
+} as const;
+
+export type ListPeriodizations200Item = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  /** @nullable */
+  goal: string | null;
+  /** @nullable */
+  notes: string | null;
+  isActive: boolean;
+  /** @nullable */
+  startedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  totalPlans: number;
+  status: ListPeriodizations200ItemStatus;
+};
+
+export type ListPeriodizations401 = {
+  error: string;
+  code: string;
+};
+
+export type ListPeriodizations500 = {
+  error: string;
+  code: string;
+};
+
+export type GetPeriodization200Status =
+  (typeof GetPeriodization200Status)[keyof typeof GetPeriodization200Status];
+
+export const GetPeriodization200Status = {
+  DRAFT: "DRAFT",
+  ACTIVE: "ACTIVE",
+  PAUSED: "PAUSED",
+  COMPLETED: "COMPLETED",
+} as const;
+
+export type GetPeriodization200PlansItemWorkoutPlan = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  isActive: boolean;
+};
+
+export type GetPeriodization200PlansItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  periodizationId: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @nullable */
+  plannedStartDate: string | null;
+  /** @nullable */
+  plannedEndDate: string | null;
+  /** @nullable */
+  activatedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  /** @nullable */
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  workoutPlan: GetPeriodization200PlansItemWorkoutPlan;
+};
+
+export type GetPeriodization200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  /** @nullable */
+  goal: string | null;
+  /** @nullable */
+  notes: string | null;
+  isActive: boolean;
+  /** @nullable */
+  startedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  status: GetPeriodization200Status;
+  plans: GetPeriodization200PlansItem[];
+};
+
+export type GetPeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type GetPeriodization404 = {
+  error: string;
+  code: string;
+};
+
+export type GetPeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type UpdatePeriodizationBody = {
+  /** @minLength 1 */
+  name?: string;
+  /**
+   * @minLength 1
+   * @nullable
+   */
+  goal?: string | null;
+  /**
+   * @minLength 1
+   * @nullable
+   */
+  notes?: string | null;
+};
+
+export type UpdatePeriodization200Status =
+  (typeof UpdatePeriodization200Status)[keyof typeof UpdatePeriodization200Status];
+
+export const UpdatePeriodization200Status = {
+  DRAFT: "DRAFT",
+  ACTIVE: "ACTIVE",
+  PAUSED: "PAUSED",
+  COMPLETED: "COMPLETED",
+} as const;
+
+export type UpdatePeriodization200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  /** @nullable */
+  goal: string | null;
+  /** @nullable */
+  notes: string | null;
+  isActive: boolean;
+  /** @nullable */
+  startedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  status: UpdatePeriodization200Status;
+};
+
+export type UpdatePeriodization400 = {
+  error: string;
+  code: string;
+};
+
+export type UpdatePeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type UpdatePeriodization404 = {
+  error: string;
+  code: string;
+};
+
+export type UpdatePeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type DeletePeriodization200 = {
+  success: boolean;
+  message: string;
+};
+
+export type DeletePeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type DeletePeriodization404 = {
+  error: string;
+  code: string;
+};
+
+export type DeletePeriodization409 = {
+  error: string;
+  code: string;
+};
+
+export type DeletePeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type AddWorkoutPlanToPeriodizationBody = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  /** @nullable */
+  plannedStartDate?: string | null;
+  /** @nullable */
+  plannedEndDate?: string | null;
+  /** @nullable */
+  notes?: string | null;
+};
+
+export type AddWorkoutPlanToPeriodization201WorkoutPlan = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  isActive: boolean;
+};
+
+export type AddWorkoutPlanToPeriodization201 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  periodizationId: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @nullable */
+  plannedStartDate: string | null;
+  /** @nullable */
+  plannedEndDate: string | null;
+  /** @nullable */
+  activatedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  /** @nullable */
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  workoutPlan: AddWorkoutPlanToPeriodization201WorkoutPlan;
+};
+
+export type AddWorkoutPlanToPeriodization400 = {
+  error: string;
+  code: string;
+};
+
+export type AddWorkoutPlanToPeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type AddWorkoutPlanToPeriodization404 = {
+  error: string;
+  code: string;
+};
+
+export type AddWorkoutPlanToPeriodization409 = {
+  error: string;
+  code: string;
+};
+
+export type AddWorkoutPlanToPeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItemWeekDay =
+  (typeof CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItemWeekDay)[keyof typeof CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItemWeekDay];
+
+export const CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItemWeekDay = {
+  MONDAY: "MONDAY",
+  TUESDAY: "TUESDAY",
+  WEDNESDAY: "WEDNESDAY",
+  THURSDAY: "THURSDAY",
+  FRIDAY: "FRIDAY",
+  SATURDAY: "SATURDAY",
+  SUNDAY: "SUNDAY",
+} as const;
+
+export type CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItemExercisesItem = {
+  /** @minimum 0 */
+  order: number;
+  /** @minLength 1 */
+  name: string;
+  /** @minimum 1 */
+  sets: number;
+  /** @minimum 1 */
+  reps: number;
+  /** @minimum 1 */
+  restTimeInSeconds: number;
+};
+
+export type CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItem = {
+  /** @minLength 1 */
+  name: string;
+  weekDay: CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItemWeekDay;
+  isRest?: boolean;
+  /** @minimum 0 */
+  estimatedDurationInSeconds: number;
+  /** @nullable */
+  coverImageUrl?: string | null;
+  exercises: CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItemExercisesItem[];
+};
+
+export type CreateWorkoutPlanInPeriodizationBody = {
+  /** @minLength 1 */
+  name: string;
+  workoutDays: CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItem[];
+  /** @nullable */
+  plannedStartDate?: string | null;
+  /** @nullable */
+  plannedEndDate?: string | null;
+  /** @nullable */
+  notes?: string | null;
+};
+
+export type CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItemWeekDay =
+  (typeof CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItemWeekDay)[keyof typeof CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItemWeekDay];
+
+export const CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItemWeekDay =
+  {
+    MONDAY: "MONDAY",
+    TUESDAY: "TUESDAY",
+    WEDNESDAY: "WEDNESDAY",
+    THURSDAY: "THURSDAY",
+    FRIDAY: "FRIDAY",
+    SATURDAY: "SATURDAY",
+    SUNDAY: "SUNDAY",
+  } as const;
+
+export type CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItemExercisesItem =
+  {
+    /** @minimum 0 */
+    order: number;
+    /** @minLength 1 */
+    name: string;
+    /** @minimum 1 */
+    sets: number;
+    /** @minimum 1 */
+    reps: number;
+    /** @minimum 1 */
+    restTimeInSeconds: number;
+  };
+
+export type CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItem = {
+  /** @minLength 1 */
+  name: string;
+  weekDay: CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItemWeekDay;
+  isRest: boolean;
+  /** @minimum 0 */
+  estimatedDurationInSeconds: number;
+  /** @nullable */
+  coverImageUrl?: string | null;
+  exercises: CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItemExercisesItem[];
+};
+
+export type CreateWorkoutPlanInPeriodization201WorkoutPlan = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @minLength 1 */
+  name: string;
+  isActive?: boolean;
+  workoutDays: CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItem[];
+};
+
+export type CreateWorkoutPlanInPeriodization201 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  periodizationId: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @nullable */
+  plannedStartDate: string | null;
+  /** @nullable */
+  plannedEndDate: string | null;
+  /** @nullable */
+  activatedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  /** @nullable */
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  workoutPlan: CreateWorkoutPlanInPeriodization201WorkoutPlan;
+};
+
+export type CreateWorkoutPlanInPeriodization400 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutPlanInPeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutPlanInPeriodization404 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutPlanInPeriodization409 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutPlanInPeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type UpdatePeriodizationPlanBody = {
+  /** @nullable */
+  plannedStartDate?: string | null;
+  /** @nullable */
+  plannedEndDate?: string | null;
+  /** @nullable */
+  notes?: string | null;
+};
+
+export type UpdatePeriodizationPlan200WorkoutPlan = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  isActive: boolean;
+};
+
+export type UpdatePeriodizationPlan200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  periodizationId: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @nullable */
+  plannedStartDate: string | null;
+  /** @nullable */
+  plannedEndDate: string | null;
+  /** @nullable */
+  activatedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  /** @nullable */
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  workoutPlan: UpdatePeriodizationPlan200WorkoutPlan;
+};
+
+export type UpdatePeriodizationPlan400 = {
+  error: string;
+  code: string;
+};
+
+export type UpdatePeriodizationPlan401 = {
+  error: string;
+  code: string;
+};
+
+export type UpdatePeriodizationPlan404 = {
+  error: string;
+  code: string;
+};
+
+export type UpdatePeriodizationPlan409 = {
+  error: string;
+  code: string;
+};
+
+export type UpdatePeriodizationPlan500 = {
+  error: string;
+  code: string;
+};
+
+export type RemoveWorkoutPlanFromPeriodization200 = {
+  success: boolean;
+  message: string;
+};
+
+export type RemoveWorkoutPlanFromPeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type RemoveWorkoutPlanFromPeriodization404 = {
+  error: string;
+  code: string;
+};
+
+export type RemoveWorkoutPlanFromPeriodization409 = {
+  error: string;
+  code: string;
+};
+
+export type RemoveWorkoutPlanFromPeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type ReorderPeriodizationPlansBody = {
+  /** @minItems 1 */
+  periodizationPlanIds: string[];
+};
+
+export type ReorderPeriodizationPlans200ItemWorkoutPlan = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  isActive: boolean;
+};
+
+export type ReorderPeriodizationPlans200Item = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  periodizationId: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @nullable */
+  plannedStartDate: string | null;
+  /** @nullable */
+  plannedEndDate: string | null;
+  /** @nullable */
+  activatedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  /** @nullable */
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  workoutPlan: ReorderPeriodizationPlans200ItemWorkoutPlan;
+};
+
+export type ReorderPeriodizationPlans400 = {
+  error: string;
+  code: string;
+};
+
+export type ReorderPeriodizationPlans401 = {
+  error: string;
+  code: string;
+};
+
+export type ReorderPeriodizationPlans404 = {
+  error: string;
+  code: string;
+};
+
+export type ReorderPeriodizationPlans409 = {
+  error: string;
+  code: string;
+};
+
+export type ReorderPeriodizationPlans500 = {
+  error: string;
+  code: string;
+};
+
+export type ActivatePeriodization200Status =
+  (typeof ActivatePeriodization200Status)[keyof typeof ActivatePeriodization200Status];
+
+export const ActivatePeriodization200Status = {
+  DRAFT: "DRAFT",
+  ACTIVE: "ACTIVE",
+  PAUSED: "PAUSED",
+  COMPLETED: "COMPLETED",
+} as const;
+
+/**
+ * @nullable
+ */
+export type ActivatePeriodization200CurrentBlock = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  workoutPlanName: string;
+  activatedAt: string;
+} | null;
+
+export type ActivatePeriodization200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  status: ActivatePeriodization200Status;
+  /** @nullable */
+  startedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  /** @nullable */
+  currentBlock: ActivatePeriodization200CurrentBlock;
+};
+
+export type ActivatePeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type ActivatePeriodization404 = {
+  error: string;
+  code: string;
+};
+
+export type ActivatePeriodization409 = {
+  error: string;
+  code: string;
+};
+
+export type ActivatePeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type DeactivatePeriodization200Status =
+  (typeof DeactivatePeriodization200Status)[keyof typeof DeactivatePeriodization200Status];
+
+export const DeactivatePeriodization200Status = {
+  DRAFT: "DRAFT",
+  ACTIVE: "ACTIVE",
+  PAUSED: "PAUSED",
+  COMPLETED: "COMPLETED",
+} as const;
+
+/**
+ * @nullable
+ */
+export type DeactivatePeriodization200CurrentBlock = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  workoutPlanName: string;
+  activatedAt: string;
+} | null;
+
+export type DeactivatePeriodization200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  status: DeactivatePeriodization200Status;
+  /** @nullable */
+  startedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  /** @nullable */
+  currentBlock: DeactivatePeriodization200CurrentBlock;
+};
+
+export type DeactivatePeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type DeactivatePeriodization404 = {
+  error: string;
+  code: string;
+};
+
+export type DeactivatePeriodization409 = {
+  error: string;
+  code: string;
+};
+
+export type DeactivatePeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type AdvancePeriodization200Status =
+  (typeof AdvancePeriodization200Status)[keyof typeof AdvancePeriodization200Status];
+
+export const AdvancePeriodization200Status = {
+  DRAFT: "DRAFT",
+  ACTIVE: "ACTIVE",
+  PAUSED: "PAUSED",
+  COMPLETED: "COMPLETED",
+} as const;
+
+/**
+ * @nullable
+ */
+export type AdvancePeriodization200CurrentBlock = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  workoutPlanName: string;
+  activatedAt: string;
+} | null;
+
+export type AdvancePeriodization200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  status: AdvancePeriodization200Status;
+  /** @nullable */
+  startedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  /** @nullable */
+  currentBlock: AdvancePeriodization200CurrentBlock;
+};
+
+export type AdvancePeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type AdvancePeriodization404 = {
+  error: string;
+  code: string;
+};
+
+export type AdvancePeriodization409 = {
+  error: string;
+  code: string;
+};
+
+export type AdvancePeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type CompletePeriodization200Status =
+  (typeof CompletePeriodization200Status)[keyof typeof CompletePeriodization200Status];
+
+export const CompletePeriodization200Status = {
+  DRAFT: "DRAFT",
+  ACTIVE: "ACTIVE",
+  PAUSED: "PAUSED",
+  COMPLETED: "COMPLETED",
+} as const;
+
+/**
+ * @nullable
+ */
+export type CompletePeriodization200CurrentBlock = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  workoutPlanName: string;
+  activatedAt: string;
+} | null;
+
+export type CompletePeriodization200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  status: CompletePeriodization200Status;
+  /** @nullable */
+  startedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  /** @nullable */
+  currentBlock: CompletePeriodization200CurrentBlock;
+};
+
+export type CompletePeriodization401 = {
+  error: string;
+  code: string;
+};
+
+export type CompletePeriodization404 = {
+  error: string;
+  code: string;
+};
+
+export type CompletePeriodization409 = {
+  error: string;
+  code: string;
+};
+
+export type CompletePeriodization500 = {
+  error: string;
+  code: string;
+};
+
+export type GetPlanningOverview200ActiveContext =
+  | {
+      type: "NONE";
+    }
+  | {
+      type: "STANDALONE_PLAN";
+      plan: {
+        /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+        id: string;
+        name: string;
+        /**
+         * @minimum 0
+         * @maximum 9007199254740991
+         */
+        workoutDaysCount: number;
+        createdAt: string;
+      };
+    }
+  | {
+      type: "PERIODIZATION";
+      periodization: {
+        /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+        id: string;
+        name: string;
+        /** @nullable */
+        goal: string | null;
+        /** @nullable */
+        startedAt: string | null;
+        currentBlock: {
+          /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+          id: string;
+          /**
+           * @minimum 1
+           * @maximum 9007199254740991
+           */
+          order: number;
+          /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+          workoutPlanId: string;
+          workoutPlanName: string;
+          activatedAt: string;
+          /** @nullable */
+          plannedStartDate: string | null;
+          /** @nullable */
+          plannedEndDate: string | null;
+        };
+        /**
+         * @minimum 0
+         * @maximum 9007199254740991
+         */
+        totalBlocks: number;
+        /**
+         * @minimum 0
+         * @maximum 9007199254740991
+         */
+        completedBlocks: number;
+      };
+    };
+
+/**
+ * @nullable
+ */
+export type GetPlanningOverview200PlansItemPeriodization = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  periodizationPlanId: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  status: "PLANNED" | "ACTIVE" | "COMPLETED";
+} | null;
+
+export type GetPlanningOverview200PlansItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  isActive: boolean;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  workoutDaysCount: number;
+  createdAt: string;
+  /** @nullable */
+  periodization: GetPlanningOverview200PlansItemPeriodization;
+};
+
+export type GetPlanningOverview200PeriodizationsItemStatus =
+  (typeof GetPlanningOverview200PeriodizationsItemStatus)[keyof typeof GetPlanningOverview200PeriodizationsItemStatus];
+
+export const GetPlanningOverview200PeriodizationsItemStatus = {
+  DRAFT: "DRAFT",
+  ACTIVE: "ACTIVE",
+  PAUSED: "PAUSED",
+  COMPLETED: "COMPLETED",
+} as const;
+
+/**
+ * @nullable
+ */
+export type GetPlanningOverview200PeriodizationsItemCurrentBlock = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutPlanId: string;
+  workoutPlanName: string;
+  activatedAt: string;
+  /** @nullable */
+  plannedStartDate: string | null;
+  /** @nullable */
+  plannedEndDate: string | null;
+} | null;
+
+export type GetPlanningOverview200PeriodizationsItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  /** @nullable */
+  goal: string | null;
+  status: GetPlanningOverview200PeriodizationsItemStatus;
+  isActive: boolean;
+  /** @nullable */
+  startedAt: string | null;
+  /** @nullable */
+  completedAt: string | null;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  totalBlocks: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  completedBlocks: number;
+  /** @nullable */
+  currentBlock: GetPlanningOverview200PeriodizationsItemCurrentBlock;
+  createdAt: string;
+};
+
+export type GetPlanningOverview200 = {
+  activeContext: GetPlanningOverview200ActiveContext;
+  plans: GetPlanningOverview200PlansItem[];
+  periodizations: GetPlanningOverview200PeriodizationsItem[];
+};
+
+export type GetPlanningOverview401 = {
+  error: string;
+  code: string;
+};
+
+export type GetPlanningOverview404 = {
+  error: string;
+  code: string;
+};
+
+export type GetPlanningOverview409 = {
+  error: string;
+  code: string;
+};
+
+export type GetPlanningOverview500 = {
   error: string;
   code: string;
 };
@@ -1363,6 +2561,11 @@ export type createWorkoutPlanResponse404 = {
   status: 404;
 };
 
+export type createWorkoutPlanResponse409 = {
+  data: CreateWorkoutPlan409;
+  status: 409;
+};
+
 export type createWorkoutPlanResponse500 = {
   data: CreateWorkoutPlan500;
   status: 500;
@@ -1375,6 +2578,7 @@ export type createWorkoutPlanResponseError = (
   | createWorkoutPlanResponse400
   | createWorkoutPlanResponse401
   | createWorkoutPlanResponse404
+  | createWorkoutPlanResponse409
   | createWorkoutPlanResponse500
 ) & {
   headers: Headers;
@@ -1503,6 +2707,201 @@ export const getWorkoutDay = async (
     ...options,
     method: "GET",
   });
+};
+
+/**
+ * @summary Activate a workout plan
+ */
+export type activateWorkoutPlanResponse200 = {
+  data: ActivateWorkoutPlan200;
+  status: 200;
+};
+
+export type activateWorkoutPlanResponse401 = {
+  data: ActivateWorkoutPlan401;
+  status: 401;
+};
+
+export type activateWorkoutPlanResponse404 = {
+  data: ActivateWorkoutPlan404;
+  status: 404;
+};
+
+export type activateWorkoutPlanResponse409 = {
+  data: ActivateWorkoutPlan409;
+  status: 409;
+};
+
+export type activateWorkoutPlanResponse500 = {
+  data: ActivateWorkoutPlan500;
+  status: 500;
+};
+
+export type activateWorkoutPlanResponseSuccess =
+  activateWorkoutPlanResponse200 & {
+    headers: Headers;
+  };
+export type activateWorkoutPlanResponseError = (
+  | activateWorkoutPlanResponse401
+  | activateWorkoutPlanResponse404
+  | activateWorkoutPlanResponse409
+  | activateWorkoutPlanResponse500
+) & {
+  headers: Headers;
+};
+
+export type activateWorkoutPlanResponse =
+  | activateWorkoutPlanResponseSuccess
+  | activateWorkoutPlanResponseError;
+
+export const getActivateWorkoutPlanUrl = (id: string) => {
+  return `/workout-plans/${id}/activate`;
+};
+
+export const activateWorkoutPlan = async (
+  id: string,
+  options?: RequestInit,
+): Promise<activateWorkoutPlanResponse> => {
+  return customFetch<activateWorkoutPlanResponse>(
+    getActivateWorkoutPlanUrl(id),
+    {
+      ...options,
+      method: "POST",
+    },
+  );
+};
+
+/**
+ * @summary Deactivate a workout plan
+ */
+export type deactivateWorkoutPlanResponse200 = {
+  data: DeactivateWorkoutPlan200;
+  status: 200;
+};
+
+export type deactivateWorkoutPlanResponse401 = {
+  data: DeactivateWorkoutPlan401;
+  status: 401;
+};
+
+export type deactivateWorkoutPlanResponse404 = {
+  data: DeactivateWorkoutPlan404;
+  status: 404;
+};
+
+export type deactivateWorkoutPlanResponse409 = {
+  data: DeactivateWorkoutPlan409;
+  status: 409;
+};
+
+export type deactivateWorkoutPlanResponse500 = {
+  data: DeactivateWorkoutPlan500;
+  status: 500;
+};
+
+export type deactivateWorkoutPlanResponseSuccess =
+  deactivateWorkoutPlanResponse200 & {
+    headers: Headers;
+  };
+export type deactivateWorkoutPlanResponseError = (
+  | deactivateWorkoutPlanResponse401
+  | deactivateWorkoutPlanResponse404
+  | deactivateWorkoutPlanResponse409
+  | deactivateWorkoutPlanResponse500
+) & {
+  headers: Headers;
+};
+
+export type deactivateWorkoutPlanResponse =
+  | deactivateWorkoutPlanResponseSuccess
+  | deactivateWorkoutPlanResponseError;
+
+export const getDeactivateWorkoutPlanUrl = (id: string) => {
+  return `/workout-plans/${id}/deactivate`;
+};
+
+export const deactivateWorkoutPlan = async (
+  id: string,
+  options?: RequestInit,
+): Promise<deactivateWorkoutPlanResponse> => {
+  return customFetch<deactivateWorkoutPlanResponse>(
+    getDeactivateWorkoutPlanUrl(id),
+    {
+      ...options,
+      method: "POST",
+    },
+  );
+};
+
+/**
+ * @summary Duplicate a workout plan
+ */
+export type duplicateWorkoutPlanResponse201 = {
+  data: DuplicateWorkoutPlan201;
+  status: 201;
+};
+
+export type duplicateWorkoutPlanResponse400 = {
+  data: DuplicateWorkoutPlan400;
+  status: 400;
+};
+
+export type duplicateWorkoutPlanResponse401 = {
+  data: DuplicateWorkoutPlan401;
+  status: 401;
+};
+
+export type duplicateWorkoutPlanResponse404 = {
+  data: DuplicateWorkoutPlan404;
+  status: 404;
+};
+
+export type duplicateWorkoutPlanResponse409 = {
+  data: DuplicateWorkoutPlan409;
+  status: 409;
+};
+
+export type duplicateWorkoutPlanResponse500 = {
+  data: DuplicateWorkoutPlan500;
+  status: 500;
+};
+
+export type duplicateWorkoutPlanResponseSuccess =
+  duplicateWorkoutPlanResponse201 & {
+    headers: Headers;
+  };
+export type duplicateWorkoutPlanResponseError = (
+  | duplicateWorkoutPlanResponse400
+  | duplicateWorkoutPlanResponse401
+  | duplicateWorkoutPlanResponse404
+  | duplicateWorkoutPlanResponse409
+  | duplicateWorkoutPlanResponse500
+) & {
+  headers: Headers;
+};
+
+export type duplicateWorkoutPlanResponse =
+  | duplicateWorkoutPlanResponseSuccess
+  | duplicateWorkoutPlanResponseError;
+
+export const getDuplicateWorkoutPlanUrl = (id: string) => {
+  return `/workout-plans/${id}/duplicate`;
+};
+
+export const duplicateWorkoutPlan = async (
+  id: string,
+  duplicateWorkoutPlanBody: DuplicateWorkoutPlanBody,
+  options?: RequestInit,
+): Promise<duplicateWorkoutPlanResponse> => {
+  return customFetch<duplicateWorkoutPlanResponse>(
+    getDuplicateWorkoutPlanUrl(id),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(duplicateWorkoutPlanBody),
+    },
+  );
 };
 
 /**
@@ -1640,6 +3039,949 @@ export const updateWorkoutSession = async (
       body: JSON.stringify(updateWorkoutSessionBody),
     },
   );
+};
+
+/**
+ * @summary Create a new periodization draft
+ */
+export type createPeriodizationResponse201 = {
+  data: CreatePeriodization201;
+  status: 201;
+};
+
+export type createPeriodizationResponse400 = {
+  data: CreatePeriodization400;
+  status: 400;
+};
+
+export type createPeriodizationResponse401 = {
+  data: CreatePeriodization401;
+  status: 401;
+};
+
+export type createPeriodizationResponse500 = {
+  data: CreatePeriodization500;
+  status: 500;
+};
+
+export type createPeriodizationResponseSuccess =
+  createPeriodizationResponse201 & {
+    headers: Headers;
+  };
+export type createPeriodizationResponseError = (
+  | createPeriodizationResponse400
+  | createPeriodizationResponse401
+  | createPeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type createPeriodizationResponse =
+  | createPeriodizationResponseSuccess
+  | createPeriodizationResponseError;
+
+export const getCreatePeriodizationUrl = () => {
+  return `/periodizations/`;
+};
+
+export const createPeriodization = async (
+  createPeriodizationBody: CreatePeriodizationBody,
+  options?: RequestInit,
+): Promise<createPeriodizationResponse> => {
+  return customFetch<createPeriodizationResponse>(getCreatePeriodizationUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createPeriodizationBody),
+  });
+};
+
+/**
+ * @summary List periodizations for authenticated user
+ */
+export type listPeriodizationsResponse200 = {
+  data: ListPeriodizations200Item[];
+  status: 200;
+};
+
+export type listPeriodizationsResponse401 = {
+  data: ListPeriodizations401;
+  status: 401;
+};
+
+export type listPeriodizationsResponse500 = {
+  data: ListPeriodizations500;
+  status: 500;
+};
+
+export type listPeriodizationsResponseSuccess =
+  listPeriodizationsResponse200 & {
+    headers: Headers;
+  };
+export type listPeriodizationsResponseError = (
+  | listPeriodizationsResponse401
+  | listPeriodizationsResponse500
+) & {
+  headers: Headers;
+};
+
+export type listPeriodizationsResponse =
+  | listPeriodizationsResponseSuccess
+  | listPeriodizationsResponseError;
+
+export const getListPeriodizationsUrl = () => {
+  return `/periodizations/`;
+};
+
+export const listPeriodizations = async (
+  options?: RequestInit,
+): Promise<listPeriodizationsResponse> => {
+  return customFetch<listPeriodizationsResponse>(getListPeriodizationsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+/**
+ * @summary Get a periodization with all plans ordered
+ */
+export type getPeriodizationResponse200 = {
+  data: GetPeriodization200;
+  status: 200;
+};
+
+export type getPeriodizationResponse401 = {
+  data: GetPeriodization401;
+  status: 401;
+};
+
+export type getPeriodizationResponse404 = {
+  data: GetPeriodization404;
+  status: 404;
+};
+
+export type getPeriodizationResponse500 = {
+  data: GetPeriodization500;
+  status: 500;
+};
+
+export type getPeriodizationResponseSuccess = getPeriodizationResponse200 & {
+  headers: Headers;
+};
+export type getPeriodizationResponseError = (
+  | getPeriodizationResponse401
+  | getPeriodizationResponse404
+  | getPeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type getPeriodizationResponse =
+  | getPeriodizationResponseSuccess
+  | getPeriodizationResponseError;
+
+export const getGetPeriodizationUrl = (id: string) => {
+  return `/periodizations/${id}`;
+};
+
+export const getPeriodization = async (
+  id: string,
+  options?: RequestInit,
+): Promise<getPeriodizationResponse> => {
+  return customFetch<getPeriodizationResponse>(getGetPeriodizationUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+/**
+ * @summary Update periodization metadata
+ */
+export type updatePeriodizationResponse200 = {
+  data: UpdatePeriodization200;
+  status: 200;
+};
+
+export type updatePeriodizationResponse400 = {
+  data: UpdatePeriodization400;
+  status: 400;
+};
+
+export type updatePeriodizationResponse401 = {
+  data: UpdatePeriodization401;
+  status: 401;
+};
+
+export type updatePeriodizationResponse404 = {
+  data: UpdatePeriodization404;
+  status: 404;
+};
+
+export type updatePeriodizationResponse500 = {
+  data: UpdatePeriodization500;
+  status: 500;
+};
+
+export type updatePeriodizationResponseSuccess =
+  updatePeriodizationResponse200 & {
+    headers: Headers;
+  };
+export type updatePeriodizationResponseError = (
+  | updatePeriodizationResponse400
+  | updatePeriodizationResponse401
+  | updatePeriodizationResponse404
+  | updatePeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type updatePeriodizationResponse =
+  | updatePeriodizationResponseSuccess
+  | updatePeriodizationResponseError;
+
+export const getUpdatePeriodizationUrl = (id: string) => {
+  return `/periodizations/${id}`;
+};
+
+export const updatePeriodization = async (
+  id: string,
+  updatePeriodizationBody: UpdatePeriodizationBody,
+  options?: RequestInit,
+): Promise<updatePeriodizationResponse> => {
+  return customFetch<updatePeriodizationResponse>(
+    getUpdatePeriodizationUrl(id),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(updatePeriodizationBody),
+    },
+  );
+};
+
+/**
+ * @summary Delete an unstarted periodization draft
+ */
+export type deletePeriodizationResponse200 = {
+  data: DeletePeriodization200;
+  status: 200;
+};
+
+export type deletePeriodizationResponse401 = {
+  data: DeletePeriodization401;
+  status: 401;
+};
+
+export type deletePeriodizationResponse404 = {
+  data: DeletePeriodization404;
+  status: 404;
+};
+
+export type deletePeriodizationResponse409 = {
+  data: DeletePeriodization409;
+  status: 409;
+};
+
+export type deletePeriodizationResponse500 = {
+  data: DeletePeriodization500;
+  status: 500;
+};
+
+export type deletePeriodizationResponseSuccess =
+  deletePeriodizationResponse200 & {
+    headers: Headers;
+  };
+export type deletePeriodizationResponseError = (
+  | deletePeriodizationResponse401
+  | deletePeriodizationResponse404
+  | deletePeriodizationResponse409
+  | deletePeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type deletePeriodizationResponse =
+  | deletePeriodizationResponseSuccess
+  | deletePeriodizationResponseError;
+
+export const getDeletePeriodizationUrl = (id: string) => {
+  return `/periodizations/${id}`;
+};
+
+export const deletePeriodization = async (
+  id: string,
+  options?: RequestInit,
+): Promise<deletePeriodizationResponse> => {
+  return customFetch<deletePeriodizationResponse>(
+    getDeletePeriodizationUrl(id),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+/**
+ * @summary Add an existing workout plan to periodization
+ */
+export type addWorkoutPlanToPeriodizationResponse201 = {
+  data: AddWorkoutPlanToPeriodization201;
+  status: 201;
+};
+
+export type addWorkoutPlanToPeriodizationResponse400 = {
+  data: AddWorkoutPlanToPeriodization400;
+  status: 400;
+};
+
+export type addWorkoutPlanToPeriodizationResponse401 = {
+  data: AddWorkoutPlanToPeriodization401;
+  status: 401;
+};
+
+export type addWorkoutPlanToPeriodizationResponse404 = {
+  data: AddWorkoutPlanToPeriodization404;
+  status: 404;
+};
+
+export type addWorkoutPlanToPeriodizationResponse409 = {
+  data: AddWorkoutPlanToPeriodization409;
+  status: 409;
+};
+
+export type addWorkoutPlanToPeriodizationResponse500 = {
+  data: AddWorkoutPlanToPeriodization500;
+  status: 500;
+};
+
+export type addWorkoutPlanToPeriodizationResponseSuccess =
+  addWorkoutPlanToPeriodizationResponse201 & {
+    headers: Headers;
+  };
+export type addWorkoutPlanToPeriodizationResponseError = (
+  | addWorkoutPlanToPeriodizationResponse400
+  | addWorkoutPlanToPeriodizationResponse401
+  | addWorkoutPlanToPeriodizationResponse404
+  | addWorkoutPlanToPeriodizationResponse409
+  | addWorkoutPlanToPeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type addWorkoutPlanToPeriodizationResponse =
+  | addWorkoutPlanToPeriodizationResponseSuccess
+  | addWorkoutPlanToPeriodizationResponseError;
+
+export const getAddWorkoutPlanToPeriodizationUrl = (id: string) => {
+  return `/periodizations/${id}/plans`;
+};
+
+export const addWorkoutPlanToPeriodization = async (
+  id: string,
+  addWorkoutPlanToPeriodizationBody: AddWorkoutPlanToPeriodizationBody,
+  options?: RequestInit,
+): Promise<addWorkoutPlanToPeriodizationResponse> => {
+  return customFetch<addWorkoutPlanToPeriodizationResponse>(
+    getAddWorkoutPlanToPeriodizationUrl(id),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(addWorkoutPlanToPeriodizationBody),
+    },
+  );
+};
+
+/**
+ * @summary Create a workout plan directly inside a periodization
+ */
+export type createWorkoutPlanInPeriodizationResponse201 = {
+  data: CreateWorkoutPlanInPeriodization201;
+  status: 201;
+};
+
+export type createWorkoutPlanInPeriodizationResponse400 = {
+  data: CreateWorkoutPlanInPeriodization400;
+  status: 400;
+};
+
+export type createWorkoutPlanInPeriodizationResponse401 = {
+  data: CreateWorkoutPlanInPeriodization401;
+  status: 401;
+};
+
+export type createWorkoutPlanInPeriodizationResponse404 = {
+  data: CreateWorkoutPlanInPeriodization404;
+  status: 404;
+};
+
+export type createWorkoutPlanInPeriodizationResponse409 = {
+  data: CreateWorkoutPlanInPeriodization409;
+  status: 409;
+};
+
+export type createWorkoutPlanInPeriodizationResponse500 = {
+  data: CreateWorkoutPlanInPeriodization500;
+  status: 500;
+};
+
+export type createWorkoutPlanInPeriodizationResponseSuccess =
+  createWorkoutPlanInPeriodizationResponse201 & {
+    headers: Headers;
+  };
+export type createWorkoutPlanInPeriodizationResponseError = (
+  | createWorkoutPlanInPeriodizationResponse400
+  | createWorkoutPlanInPeriodizationResponse401
+  | createWorkoutPlanInPeriodizationResponse404
+  | createWorkoutPlanInPeriodizationResponse409
+  | createWorkoutPlanInPeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type createWorkoutPlanInPeriodizationResponse =
+  | createWorkoutPlanInPeriodizationResponseSuccess
+  | createWorkoutPlanInPeriodizationResponseError;
+
+export const getCreateWorkoutPlanInPeriodizationUrl = (id: string) => {
+  return `/periodizations/${id}/plans/create`;
+};
+
+export const createWorkoutPlanInPeriodization = async (
+  id: string,
+  createWorkoutPlanInPeriodizationBody: CreateWorkoutPlanInPeriodizationBody,
+  options?: RequestInit,
+): Promise<createWorkoutPlanInPeriodizationResponse> => {
+  return customFetch<createWorkoutPlanInPeriodizationResponse>(
+    getCreateWorkoutPlanInPeriodizationUrl(id),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(createWorkoutPlanInPeriodizationBody),
+    },
+  );
+};
+
+/**
+ * @summary Update planned dates or notes of a periodization plan
+ */
+export type updatePeriodizationPlanResponse200 = {
+  data: UpdatePeriodizationPlan200;
+  status: 200;
+};
+
+export type updatePeriodizationPlanResponse400 = {
+  data: UpdatePeriodizationPlan400;
+  status: 400;
+};
+
+export type updatePeriodizationPlanResponse401 = {
+  data: UpdatePeriodizationPlan401;
+  status: 401;
+};
+
+export type updatePeriodizationPlanResponse404 = {
+  data: UpdatePeriodizationPlan404;
+  status: 404;
+};
+
+export type updatePeriodizationPlanResponse409 = {
+  data: UpdatePeriodizationPlan409;
+  status: 409;
+};
+
+export type updatePeriodizationPlanResponse500 = {
+  data: UpdatePeriodizationPlan500;
+  status: 500;
+};
+
+export type updatePeriodizationPlanResponseSuccess =
+  updatePeriodizationPlanResponse200 & {
+    headers: Headers;
+  };
+export type updatePeriodizationPlanResponseError = (
+  | updatePeriodizationPlanResponse400
+  | updatePeriodizationPlanResponse401
+  | updatePeriodizationPlanResponse404
+  | updatePeriodizationPlanResponse409
+  | updatePeriodizationPlanResponse500
+) & {
+  headers: Headers;
+};
+
+export type updatePeriodizationPlanResponse =
+  | updatePeriodizationPlanResponseSuccess
+  | updatePeriodizationPlanResponseError;
+
+export const getUpdatePeriodizationPlanUrl = (
+  periodizationId: string,
+  periodizationPlanId: string,
+) => {
+  return `/periodizations/${periodizationId}/plans/${periodizationPlanId}`;
+};
+
+export const updatePeriodizationPlan = async (
+  periodizationId: string,
+  periodizationPlanId: string,
+  updatePeriodizationPlanBody: UpdatePeriodizationPlanBody,
+  options?: RequestInit,
+): Promise<updatePeriodizationPlanResponse> => {
+  return customFetch<updatePeriodizationPlanResponse>(
+    getUpdatePeriodizationPlanUrl(periodizationId, periodizationPlanId),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(updatePeriodizationPlanBody),
+    },
+  );
+};
+
+/**
+ * @summary Remove a planned block from periodization
+ */
+export type removeWorkoutPlanFromPeriodizationResponse200 = {
+  data: RemoveWorkoutPlanFromPeriodization200;
+  status: 200;
+};
+
+export type removeWorkoutPlanFromPeriodizationResponse401 = {
+  data: RemoveWorkoutPlanFromPeriodization401;
+  status: 401;
+};
+
+export type removeWorkoutPlanFromPeriodizationResponse404 = {
+  data: RemoveWorkoutPlanFromPeriodization404;
+  status: 404;
+};
+
+export type removeWorkoutPlanFromPeriodizationResponse409 = {
+  data: RemoveWorkoutPlanFromPeriodization409;
+  status: 409;
+};
+
+export type removeWorkoutPlanFromPeriodizationResponse500 = {
+  data: RemoveWorkoutPlanFromPeriodization500;
+  status: 500;
+};
+
+export type removeWorkoutPlanFromPeriodizationResponseSuccess =
+  removeWorkoutPlanFromPeriodizationResponse200 & {
+    headers: Headers;
+  };
+export type removeWorkoutPlanFromPeriodizationResponseError = (
+  | removeWorkoutPlanFromPeriodizationResponse401
+  | removeWorkoutPlanFromPeriodizationResponse404
+  | removeWorkoutPlanFromPeriodizationResponse409
+  | removeWorkoutPlanFromPeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type removeWorkoutPlanFromPeriodizationResponse =
+  | removeWorkoutPlanFromPeriodizationResponseSuccess
+  | removeWorkoutPlanFromPeriodizationResponseError;
+
+export const getRemoveWorkoutPlanFromPeriodizationUrl = (
+  periodizationId: string,
+  periodizationPlanId: string,
+) => {
+  return `/periodizations/${periodizationId}/plans/${periodizationPlanId}`;
+};
+
+export const removeWorkoutPlanFromPeriodization = async (
+  periodizationId: string,
+  periodizationPlanId: string,
+  options?: RequestInit,
+): Promise<removeWorkoutPlanFromPeriodizationResponse> => {
+  return customFetch<removeWorkoutPlanFromPeriodizationResponse>(
+    getRemoveWorkoutPlanFromPeriodizationUrl(
+      periodizationId,
+      periodizationPlanId,
+    ),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+/**
+ * @summary Reorder planned blocks of a periodization
+ */
+export type reorderPeriodizationPlansResponse200 = {
+  data: ReorderPeriodizationPlans200Item[];
+  status: 200;
+};
+
+export type reorderPeriodizationPlansResponse400 = {
+  data: ReorderPeriodizationPlans400;
+  status: 400;
+};
+
+export type reorderPeriodizationPlansResponse401 = {
+  data: ReorderPeriodizationPlans401;
+  status: 401;
+};
+
+export type reorderPeriodizationPlansResponse404 = {
+  data: ReorderPeriodizationPlans404;
+  status: 404;
+};
+
+export type reorderPeriodizationPlansResponse409 = {
+  data: ReorderPeriodizationPlans409;
+  status: 409;
+};
+
+export type reorderPeriodizationPlansResponse500 = {
+  data: ReorderPeriodizationPlans500;
+  status: 500;
+};
+
+export type reorderPeriodizationPlansResponseSuccess =
+  reorderPeriodizationPlansResponse200 & {
+    headers: Headers;
+  };
+export type reorderPeriodizationPlansResponseError = (
+  | reorderPeriodizationPlansResponse400
+  | reorderPeriodizationPlansResponse401
+  | reorderPeriodizationPlansResponse404
+  | reorderPeriodizationPlansResponse409
+  | reorderPeriodizationPlansResponse500
+) & {
+  headers: Headers;
+};
+
+export type reorderPeriodizationPlansResponse =
+  | reorderPeriodizationPlansResponseSuccess
+  | reorderPeriodizationPlansResponseError;
+
+export const getReorderPeriodizationPlansUrl = (id: string) => {
+  return `/periodizations/${id}/plans/order`;
+};
+
+export const reorderPeriodizationPlans = async (
+  id: string,
+  reorderPeriodizationPlansBody: ReorderPeriodizationPlansBody,
+  options?: RequestInit,
+): Promise<reorderPeriodizationPlansResponse> => {
+  return customFetch<reorderPeriodizationPlansResponse>(
+    getReorderPeriodizationPlansUrl(id),
+    {
+      ...options,
+      method: "PUT",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(reorderPeriodizationPlansBody),
+    },
+  );
+};
+
+/**
+ * @summary Activate or resume a periodization and its current block
+ */
+export type activatePeriodizationResponse200 = {
+  data: ActivatePeriodization200;
+  status: 200;
+};
+
+export type activatePeriodizationResponse401 = {
+  data: ActivatePeriodization401;
+  status: 401;
+};
+
+export type activatePeriodizationResponse404 = {
+  data: ActivatePeriodization404;
+  status: 404;
+};
+
+export type activatePeriodizationResponse409 = {
+  data: ActivatePeriodization409;
+  status: 409;
+};
+
+export type activatePeriodizationResponse500 = {
+  data: ActivatePeriodization500;
+  status: 500;
+};
+
+export type activatePeriodizationResponseSuccess =
+  activatePeriodizationResponse200 & {
+    headers: Headers;
+  };
+export type activatePeriodizationResponseError = (
+  | activatePeriodizationResponse401
+  | activatePeriodizationResponse404
+  | activatePeriodizationResponse409
+  | activatePeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type activatePeriodizationResponse =
+  | activatePeriodizationResponseSuccess
+  | activatePeriodizationResponseError;
+
+export const getActivatePeriodizationUrl = (id: string) => {
+  return `/periodizations/${id}/activate`;
+};
+
+export const activatePeriodization = async (
+  id: string,
+  options?: RequestInit,
+): Promise<activatePeriodizationResponse> => {
+  return customFetch<activatePeriodizationResponse>(
+    getActivatePeriodizationUrl(id),
+    {
+      ...options,
+      method: "POST",
+    },
+  );
+};
+
+/**
+ * @summary Pause an active periodization
+ */
+export type deactivatePeriodizationResponse200 = {
+  data: DeactivatePeriodization200;
+  status: 200;
+};
+
+export type deactivatePeriodizationResponse401 = {
+  data: DeactivatePeriodization401;
+  status: 401;
+};
+
+export type deactivatePeriodizationResponse404 = {
+  data: DeactivatePeriodization404;
+  status: 404;
+};
+
+export type deactivatePeriodizationResponse409 = {
+  data: DeactivatePeriodization409;
+  status: 409;
+};
+
+export type deactivatePeriodizationResponse500 = {
+  data: DeactivatePeriodization500;
+  status: 500;
+};
+
+export type deactivatePeriodizationResponseSuccess =
+  deactivatePeriodizationResponse200 & {
+    headers: Headers;
+  };
+export type deactivatePeriodizationResponseError = (
+  | deactivatePeriodizationResponse401
+  | deactivatePeriodizationResponse404
+  | deactivatePeriodizationResponse409
+  | deactivatePeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type deactivatePeriodizationResponse =
+  | deactivatePeriodizationResponseSuccess
+  | deactivatePeriodizationResponseError;
+
+export const getDeactivatePeriodizationUrl = (id: string) => {
+  return `/periodizations/${id}/deactivate`;
+};
+
+export const deactivatePeriodization = async (
+  id: string,
+  options?: RequestInit,
+): Promise<deactivatePeriodizationResponse> => {
+  return customFetch<deactivatePeriodizationResponse>(
+    getDeactivatePeriodizationUrl(id),
+    {
+      ...options,
+      method: "POST",
+    },
+  );
+};
+
+/**
+ * @summary Complete current block and advance to the next block or conclude periodization
+ */
+export type advancePeriodizationResponse200 = {
+  data: AdvancePeriodization200;
+  status: 200;
+};
+
+export type advancePeriodizationResponse401 = {
+  data: AdvancePeriodization401;
+  status: 401;
+};
+
+export type advancePeriodizationResponse404 = {
+  data: AdvancePeriodization404;
+  status: 404;
+};
+
+export type advancePeriodizationResponse409 = {
+  data: AdvancePeriodization409;
+  status: 409;
+};
+
+export type advancePeriodizationResponse500 = {
+  data: AdvancePeriodization500;
+  status: 500;
+};
+
+export type advancePeriodizationResponseSuccess =
+  advancePeriodizationResponse200 & {
+    headers: Headers;
+  };
+export type advancePeriodizationResponseError = (
+  | advancePeriodizationResponse401
+  | advancePeriodizationResponse404
+  | advancePeriodizationResponse409
+  | advancePeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type advancePeriodizationResponse =
+  | advancePeriodizationResponseSuccess
+  | advancePeriodizationResponseError;
+
+export const getAdvancePeriodizationUrl = (id: string) => {
+  return `/periodizations/${id}/advance`;
+};
+
+export const advancePeriodization = async (
+  id: string,
+  options?: RequestInit,
+): Promise<advancePeriodizationResponse> => {
+  return customFetch<advancePeriodizationResponse>(
+    getAdvancePeriodizationUrl(id),
+    {
+      ...options,
+      method: "POST",
+    },
+  );
+};
+
+/**
+ * @summary Conclude periodization manually, completing open block and preserving future blocks
+ */
+export type completePeriodizationResponse200 = {
+  data: CompletePeriodization200;
+  status: 200;
+};
+
+export type completePeriodizationResponse401 = {
+  data: CompletePeriodization401;
+  status: 401;
+};
+
+export type completePeriodizationResponse404 = {
+  data: CompletePeriodization404;
+  status: 404;
+};
+
+export type completePeriodizationResponse409 = {
+  data: CompletePeriodization409;
+  status: 409;
+};
+
+export type completePeriodizationResponse500 = {
+  data: CompletePeriodization500;
+  status: 500;
+};
+
+export type completePeriodizationResponseSuccess =
+  completePeriodizationResponse200 & {
+    headers: Headers;
+  };
+export type completePeriodizationResponseError = (
+  | completePeriodizationResponse401
+  | completePeriodizationResponse404
+  | completePeriodizationResponse409
+  | completePeriodizationResponse500
+) & {
+  headers: Headers;
+};
+
+export type completePeriodizationResponse =
+  | completePeriodizationResponseSuccess
+  | completePeriodizationResponseError;
+
+export const getCompletePeriodizationUrl = (id: string) => {
+  return `/periodizations/${id}/complete`;
+};
+
+export const completePeriodization = async (
+  id: string,
+  options?: RequestInit,
+): Promise<completePeriodizationResponse> => {
+  return customFetch<completePeriodizationResponse>(
+    getCompletePeriodizationUrl(id),
+    {
+      ...options,
+      method: "POST",
+    },
+  );
+};
+
+/**
+ * @summary Get planning overview for authenticated user
+ */
+export type getPlanningOverviewResponse200 = {
+  data: GetPlanningOverview200;
+  status: 200;
+};
+
+export type getPlanningOverviewResponse401 = {
+  data: GetPlanningOverview401;
+  status: 401;
+};
+
+export type getPlanningOverviewResponse404 = {
+  data: GetPlanningOverview404;
+  status: 404;
+};
+
+export type getPlanningOverviewResponse409 = {
+  data: GetPlanningOverview409;
+  status: 409;
+};
+
+export type getPlanningOverviewResponse500 = {
+  data: GetPlanningOverview500;
+  status: 500;
+};
+
+export type getPlanningOverviewResponseSuccess =
+  getPlanningOverviewResponse200 & {
+    headers: Headers;
+  };
+export type getPlanningOverviewResponseError = (
+  | getPlanningOverviewResponse401
+  | getPlanningOverviewResponse404
+  | getPlanningOverviewResponse409
+  | getPlanningOverviewResponse500
+) & {
+  headers: Headers;
+};
+
+export type getPlanningOverviewResponse =
+  | getPlanningOverviewResponseSuccess
+  | getPlanningOverviewResponseError;
+
+export const getGetPlanningOverviewUrl = () => {
+  return `/planning/overview`;
+};
+
+export const getPlanningOverview = async (
+  options?: RequestInit,
+): Promise<getPlanningOverviewResponse> => {
+  return customFetch<getPlanningOverviewResponse>(getGetPlanningOverviewUrl(), {
+    ...options,
+    method: "GET",
+  });
 };
 
 /**
