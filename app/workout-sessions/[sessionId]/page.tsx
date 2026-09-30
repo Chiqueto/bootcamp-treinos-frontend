@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AlertCircle } from "lucide-react";
@@ -18,9 +18,12 @@ interface WorkoutSessionPageProps {
 export default async function WorkoutSessionPage({
   params,
 }: WorkoutSessionPageProps) {
+  const _cookies = await cookies();
   const sessionAuth = await authClient.getSession({
     fetchOptions: {
-      headers: await headers(),
+      headers: {
+        cookie: _cookies.toString(),
+      },
     },
   });
 
@@ -30,6 +33,10 @@ export default async function WorkoutSessionPage({
 
   const { sessionId } = await params;
   const sessionResponse = await getWorkoutSession(sessionId);
+
+  if (sessionResponse.status === 401) {
+    redirect("/auth");
+  }
 
   // Estado: Sessão inexistente ou sem ownership (404)
   if (sessionResponse.status === 404) {

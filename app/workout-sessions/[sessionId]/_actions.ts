@@ -43,7 +43,6 @@ export async function createWorkoutSetAction(
       return { success: false, error: errorMsg };
     }
 
-    revalidatePath(`/workout-sessions/${sessionId}`);
     return { success: true, data: response.data };
   } catch (err: unknown) {
     return {
@@ -70,7 +69,6 @@ export async function updateWorkoutSetAction(
       return { success: false, error: errorMsg };
     }
 
-    revalidatePath(`/workout-sessions/${sessionId}`);
     return { success: true, data: response.data };
   } catch (err: unknown) {
     return {
@@ -96,7 +94,6 @@ export async function deleteWorkoutSetAction(
       return { success: false, error: errorMsg };
     }
 
-    revalidatePath(`/workout-sessions/${sessionId}`);
     return { success: true, data: response.data };
   } catch (err: unknown) {
     return {
@@ -218,7 +215,6 @@ export async function addExerciseToWorkoutSessionAction(
       return { success: false, error: errorMsg };
     }
 
-    revalidatePath(`/workout-sessions/${sessionId}`);
     return { success: true, data: response.data };
   } catch (err: unknown) {
     return {
@@ -245,7 +241,6 @@ export async function removeExerciseFromWorkoutSessionAction(
       return { success: false, error: errorMsg };
     }
 
-    revalidatePath(`/workout-sessions/${sessionId}`);
     return { success: true, data: response.data };
   } catch (err: unknown) {
     return {
