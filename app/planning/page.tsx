@@ -14,13 +14,13 @@ import { authClient } from "@/app/_lib/auth-client";
 import {
   getPlanningOverview,
   GetPlanningOverview200PeriodizationsItem,
-  GetPlanningOverview200PlansItem,
   getUserTrainData,
 } from "@/app/_lib/api/fetch-generated";
 import { BottomNav } from "@/app/_components/bottom-nav";
 import { Badge } from "@/components/ui/badge";
 import { PlanningCreateMenu } from "./_components/planning-create-menu";
 import { PlannedDeadlineBadge } from "./_components/planned-deadline-badge";
+import { WorkoutPlanCard } from "./_components/workout-plan-card";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +46,11 @@ export default async function PlanningPage() {
   if (needsOnboarding) redirect("/onboarding");
 
   // Tratamento amigável para erro de visão geral ou INCONSISTENT_PLANNING_STATE
-  if (!overviewResponse || overviewResponse.status !== 200 || !overviewResponse.data) {
+  if (
+    !overviewResponse ||
+    overviewResponse.status !== 200 ||
+    !overviewResponse.data
+  ) {
     return (
       <div className="flex min-h-svh flex-col bg-background pb-24">
         <div className="flex h-14 items-center justify-between border-b border-border/40 px-5">
@@ -66,7 +70,8 @@ export default async function PlanningPage() {
             Não foi possível carregar seu planejamento.
           </h1>
           <p className="mt-1 text-xs text-muted-foreground max-w-xs">
-            Ocorreu uma instabilidade ao recuperar suas periodizações e planos. Tente novamente em instantes.
+            Ocorreu uma instabilidade ao recuperar suas periodizações e planos.
+            Tente novamente em instantes.
           </p>
           <div className="mt-6 flex flex-col gap-2 w-full max-w-xs">
             <Link
@@ -118,7 +123,10 @@ export default async function PlanningPage() {
 
       <main className="flex flex-col gap-6 p-5">
         {/* Seção 1: Ativo agora */}
-        <section className="flex flex-col gap-3" aria-labelledby="section-active-now">
+        <section
+          className="flex flex-col gap-3"
+          aria-labelledby="section-active-now"
+        >
           <div className="flex items-center justify-between">
             <h2
               id="section-active-now"
@@ -150,7 +158,9 @@ export default async function PlanningPage() {
                 </Badge>
                 <span className="text-xs text-muted-foreground">
                   {activeContext.plan.workoutDaysCount}{" "}
-                  {activeContext.plan.workoutDaysCount === 1 ? "dia configurado" : "dias configurados"}
+                  {activeContext.plan.workoutDaysCount === 1
+                    ? "dia configurado"
+                    : "dias configurados"}
                 </span>
               </div>
 
@@ -193,7 +203,9 @@ export default async function PlanningPage() {
                 </h3>
                 <div className="flex items-center gap-2 text-xs font-semibold text-primary">
                   <Dumbbell className="size-3.5" />
-                  <span>{activeContext.periodization.currentBlock.workoutPlanName}</span>
+                  <span>
+                    {activeContext.periodization.currentBlock.workoutPlanName}
+                  </span>
                 </div>
               </div>
 
@@ -205,7 +217,10 @@ export default async function PlanningPage() {
                     style={{
                       width: `${Math.round(
                         (activeContext.periodization.currentBlock.order /
-                          Math.max(activeContext.periodization.totalBlocks, 1)) *
+                          Math.max(
+                            activeContext.periodization.totalBlocks,
+                            1,
+                          )) *
                           100,
                       )}%`,
                     }}
@@ -215,7 +230,9 @@ export default async function PlanningPage() {
 
               <div className="flex items-center justify-between pt-1">
                 <PlannedDeadlineBadge
-                  plannedEndDate={activeContext.periodization.currentBlock.plannedEndDate}
+                  plannedEndDate={
+                    activeContext.periodization.currentBlock.plannedEndDate
+                  }
                 />
 
                 <Link
@@ -231,7 +248,10 @@ export default async function PlanningPage() {
         </section>
 
         {/* Seção 2: Meus planos */}
-        <section className="flex flex-col gap-3" aria-labelledby="section-my-plans">
+        <section
+          className="flex flex-col gap-3"
+          aria-labelledby="section-my-plans"
+        >
           <div className="flex items-center justify-between">
             <h2
               id="section-my-plans"
@@ -252,76 +272,18 @@ export default async function PlanningPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-2.5">
-              {plans.map((plan: GetPlanningOverview200PlansItem) => {
-                const isStandaloneActive = plan.isActive && !plan.periodization;
-
-                return (
-                  <Link
-                    key={plan.id}
-                    href={`/workout-plans/${plan.id}`}
-                    className="group flex items-center justify-between rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-xs"
-                  >
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-heading text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {plan.name}
-                        </h3>
-
-                        {isStandaloneActive && (
-                          <Badge
-                            variant="default"
-                            className="rounded-full px-2 py-0 text-[10px] font-semibold"
-                          >
-                            Plano atual
-                          </Badge>
-                        )}
-
-                        {plan.periodization && (
-                          <Badge
-                            variant={
-                              plan.periodization.status === "ACTIVE"
-                                ? "default"
-                                : plan.periodization.status === "COMPLETED"
-                                  ? "outline"
-                                  : "secondary"
-                            }
-                            className="rounded-full px-2 py-0 text-[10px] font-medium"
-                          >
-                            {plan.periodization.status === "ACTIVE"
-                              ? "Em andamento"
-                              : plan.periodization.status === "COMPLETED"
-                                ? "Concluído"
-                                : "Planejado"}
-                          </Badge>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span>
-                          {plan.workoutDaysCount}{" "}
-                          {plan.workoutDaysCount === 1 ? "dia" : "dias"}
-                        </span>
-                        {plan.periodization && (
-                          <>
-                            <span>•</span>
-                            <span className="font-medium">
-                              {plan.periodization.name} • Etapa {plan.periodization.order}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    <ChevronRight className="size-4 text-muted-foreground/60 transition group-hover:translate-x-0.5 group-hover:text-foreground" />
-                  </Link>
-                );
-              })}
+              {plans.map((plan) => (
+                <WorkoutPlanCard key={plan.id} plan={plan} />
+              ))}
             </div>
           )}
         </section>
 
         {/* Seção 3: Minhas periodizações */}
-        <section className="flex flex-col gap-3" aria-labelledby="section-my-periodizations">
+        <section
+          className="flex flex-col gap-3"
+          aria-labelledby="section-my-periodizations"
+        >
           <div className="flex items-center justify-between">
             <h2
               id="section-my-periodizations"
@@ -345,64 +307,70 @@ export default async function PlanningPage() {
               {periodizations.map(
                 (periodization: GetPlanningOverview200PeriodizationsItem) => {
                   let statusLabel = "RASCUNHO";
-                let statusVariant: "default" | "secondary" | "outline" = "secondary";
-                let progressText = `${periodization.totalBlocks} etapas`;
+                  let statusVariant: "default" | "secondary" | "outline" =
+                    "secondary";
+                  let progressText = `${periodization.totalBlocks} etapas`;
 
-                if (periodization.status === "ACTIVE") {
-                  statusLabel = "ATIVA";
-                  statusVariant = "default";
-                  progressText = `${periodization.completedBlocks} de ${periodization.totalBlocks} etapas concluídas`;
-                } else if (periodization.status === "PAUSED") {
-                  statusLabel = "PAUSADA";
-                  statusVariant = "secondary";
-                  progressText = periodization.currentBlock
-                    ? `Última etapa: ${periodization.currentBlock.workoutPlanName}`
-                    : "Não iniciada";
-                } else if (periodization.status === "COMPLETED") {
-                  statusLabel = "CONCLUÍDA";
-                  statusVariant = "outline";
-                  progressText = `${periodization.completedBlocks} de ${periodization.totalBlocks} etapas executadas`;
-                }
+                  if (periodization.status === "ACTIVE") {
+                    statusLabel = "ATIVA";
+                    statusVariant = "default";
+                    progressText = `${periodization.completedBlocks} de ${periodization.totalBlocks} etapas concluídas`;
+                  } else if (periodization.status === "PAUSED") {
+                    statusLabel = "PAUSADA";
+                    statusVariant = "secondary";
+                    progressText = periodization.currentBlock
+                      ? `Última etapa: ${periodization.currentBlock.workoutPlanName}`
+                      : "Não iniciada";
+                  } else if (periodization.status === "COMPLETED") {
+                    statusLabel = "CONCLUÍDA";
+                    statusVariant = "outline";
+                    progressText = `${periodization.completedBlocks} de ${periodization.totalBlocks} etapas executadas`;
+                  }
 
-                return (
-                  <Link
-                    key={periodization.id}
-                    href={`/planning/periodizations/${periodization.id}`}
-                    className="group flex flex-col gap-2.5 rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-xs"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex flex-col gap-0.5">
-                        <div className="flex items-center gap-2">
-                          <CalendarRange className="size-4 text-primary shrink-0" />
-                          <h3 className="font-heading text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                            {periodization.name}
-                          </h3>
+                  return (
+                    <Link
+                      key={periodization.id}
+                      href={`/planning/periodizations/${periodization.id}`}
+                      className="group flex flex-col gap-2.5 rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-xs"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex flex-col gap-0.5">
+                          <div className="flex items-center gap-2">
+                            <CalendarRange className="size-4 text-primary shrink-0" />
+                            <h3 className="font-heading text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                              {periodization.name}
+                            </h3>
+                          </div>
+                          {periodization.goal && (
+                            <p className="text-xs text-muted-foreground line-clamp-1 pl-6">
+                              {periodization.goal}
+                            </p>
+                          )}
                         </div>
-                        {periodization.goal && (
-                          <p className="text-xs text-muted-foreground line-clamp-1 pl-6">
-                            {periodization.goal}
-                          </p>
-                        )}
+
+                        <Badge
+                          variant={statusVariant}
+                          className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shrink-0"
+                        >
+                          {statusLabel}
+                        </Badge>
                       </div>
 
-                      <Badge
-                        variant={statusVariant}
-                        className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shrink-0"
-                      >
-                        {statusLabel}
-                      </Badge>
-                    </div>
-
-                    <div className="flex items-center justify-between border-t border-border/40 pt-2 text-xs text-muted-foreground pl-6">
-                      <span className="font-medium text-foreground/80">{progressText}</span>
-                      <div className="flex items-center gap-1 text-primary group-hover:translate-x-0.5 transition-transform">
-                        <span className="text-[11px] font-semibold">Detalhes</span>
-                        <ChevronRight className="size-3.5" />
+                      <div className="flex items-center justify-between border-t border-border/40 pt-2 text-xs text-muted-foreground pl-6">
+                        <span className="font-medium text-foreground/80">
+                          {progressText}
+                        </span>
+                        <div className="flex items-center gap-1 text-primary group-hover:translate-x-0.5 transition-transform">
+                          <span className="text-[11px] font-semibold">
+                            Detalhes
+                          </span>
+                          <ChevronRight className="size-3.5" />
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                );
-              })}
+                    </Link>
+                  );
+                },
+              )}
             </div>
           )}
         </section>

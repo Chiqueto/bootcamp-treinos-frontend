@@ -1,0 +1,305 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  CheckCircle2,
+  ChevronRight,
+  Copy,
+  LoaderCircle,
+  MoreHorizontal,
+  PauseCircle,
+  PlayCircle,
+} from "lucide-react";
+
+import type { GetPlanningOverview200PlansItem } from "@/app/_lib/api/fetch-generated";
+import {
+  activateWorkoutPlanAction,
+  deactivateWorkoutPlanAction,
+  duplicateWorkoutPlanAction,
+} from "@/app/planning/_actions";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { PlanningConfirmDialog } from "./planning-confirm-dialog";
+
+type DialogKind = "activate" | "deactivate" | "duplicate" | null;
+
+interface WorkoutPlanCardProps {
+  plan: GetPlanningOverview200PlansItem;
+}
+
+export function WorkoutPlanCard({ plan }: WorkoutPlanCardProps) {
+  const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [dialog, setDialog] = useState<DialogKind>(null);
+  const [copyName, setCopyName] = useState(`${plan.name} - Cópia`);
+  const [feedback, setFeedback] = useState<
+    { kind: "success" | "error"; message: string } | undefined
+  >();
+  const [isPending, startTransition] = useTransition();
+
+  const isStandalone = plan.periodization === null;
+  const isStandaloneActive = plan.isActive && isStandalone;
+
+  function openDialog(kind: Exclude<DialogKind, null>) {
+    setFeedback(undefined);
+    setIsMenuOpen(false);
+    setDialog(kind);
+    if (kind === "duplicate") setCopyName(`${plan.name} - Cópia`);
+  }
+
+  function handleMutation() {
+    if (!dialog) return;
+
+    startTransition(async () => {
+      const result =
+        dialog === "activate"
+          ? await activateWorkoutPlanAction(plan.id)
+          : dialog === "deactivate"
+            ? await deactivateWorkoutPlanAction(plan.id)
+            : await duplicateWorkoutPlanAction(plan.id, copyName);
+
+      if (!result.success) {
+        setFeedback({ kind: "error", message: result.error });
+        setDialog(null);
+        return;
+      }
+
+      const successMessage =
+        dialog === "activate"
+          ? "Plano ativado com sucesso."
+          : dialog === "deactivate"
+            ? "Plano desativado com sucesso."
+            : "Cópia criada como plano inativo.";
+
+      setFeedback({ kind: "success", message: successMessage });
+      setDialog(null);
+      router.refresh();
+    });
+  }
+
+  return (
+    <div className="relative rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-xs">
+      <div className="flex items-start justify-between gap-3">
+        <Link
+          href={`/workout-plans/${plan.id}`}
+          className="group min-w-0 flex-1 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <div className="flex flex-col gap-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="font-heading text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                {plan.name}
+              </h3>
+
+              {isStandaloneActive && (
+                <Badge className="rounded-full px-2 py-0 text-[10px] font-semibold">
+                  Plano atual
+                </Badge>
+              )}
+
+              {plan.periodization && (
+                <Badge
+                  variant={
+                    plan.periodization.status === "ACTIVE"
+                      ? "default"
+                      : plan.periodization.status === "COMPLETED"
+                        ? "outline"
+                        : "secondary"
+                  }
+                  className="rounded-full px-2 py-0 text-[10px] font-medium"
+                >
+                  {plan.periodization.status === "ACTIVE"
+                    ? "Em andamento"
+                    : plan.periodization.status === "COMPLETED"
+                      ? "Concluído"
+                      : "Planejado"}
+                </Badge>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              <span>
+                {plan.workoutDaysCount}{" "}
+                {plan.workoutDaysCount === 1 ? "dia" : "dias"}
+              </span>
+              {plan.periodization && (
+                <>
+                  <span>•</span>
+                  <span className="font-medium">
+                    {plan.periodization.name} • Etapa {plan.periodization.order}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+        </Link>
+
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            aria-label={`Ações do plano ${plan.name}`}
+            aria-expanded={isMenuOpen}
+            aria-haspopup="menu"
+            disabled={isPending}
+            onClick={() => setIsMenuOpen((open) => !open)}
+            className="flex size-11 items-center justify-center rounded-full text-muted-foreground transition hover:bg-accent hover:text-foreground disabled:opacity-50"
+          >
+            {isPending ? (
+              <LoaderCircle className="size-5 animate-spin" />
+            ) : (
+              <MoreHorizontal className="size-5" />
+            )}
+          </button>
+
+          {isMenuOpen && (
+            <>
+              <button
+                type="button"
+                aria-label="Fechar menu"
+                className="fixed inset-0 z-40 cursor-default"
+                onClick={() => setIsMenuOpen(false)}
+              />
+              <div
+                role="menu"
+                className="absolute right-0 top-full z-50 mt-1 w-52 rounded-2xl border border-border bg-popover p-1.5 shadow-lg"
+              >
+                <Link
+                  role="menuitem"
+                  href={`/workout-plans/${plan.id}`}
+                  className="flex min-h-11 items-center gap-2.5 rounded-xl px-3 text-sm font-medium transition hover:bg-accent"
+                >
+                  <ChevronRight className="size-4" />
+                  Ver plano
+                </Link>
+
+                {isStandalone && (
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className="flex min-h-11 w-full items-center gap-2.5 rounded-xl px-3 text-left text-sm font-medium transition hover:bg-accent"
+                    onClick={() =>
+                      openDialog(isStandaloneActive ? "deactivate" : "activate")
+                    }
+                  >
+                    {isStandaloneActive ? (
+                      <PauseCircle className="size-4" />
+                    ) : (
+                      <PlayCircle className="size-4" />
+                    )}
+                    {isStandaloneActive ? "Desativar plano" : "Ativar plano"}
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="flex min-h-11 w-full items-center gap-2.5 rounded-xl px-3 text-left text-sm font-medium transition hover:bg-accent"
+                  onClick={() => openDialog("duplicate")}
+                >
+                  <Copy className="size-4" />
+                  Duplicar
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {feedback && (
+        <p
+          role={feedback.kind === "error" ? "alert" : "status"}
+          className={`mt-3 flex items-center gap-1.5 border-t border-border/50 pt-3 text-xs ${
+            feedback.kind === "error" ? "text-destructive" : "text-primary"
+          }`}
+        >
+          {feedback.kind === "success" && <CheckCircle2 className="size-3.5" />}
+          {feedback.message}
+        </p>
+      )}
+
+      <PlanningConfirmDialog
+        open={dialog === "activate"}
+        title="Ativar plano"
+        description="Tornar este seu plano atual?"
+        confirmLabel="Ativar plano"
+        pendingLabel="Ativando..."
+        isPending={isPending}
+        onCancel={() => setDialog(null)}
+        onConfirm={handleMutation}
+      />
+
+      <PlanningConfirmDialog
+        open={dialog === "deactivate"}
+        title="Desativar plano"
+        description={
+          <>
+            <p>Você ficará sem um plano ativo.</p>
+            <p className="mt-2">Treinos avulsos continuarão disponíveis.</p>
+          </>
+        }
+        confirmLabel="Desativar plano"
+        pendingLabel="Desativando..."
+        isPending={isPending}
+        onCancel={() => setDialog(null)}
+        onConfirm={handleMutation}
+      />
+
+      {dialog === "duplicate" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-5 backdrop-blur-xs">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="duplicate-plan-title"
+            className="flex w-full max-w-sm flex-col gap-4 rounded-3xl border border-border bg-card p-6 shadow-xl"
+          >
+            <div className="flex flex-col gap-1">
+              <h2
+                id="duplicate-plan-title"
+                className="font-heading text-base font-semibold text-foreground"
+              >
+                Duplicar plano
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                A cópia será criada inativa e fora de periodizações.
+              </p>
+            </div>
+
+            <label className="flex flex-col gap-2 text-sm font-medium text-foreground">
+              Nome da cópia
+              <Input
+                value={copyName}
+                disabled={isPending}
+                autoFocus
+                maxLength={120}
+                onChange={(event) => setCopyName(event.target.value)}
+              />
+            </label>
+
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 rounded-full"
+                disabled={isPending}
+                onClick={() => setDialog(null)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                className="h-11 rounded-full"
+                disabled={isPending || copyName.trim().length === 0}
+                onClick={handleMutation}
+              >
+                {isPending && <LoaderCircle className="size-4 animate-spin" />}
+                {isPending ? "Duplicando..." : "Criar cópia"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

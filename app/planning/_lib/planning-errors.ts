@@ -1,0 +1,26 @@
+const PLANNING_ERROR_MESSAGES: Record<string, string> = {
+  ACTIVE_WORKOUT_SESSION:
+    "Finalize seu treino atual antes de alterar o planejamento.",
+  PLAN_BELONGS_TO_PERIODIZATION:
+    "Este plano pertence a uma periodização e deve ser gerenciado por ela.",
+  PLAN_IS_ACTIVE_PERIODIZATION_BLOCK:
+    "Este plano é a etapa atual de uma periodização ativa. Pause a periodização para alterá-lo.",
+  ACTIVE_PERIODIZATION:
+    "Existe uma periodização ativa. Pause-a antes de realizar esta ação.",
+  PERIODIZATION_HAS_NO_PLANS:
+    "Adicione pelo menos uma etapa antes de ativar a periodização.",
+  PERIODIZATION_NOT_STARTED: "Esta periodização ainda não foi iniciada.",
+  PERIODIZATION_NOT_ACTIVE: "Esta periodização não está ativa.",
+  PERIODIZATION_COMPLETED: "Esta periodização já foi concluída.",
+  NO_OPEN_BLOCK: "Não há uma etapa em andamento nesta periodização.",
+  INCONSISTENT_PLANNING_STATE:
+    "Não foi possível alterar o planejamento porque seu estado está inconsistente. Tente novamente ou entre em contato com o suporte.",
+};
+
+export function getPlanningErrorMessage(code?: string): string {
+  if (code && PLANNING_ERROR_MESSAGES[code]) {
+    return PLANNING_ERROR_MESSAGES[code];
+  }
+
+  return "Não foi possível concluir a ação. Tente novamente em instantes.";
+}

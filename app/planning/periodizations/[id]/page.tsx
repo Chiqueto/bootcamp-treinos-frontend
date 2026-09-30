@@ -15,6 +15,7 @@ import { authClient } from "@/app/_lib/auth-client";
 import { getPeriodization } from "@/app/_lib/api/fetch-generated";
 import { BottomNav } from "@/app/_components/bottom-nav";
 import { Badge } from "@/components/ui/badge";
+import { PeriodizationActions } from "../../_components/periodization-actions";
 
 interface PeriodizationDetailPageProps {
   params: Promise<{ id: string }>;
@@ -51,9 +52,20 @@ export default async function PeriodizationDetailPage({
   }
 
   const periodization = response.data;
-  const sortedPlans = [...periodization.plans].sort((a, b) => a.order - b.order);
+  const sortedPlans = [...periodization.plans].sort(
+    (a, b) => a.order - b.order,
+  );
   const totalBlocks = sortedPlans.length;
-  const completedBlocks = sortedPlans.filter((p) => p.completedAt !== null).length;
+  const completedBlocks = sortedPlans.filter(
+    (p) => p.completedAt !== null,
+  ).length;
+  const currentBlockIndex = sortedPlans.findIndex(
+    (plan) => plan.activatedAt !== null && plan.completedAt === null,
+  );
+  const currentBlock =
+    currentBlockIndex >= 0 ? sortedPlans[currentBlockIndex] : undefined;
+  const nextBlock =
+    currentBlockIndex >= 0 ? sortedPlans[currentBlockIndex + 1] : undefined;
 
   let statusLabel = "RASCUNHO";
   let statusVariant: "default" | "secondary" | "outline" = "secondary";
@@ -97,7 +109,9 @@ export default async function PeriodizationDetailPage({
                 {periodization.name}
               </h1>
               {periodization.goal && (
-                <p className="text-xs text-muted-foreground">{periodization.goal}</p>
+                <p className="text-xs text-muted-foreground">
+                  {periodization.goal}
+                </p>
               )}
             </div>
             <Badge
@@ -130,8 +144,22 @@ export default async function PeriodizationDetailPage({
           </div>
         </section>
 
+        <PeriodizationActions
+          id={periodization.id}
+          status={periodization.status}
+          totalBlocks={totalBlocks}
+          currentBlockName={currentBlock?.workoutPlan.name}
+          nextBlockName={nextBlock?.workoutPlan.name}
+          isLastBlock={
+            currentBlockIndex >= 0 && currentBlockIndex === totalBlocks - 1
+          }
+        />
+
         {/* Timeline dos Blocos */}
-        <section className="flex flex-col gap-3" aria-labelledby="section-blocks-timeline">
+        <section
+          className="flex flex-col gap-3"
+          aria-labelledby="section-blocks-timeline"
+        >
           <div className="flex items-center justify-between">
             <h2
               id="section-blocks-timeline"
@@ -158,16 +186,21 @@ export default async function PeriodizationDetailPage({
               {sortedPlans.map((planItem) => {
                 const isCompleted = planItem.completedAt !== null;
                 const isActive =
-                  planItem.activatedAt !== null && planItem.completedAt === null;
+                  planItem.activatedAt !== null &&
+                  planItem.completedAt === null;
                 const isPlanned =
-                  planItem.activatedAt === null && planItem.completedAt === null;
+                  planItem.activatedAt === null &&
+                  planItem.completedAt === null;
 
                 const startFormatted = formatDate(planItem.plannedStartDate);
                 const endFormatted = formatDate(planItem.plannedEndDate);
                 const hasDates = startFormatted || endFormatted;
 
                 return (
-                  <div key={planItem.id} className="relative flex items-start gap-4">
+                  <div
+                    key={planItem.id}
+                    className="relative flex items-start gap-4"
+                  >
                     {/* Indicador / Marcador da Timeline */}
                     <div className="relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full bg-background">
                       {isCompleted && (
@@ -204,7 +237,8 @@ export default async function PeriodizationDetailPage({
                             <div className="flex items-center gap-1.5 text-xs text-muted-foreground pl-4">
                               <Calendar className="size-3 shrink-0" />
                               <span>
-                                {startFormatted ?? "Início"} → {endFormatted ?? "Fim"}
+                                {startFormatted ?? "Início"} →{" "}
+                                {endFormatted ?? "Fim"}
                               </span>
                             </div>
                           )}
@@ -218,7 +252,11 @@ export default async function PeriodizationDetailPage({
 
                         <Badge
                           variant={
-                            isActive ? "default" : isCompleted ? "outline" : "secondary"
+                            isActive
+                              ? "default"
+                              : isCompleted
+                                ? "outline"
+                                : "secondary"
                           }
                           className="rounded-full px-2 py-0 text-[10px] font-semibold shrink-0"
                         >
