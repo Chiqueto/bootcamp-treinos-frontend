@@ -696,10 +696,26 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
                       return (
                         <div
                           key={index}
-                          className="mt-2 flex items-center gap-1.5 rounded-lg border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive"
+                          className="mt-2 flex items-center justify-between gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive"
                         >
-                          <X className="size-3.5" />
-                          <span>Não foi possível salvar</span>
+                          <div className="flex items-center gap-1.5">
+                            <X className="size-3.5" />
+                            <span>Não foi possível salvar</span>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={isLoading}
+                            className="h-6 border-destructive/40 bg-transparent px-2 text-xs text-destructive hover:bg-destructive/20 hover:text-destructive"
+                            onClick={() =>
+                              sendMessage({
+                                text: "Ocorreu um erro ao salvar o rascunho. Por favor, tente salvar novamente a proposta.",
+                              })
+                            }
+                          >
+                            Tentar novamente
+                          </Button>
                         </div>
                       );
                     }
