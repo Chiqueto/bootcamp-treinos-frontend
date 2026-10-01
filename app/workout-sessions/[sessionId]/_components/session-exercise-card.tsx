@@ -138,15 +138,28 @@ export function SessionExerciseCard({
 
   // Formatação da prescrição
   const prescriptionText = useMemo(() => {
-    const parts: string[] = [];
-    if (exercise.plannedSets && exercise.plannedReps) {
-      parts.push(`${exercise.plannedSets} séries × ${exercise.plannedReps} reps`);
-    } else if (exercise.plannedSets) {
-      parts.push(`${exercise.plannedSets} séries planejadas`);
-    } else if (exercise.plannedReps) {
-      parts.push(`${exercise.plannedReps} reps planejadas`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const warmup = (exercise as any).plannedWarmupSets ?? 0;
+    const workingSets = exercise.plannedSets;
+    const reps = exercise.plannedReps;
+
+    if (warmup > 0) {
+      if (workingSets && reps) {
+        return `${warmup} aquecimento • ${workingSets} válidas × ${reps} reps`;
+      } else if (workingSets) {
+        return `${warmup} aquecimento • ${workingSets} válidas`;
+      }
+      return `${warmup} aquecimento`;
     }
-    return parts.join(" • ");
+
+    if (workingSets && reps) {
+      return `${workingSets} séries × ${reps} reps`;
+    } else if (workingSets) {
+      return `${workingSets} séries planejadas`;
+    } else if (reps) {
+      return `${reps} reps planejadas`;
+    }
+    return null;
   }, [exercise]);
 
   return (
@@ -165,7 +178,7 @@ export function SessionExerciseCard({
 
           {prescriptionText && (
             <p className="font-heading text-xs text-muted-foreground pl-7">
-              {prescriptionText}
+              <span className="font-medium text-foreground/80">Planejado:</span> {prescriptionText}
             </p>
           )}
 

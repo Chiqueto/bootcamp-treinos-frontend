@@ -164,6 +164,13 @@ describe("Task 1.8 — Treino Avulso Frontend Tests", () => {
             id: "ex-1",
             name: "Supino Reto",
             ownerUserId: null,
+            muscles: [
+              {
+                id: "m-1",
+                muscleGroup: "CHEST",
+                role: "PRIMARY",
+              },
+            ],
           },
         ],
         headers: new Headers(),
@@ -184,6 +191,7 @@ describe("Task 1.8 — Treino Avulso Frontend Tests", () => {
           id: "ex-custom-1",
           name: "Supino Hammer",
           ownerUserId: "user-123",
+          muscles: [],
         },
         headers: new Headers(),
       });
@@ -195,6 +203,8 @@ describe("Task 1.8 — Treino Avulso Frontend Tests", () => {
       }
       expect(api.createExercise).toHaveBeenCalledWith({
         name: "Supino Hammer",
+        primaryMuscleGroups: undefined,
+        secondaryMuscleGroups: undefined,
       });
     });
 
@@ -214,6 +224,7 @@ describe("Task 1.8 — Treino Avulso Frontend Tests", () => {
             id: "ex-1",
             name: "Supino Reto",
             ownerUserId: null,
+            muscles: [],
           },
         ],
         headers: new Headers(),
@@ -282,6 +293,7 @@ describe("Task 1.8 — Treino Avulso Frontend Tests", () => {
             id: "ex-agachamento",
             name: "Agachamento Livre",
             ownerUserId: null,
+            muscles: [],
           },
         ],
         headers: new Headers(),

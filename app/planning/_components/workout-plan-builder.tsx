@@ -335,9 +335,23 @@ export function WorkoutPlanBuilder({
                           }
                         />
                       </label>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                         <label className="flex flex-col gap-1.5 text-xs font-medium">
-                          Séries
+                          Aquecimento
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            min={0}
+                            value={exercise.warmupSets ?? 0}
+                            onChange={(event) =>
+                              updateExercise(dayIndex, exerciseIndex, {
+                                warmupSets: Math.max(0, Number(event.target.value)),
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="flex flex-col gap-1.5 text-xs font-medium">
+                          Séries válidas
                           <Input
                             type="number"
                             inputMode="numeric"
@@ -351,7 +365,7 @@ export function WorkoutPlanBuilder({
                           />
                         </label>
                         <label className="flex flex-col gap-1.5 text-xs font-medium">
-                          Reps
+                          Repetições
                           <Input
                             type="number"
                             inputMode="numeric"

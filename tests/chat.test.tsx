@@ -375,4 +375,165 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
 
     expect(mockSetMessages).toHaveBeenCalledWith([]);
   });
+
+  describe("Task 2.8.2 — Chat Tool Classification & Deduplication", () => {
+    it("proposePeriodization e proposeWorkoutPlan output-available NÃO mostram 'Rascunho salvo'", () => {
+      mockMessages = [
+        {
+          id: "msg-prop-1",
+          role: "assistant",
+          parts: [
+            {
+              type: "tool-proposePeriodization",
+              state: "output-available",
+              output: { status: "PROPOSED", periodization: { name: "Ciclo Hipertrofia" } },
+            },
+            {
+              type: "tool-proposeWorkoutPlan",
+              state: "output-available",
+              output: { status: "PROPOSED", plan: { name: "Push Pull Legs" } },
+            },
+          ],
+        },
+      ];
+
+      render(<Chat embedded={false} />);
+
+      expect(screen.queryByText(/Rascunho salvo/i)).toBeNull();
+    });
+
+    it("getPlanningOverview e tools read-only output-available NÃO mostram card de persistência", () => {
+      mockMessages = [
+        {
+          id: "msg-read-1",
+          role: "assistant",
+          parts: [
+            {
+              type: "tool-getPlanningOverview",
+              state: "output-available",
+              output: { activeContext: { type: "NONE" }, plans: [] },
+            },
+            {
+              type: "tool-getWorkoutPlan",
+              state: "output-available",
+              output: { id: "p1", name: "Plano 1" },
+            },
+          ],
+        },
+      ];
+
+      render(<Chat embedded={false} />);
+
+      expect(screen.queryByText(/Rascunho salvo/i)).toBeNull();
+      expect(screen.queryByText(/Não foi possível salvar/i)).toBeNull();
+    });
+
+    it("createPeriodizationDraft output-available mostra exatamente 1 'Rascunho salvo'", () => {
+      mockMessages = [
+        {
+          id: "msg-draft-per",
+          role: "assistant",
+          parts: [
+            // Proposta prévia que executou no mesmo fluxo
+            {
+              type: "tool-proposePeriodization",
+              state: "output-available",
+              output: { status: "PROPOSED" },
+            },
+            // Draft salvo após aprovação
+            {
+              type: "tool-createPeriodizationDraft",
+              state: "output-available",
+              output: {
+                status: "SAVED_DRAFT",
+                periodizationId: "per-real-123",
+              },
+            },
+          ],
+        },
+      ];
+
+      render(<Chat embedded={false} />);
+
+      const savedCards = screen.getAllByText(/Rascunho salvo/i);
+      expect(savedCards).toHaveLength(1);
+      const link = screen.getByRole("link", { name: /Ver periodização/i });
+      expect(link.getAttribute("href")).toBe("/planning/periodizations/per-real-123");
+    });
+
+    it("createWorkoutPlanDraft output-available mostra exatamente 1 'Rascunho salvo'", () => {
+      mockMessages = [
+        {
+          id: "msg-draft-plan",
+          role: "assistant",
+          parts: [
+            {
+              type: "tool-proposeWorkoutPlan",
+              state: "output-available",
+              output: { status: "PROPOSED" },
+            },
+            {
+              type: "tool-createWorkoutPlanDraft",
+              state: "output-available",
+              output: {
+                status: "SAVED_DRAFT",
+                planId: "plan-real-456",
+              },
+            },
+          ],
+        },
+      ];
+
+      render(<Chat embedded={false} />);
+
+      const savedCards = screen.getAllByText(/Rascunho salvo/i);
+      expect(savedCards).toHaveLength(1);
+      const link = screen.getByRole("link", { name: /Ver em Planejamento/i });
+      expect(link.getAttribute("href")).toBe("/planning");
+    });
+
+    it("approval requested exibe botões e approval responded faz botões sumirem", () => {
+      // 1. approval requested: botões disponíveis
+      mockMessages = [
+        {
+          id: "msg-appr-flow",
+          role: "assistant",
+          parts: [
+            {
+              type: "tool-createWorkoutPlanDraft",
+              state: "approval-requested",
+              input: { name: "Full Body 3x" },
+              approval: { id: "appr-123" },
+            },
+          ],
+        },
+      ];
+
+      const { unmount } = render(<Chat embedded={false} />);
+      expect(screen.getByRole("button", { name: "Salvar como rascunho" })).toBeDefined();
+      expect(screen.getByRole("button", { name: "Continuar ajustando" })).toBeDefined();
+      unmount();
+
+      // 2. approval responded: botões somem
+      mockMessages = [
+        {
+          id: "msg-appr-flow",
+          role: "assistant",
+          parts: [
+            {
+              type: "tool-createWorkoutPlanDraft",
+              state: "approval-responded",
+              input: { name: "Full Body 3x" },
+              approval: { id: "appr-123", approved: true },
+            },
+          ],
+        },
+      ];
+
+      render(<Chat embedded={false} />);
+      expect(screen.queryByRole("button", { name: "Salvar como rascunho" })).toBeNull();
+      expect(screen.queryByRole("button", { name: "Continuar ajustando" })).toBeNull();
+      expect(screen.getByText(/Proposta aprovada — salvando.../i)).toBeDefined();
+    });
+  });
 });

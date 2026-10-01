@@ -79,6 +79,45 @@ const chatFormSchema = z.object({
 
 type ChatFormValues = z.infer<typeof chatFormSchema>;
 
+export type AiToolKind = "PROPOSAL" | "READ" | "MUTATION_DRAFT" | "OTHER";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getAiToolName(part: any): string {
+  if (!part) return "";
+  if (typeof part.toolName === "string" && part.toolName) {
+    return part.toolName;
+  }
+  if (typeof part.type === "string") {
+    if (part.type.startsWith("tool-")) {
+      return part.type.replace(/^tool-/, "");
+    }
+    if (part.type === "tool-invocation" && part.toolInvocation?.toolName) {
+      return part.toolInvocation.toolName;
+    }
+  }
+  return "";
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getAiToolKind(part: any): AiToolKind {
+  const name = getAiToolName(part);
+  if (name === "proposeWorkoutPlan" || name === "proposePeriodization") {
+    return "PROPOSAL";
+  }
+  if (
+    name === "getPlanningOverview" ||
+    name === "getWorkoutPlan" ||
+    name === "getPeriodization" ||
+    name === "getUserTrainData"
+  ) {
+    return "READ";
+  }
+  if (name === "createWorkoutPlanDraft" || name === "createPeriodizationDraft") {
+    return "MUTATION_DRAFT";
+  }
+  return "OTHER";
+}
+
 interface ChatProps {
   embedded?: boolean;
   initialMessage?: string;
@@ -593,143 +632,153 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
 
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const anyPart = part as any;
-                    if (
-                      anyPart.state === "approval-requested" &&
-                      anyPart.approval?.id
-                    ) {
-                      return (
-                        <ToolApprovalCard
-                          key={index}
-                          part={anyPart}
-                          onApprove={() =>
-                            addToolApprovalResponse({
-                              id: anyPart.approval.id,
-                              approved: true,
-                            })
-                          }
-                          onReject={() =>
-                            addToolApprovalResponse({
-                              id: anyPart.approval.id,
-                              approved: false,
-                              reason: "Continuar ajustando",
-                            })
-                          }
-                        />
-                      );
+                    const toolKind = getAiToolKind(anyPart);
+
+                    // Tools de consulta/leitura e proposta nunca renderizam cards de persistência
+                    if (toolKind === "READ" || toolKind === "PROPOSAL") {
+                      return null;
                     }
 
-                    if (
-                      anyPart.state === "approval-responded" &&
-                      anyPart.approval
-                    ) {
-                      if (anyPart.approval.approved) {
+                    // Apenas MUTATION_DRAFT (createWorkoutPlanDraft, createPeriodizationDraft) renderiza fluxo de persistência
+                    if (toolKind === "MUTATION_DRAFT") {
+                      if (
+                        anyPart.state === "approval-requested" &&
+                        anyPart.approval?.id
+                      ) {
+                        return (
+                          <ToolApprovalCard
+                            key={index}
+                            part={anyPart}
+                            onApprove={() =>
+                              addToolApprovalResponse({
+                                id: anyPart.approval.id,
+                                approved: true,
+                              })
+                            }
+                            onReject={() =>
+                              addToolApprovalResponse({
+                                id: anyPart.approval.id,
+                                approved: false,
+                                reason: "Continuar ajustando",
+                              })
+                            }
+                          />
+                        );
+                      }
+
+                      if (
+                        anyPart.state === "approval-responded" &&
+                        anyPart.approval
+                      ) {
+                        if (anyPart.approval.approved) {
+                          return (
+                            <div
+                              key={index}
+                              className="mt-2 flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 p-2 text-xs text-primary"
+                            >
+                              <Loader2 className="size-3.5 animate-spin" />
+                              <span>Proposta aprovada — salvando...</span>
+                            </div>
+                          );
+                        } else {
+                          return (
+                            <div
+                              key={index}
+                              className="mt-2 flex items-center gap-1.5 rounded-lg border border-border/70 bg-card/60 p-2 text-xs text-muted-foreground"
+                            >
+                              <X className="size-3.5" />
+                              <span>Ajustes solicitados — Rascunho não persistido</span>
+                            </div>
+                          );
+                        }
+                      }
+
+                      if (anyPart.state === "output-available") {
+                        const planId = anyPart.output?.planId;
+                        const periodizationId = anyPart.output?.periodizationId;
+
                         return (
                           <div
                             key={index}
-                            className="mt-2 flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 p-2 text-xs text-primary"
+                            className="mt-2 space-y-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2.5 text-xs text-foreground"
                           >
-                            <Loader2 className="size-3.5 animate-spin" />
-                            <span>Proposta aprovada — salvando...</span>
+                            <div className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
+                              <Check className="size-3.5" />
+                              <span>Rascunho salvo</span>
+                            </div>
+                            {planId && (
+                              <div className="pt-0.5">
+                                <Button
+                                  asChild
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-7 border-emerald-500/40 text-xs hover:bg-emerald-500/20"
+                                  onClick={() => router.refresh()}
+                                >
+                                  <Link href="/planning">Ver em Planejamento</Link>
+                                </Button>
+                              </div>
+                            )}
+                            {periodizationId && (
+                              <div className="pt-0.5">
+                                <Button
+                                  asChild
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-7 border-emerald-500/40 text-xs hover:bg-emerald-500/20"
+                                  onClick={() => router.refresh()}
+                                >
+                                  <Link
+                                    href={`/planning/periodizations/${periodizationId}`}
+                                  >
+                                    Ver periodização
+                                  </Link>
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         );
-                      } else {
+                      }
+
+                      if (anyPart.state === "output-error") {
+                        return (
+                          <div
+                            key={index}
+                            className="mt-2 flex items-center justify-between gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive"
+                          >
+                            <div className="flex items-center gap-1.5">
+                              <X className="size-3.5" />
+                              <span>Não foi possível salvar</span>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              disabled={isLoading}
+                              className="h-6 border-destructive/40 bg-transparent px-2 text-xs text-destructive hover:bg-destructive/20 hover:text-destructive"
+                              onClick={() =>
+                                sendMessage({
+                                  text: "Ocorreu um erro ao salvar o rascunho. Por favor, tente salvar novamente a proposta.",
+                                })
+                              }
+                            >
+                              Tentar novamente
+                            </Button>
+                          </div>
+                        );
+                      }
+
+                      if (anyPart.state === "output-denied") {
                         return (
                           <div
                             key={index}
                             className="mt-2 flex items-center gap-1.5 rounded-lg border border-border/70 bg-card/60 p-2 text-xs text-muted-foreground"
                           >
                             <X className="size-3.5" />
-                            <span>Ajustes solicitados — Rascunho não persistido</span>
+                            <span>Rascunho não salvo</span>
                           </div>
                         );
                       }
-                    }
-
-                    if (anyPart.state === "output-available") {
-                      const planId = anyPart.output?.planId;
-                      const periodizationId = anyPart.output?.periodizationId;
-
-                      return (
-                        <div
-                          key={index}
-                          className="mt-2 space-y-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2.5 text-xs text-foreground"
-                        >
-                          <div className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
-                            <Check className="size-3.5" />
-                            <span>Rascunho salvo</span>
-                          </div>
-                          {planId && (
-                            <div className="pt-0.5">
-                              <Button
-                                asChild
-                                size="sm"
-                                variant="outline"
-                                className="h-7 border-emerald-500/40 text-xs hover:bg-emerald-500/20"
-                                onClick={() => router.refresh()}
-                              >
-                                <Link href="/planning">Ver em Planejamento</Link>
-                              </Button>
-                            </div>
-                          )}
-                          {periodizationId && (
-                            <div className="pt-0.5">
-                              <Button
-                                asChild
-                                size="sm"
-                                variant="outline"
-                                className="h-7 border-emerald-500/40 text-xs hover:bg-emerald-500/20"
-                                onClick={() => router.refresh()}
-                              >
-                                <Link
-                                  href={`/planning/periodizations/${periodizationId}`}
-                                >
-                                  Ver periodização
-                                </Link>
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    }
-
-                    if (anyPart.state === "output-error") {
-                      return (
-                        <div
-                          key={index}
-                          className="mt-2 flex items-center justify-between gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive"
-                        >
-                          <div className="flex items-center gap-1.5">
-                            <X className="size-3.5" />
-                            <span>Não foi possível salvar</span>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            disabled={isLoading}
-                            className="h-6 border-destructive/40 bg-transparent px-2 text-xs text-destructive hover:bg-destructive/20 hover:text-destructive"
-                            onClick={() =>
-                              sendMessage({
-                                text: "Ocorreu um erro ao salvar o rascunho. Por favor, tente salvar novamente a proposta.",
-                              })
-                            }
-                          >
-                            Tentar novamente
-                          </Button>
-                        </div>
-                      );
-                    }
-
-                    if (anyPart.state === "output-denied") {
-                      return (
-                        <div
-                          key={index}
-                          className="mt-2 flex items-center gap-1.5 rounded-lg border border-border/70 bg-card/60 p-2 text-xs text-muted-foreground"
-                        >
-                          <X className="size-3.5" />
-                          <span>Rascunho não salvo</span>
-                        </div>
-                      );
                     }
 
                     return null;

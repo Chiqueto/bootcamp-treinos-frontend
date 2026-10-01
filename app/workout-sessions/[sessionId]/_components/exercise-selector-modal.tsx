@@ -1,11 +1,36 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { AlertCircle, Dumbbell, Loader2, Plus, Search, X } from "lucide-react";
-import type { ListExercises200Item } from "@/app/_lib/api/fetch-generated";
+import {
+  AlertCircle,
+  ArrowLeft,
+  Check,
+  Dumbbell,
+  Loader2,
+  Plus,
+  Search,
+  Tag,
+  X,
+} from "lucide-react";
+
+import type {
+  CreateExerciseBodyPrimaryMuscleGroupsItem,
+  CreateExerciseBodySecondaryMuscleGroupsItem,
+  ListExercises200Item,
+} from "@/app/_lib/api/fetch-generated";
+import {
+  ALL_MUSCLE_GROUPS,
+  getMuscleGroupLabel,
+  type MuscleGroup,
+} from "@/app/_lib/muscle-labels";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createExerciseAction, listExercisesAction } from "../_actions";
+
+import {
+  createExerciseAction,
+  listExercisesAction,
+  updateExerciseMusclesAction,
+} from "../_actions";
 
 interface ExerciseSelectorModalProps {
   isOpen: boolean;
@@ -13,16 +38,25 @@ interface ExerciseSelectorModalProps {
   onSelectExercise: (exerciseId: string) => Promise<void>;
 }
 
+type ModalView = "LIST" | "CREATE_CUSTOM" | "EDIT_MUSCLES";
+
 export function ExerciseSelectorModal({
   isOpen,
   onClose,
   onSelectExercise,
 }: ExerciseSelectorModalProps) {
+  const [view, setView] = useState<ModalView>("LIST");
   const [query, setQuery] = useState("");
   const [exercises, setExercises] = useState<ListExercises200Item[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, startSubmittingTransition] = useTransition();
+
+  // Estados do formulário de criação / edição de músculos
+  const [customName, setCustomName] = useState("");
+  const [primaryMuscle, setPrimaryMuscle] = useState<MuscleGroup | "">("");
+  const [secondaryMuscles, setSecondaryMuscles] = useState<MuscleGroup[]>([]);
+  const [editingExercise, setEditingExercise] = useState<ListExercises200Item | null>(null);
 
   // Carrega exercícios ao abrir e ao alterar o termo de busca
   useEffect(() => {
@@ -55,9 +89,18 @@ export function ExerciseSelectorModal({
     (ex) => ex.name.toLowerCase() === trimmedQuery.toLowerCase(),
   );
 
+  const resetForm = () => {
+    setCustomName("");
+    setPrimaryMuscle("");
+    setSecondaryMuscles([]);
+    setEditingExercise(null);
+    setErrorMessage(null);
+  };
+
   const handleClose = () => {
     setQuery("");
-    setErrorMessage(null);
+    resetForm();
+    setView("LIST");
     onClose();
   };
 
@@ -76,11 +119,63 @@ export function ExerciseSelectorModal({
     });
   };
 
-  const handleCreateCustom = () => {
-    if (isSubmitting || !trimmedQuery) return;
+  const openCreateForm = (initialName?: string) => {
+    resetForm();
+    setCustomName(initialName ?? trimmedQuery);
+    setView("CREATE_CUSTOM");
+  };
+
+  const openEditMuscles = (exercise: ListExercises200Item, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    resetForm();
+    setEditingExercise(exercise);
+    const primary = exercise.muscles?.find((m) => m.role === "PRIMARY");
+    const secondaries =
+      exercise.muscles
+        ?.filter((m) => m.role === "SECONDARY")
+        .map((m) => m.muscleGroup as MuscleGroup) ?? [];
+
+    setPrimaryMuscle((primary?.muscleGroup as MuscleGroup) || "");
+    setSecondaryMuscles(secondaries);
+    setView("EDIT_MUSCLES");
+  };
+
+  const toggleSecondaryMuscle = (muscle: MuscleGroup) => {
+    if (secondaryMuscles.includes(muscle)) {
+      setSecondaryMuscles(secondaryMuscles.filter((m) => m !== muscle));
+    } else {
+      setSecondaryMuscles([...secondaryMuscles, muscle]);
+    }
+  };
+
+  const handleCreateSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    const trimmed = customName.trim();
+    if (!trimmed) {
+      setErrorMessage("Nome do exercício é obrigatório.");
+      return;
+    }
+
+    if (!primaryMuscle) {
+      setErrorMessage("Selecione o músculo principal do exercício.");
+      return;
+    }
+
     setErrorMessage(null);
     startSubmittingTransition(async () => {
-      const createRes = await createExerciseAction(trimmedQuery);
+      const createRes = await createExerciseAction({
+        name: trimmed,
+        primaryMuscleGroups: [
+          primaryMuscle as CreateExerciseBodyPrimaryMuscleGroupsItem,
+        ],
+        secondaryMuscleGroups:
+          secondaryMuscles.length > 0
+            ? (secondaryMuscles as CreateExerciseBodySecondaryMuscleGroupsItem[])
+            : undefined,
+      });
+
       if (!createRes.success) {
         setErrorMessage(createRes.error);
         return;
@@ -97,6 +192,42 @@ export function ExerciseSelectorModal({
     });
   };
 
+  const handleEditMusclesSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSubmitting || !editingExercise) return;
+
+    if (!primaryMuscle) {
+      setErrorMessage("Selecione pelo menos um músculo principal.");
+      return;
+    }
+
+    setErrorMessage(null);
+    startSubmittingTransition(async () => {
+      const updateRes = await updateExerciseMusclesAction(editingExercise.id, {
+        primaryMuscleGroups: [primaryMuscle],
+        secondaryMuscleGroups:
+          secondaryMuscles.length > 0 ? secondaryMuscles : undefined,
+      });
+
+      if (!updateRes.success) {
+        setErrorMessage(updateRes.error);
+        return;
+      }
+
+      // Atualiza na lista local de exercícios
+      setExercises((prev) =>
+        prev.map((ex) =>
+          ex.id === editingExercise.id
+            ? { ...ex, muscles: updateRes.data.muscles }
+            : ex,
+        ),
+      );
+
+      resetForm();
+      setView("LIST");
+    });
+  };
+
   return (
     <div
       role="dialog"
@@ -106,133 +237,529 @@ export function ExerciseSelectorModal({
       onClick={handleClose}
     >
       <div
-        className="w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-border bg-card p-5 shadow-2xl flex flex-col gap-4 max-h-[85vh] animate-in slide-in-from-bottom-4 sm:zoom-in-95"
+        className="w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-border bg-card p-5 shadow-2xl flex flex-col gap-4 max-h-[90vh] animate-in slide-in-from-bottom-4 sm:zoom-in-95"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border/60 pb-3">
-          <div className="flex items-center gap-2">
-            <Dumbbell className="size-5 text-primary" />
-            <h2
-              id="exercise-selector-title"
-              className="font-heading text-lg font-bold text-foreground"
-            >
-              Adicionar Exercício
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={handleClose}
-            disabled={isSubmitting}
-            className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
-          >
-            <X className="size-5" />
-            <span className="sr-only">Fechar</span>
-          </button>
-        </div>
-
-        {/* Input de Busca */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar exercício..."
-            disabled={isSubmitting}
-            className="h-11 pl-9 pr-8 rounded-xl font-heading text-sm"
-            autoFocus
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              <X className="size-3.5" />
-              <span className="sr-only">Limpar busca</span>
-            </button>
-          )}
-        </div>
-
-        {/* Mensagem de Erro Inline */}
-        {errorMessage && (
-          <div
-            role="alert"
-            className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-destructive font-heading text-xs font-semibold"
-          >
-            <AlertCircle className="size-4 shrink-0" />
-            <span>{errorMessage}</span>
-          </div>
-        )}
-
-        {/* Opção de Criar Exercício Personalizado */}
-        {trimmedQuery.length > 0 && !hasExactMatch && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCreateCustom}
-            disabled={isSubmitting}
-            className="w-full justify-start rounded-xl border-dashed border-primary/40 bg-primary/5 py-5 font-heading text-sm font-semibold text-primary hover:bg-primary/10"
-          >
-            {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <Loader2 className="size-4 animate-spin" />
-                Criando...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2 truncate">
-                <Plus className="size-4 shrink-0" />
-                Criar &quot;{trimmedQuery}&quot;
-              </span>
-            )}
-          </Button>
-        )}
-
-        {/* Lista de Exercícios */}
-        <div className="flex-1 overflow-y-auto divide-y divide-border/40 pr-1 max-h-60 sm:max-h-72">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8 text-muted-foreground">
-              <Loader2 className="size-6 animate-spin" />
+        {/* ===================== VIEW: LISTA ===================== */}
+        {view === "LIST" && (
+          <>
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2">
+                <Dumbbell className="size-5 text-primary" />
+                <h2
+                  id="exercise-selector-title"
+                  className="font-heading text-lg font-bold text-foreground"
+                >
+                  Adicionar Exercício
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={handleClose}
+                disabled={isSubmitting}
+                className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <X className="size-5" />
+                <span className="sr-only">Fechar</span>
+              </button>
             </div>
-          ) : exercises.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-              <p className="font-heading text-sm font-semibold text-foreground">
-                Nenhum exercício encontrado
-              </p>
-              {trimmedQuery.length > 0 ? (
-                <p className="text-xs text-muted-foreground mt-1">
-                  Você pode criá-lo como exercício personalizado acima.
-                </p>
-              ) : (
-                <p className="text-xs text-muted-foreground mt-1">
-                  Digite para buscar ou criar um novo exercício.
-                </p>
+
+            {/* Input de Busca */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Buscar exercício..."
+                disabled={isSubmitting}
+                className="h-11 pl-9 pr-8 rounded-xl font-heading text-sm"
+                autoFocus
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <X className="size-3.5" />
+                  <span className="sr-only">Limpar busca</span>
+                </button>
               )}
             </div>
-          ) : (
-            exercises.map((exercise) => (
-              <button
-                key={exercise.id}
-                type="button"
-                onClick={() => handleSelect(exercise.id)}
-                disabled={isSubmitting}
-                className="w-full text-left py-3 px-2 flex items-center justify-between hover:bg-muted/50 rounded-xl transition-colors group"
+
+            {/* Mensagem de Erro Inline */}
+            {errorMessage && (
+              <div
+                role="alert"
+                className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-destructive font-heading text-xs font-semibold"
               >
-                <div className="flex flex-col">
-                  <span className="font-heading text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                    {exercise.name}
-                  </span>
-                  {exercise.ownerUserId && (
-                    <span className="text-[10px] text-muted-foreground font-heading">
-                      Personalizado
-                    </span>
-                  )}
+                <AlertCircle className="size-4 shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {/* Opção de Criar Exercício Personalizado com Músculos */}
+            {trimmedQuery.length > 0 && !hasExactMatch && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => openCreateForm(trimmedQuery)}
+                disabled={isSubmitting}
+                className="w-full justify-start rounded-xl border-dashed border-primary/40 bg-primary/5 py-5 font-heading text-sm font-semibold text-primary hover:bg-primary/10"
+              >
+                <span className="flex items-center gap-2 truncate">
+                  <Plus className="size-4 shrink-0" />
+                  Criar &quot;{trimmedQuery}&quot; (com músculos)
+                </span>
+              </Button>
+            )}
+
+            {/* Lista de Exercícios */}
+            <div className="flex-1 overflow-y-auto divide-y divide-border/40 pr-1 max-h-60 sm:max-h-72">
+              {isLoading ? (
+                <div className="flex items-center justify-center py-8 text-muted-foreground">
+                  <Loader2 className="size-6 animate-spin" />
                 </div>
-                <Plus className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              ) : exercises.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+                  <p className="font-heading text-sm font-semibold text-foreground">
+                    Nenhum exercício encontrado
+                  </p>
+                  {trimmedQuery.length > 0 ? (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Você pode criá-lo como exercício personalizado acima.
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Digite para buscar ou crie um novo exercício.
+                    </p>
+                  )}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openCreateForm()}
+                    className="mt-3 text-primary text-xs"
+                  >
+                    <Plus className="size-3.5 mr-1" /> Criar novo personalizado
+                  </Button>
+                </div>
+              ) : (
+                exercises.map((exercise) => {
+                  const hasMuscles =
+                    exercise.muscles && exercise.muscles.length > 0;
+                  const primaryMuscleObj = exercise.muscles?.find(
+                    (m) => m.role === "PRIMARY",
+                  );
+                  const isCustom = exercise.ownerUserId !== null;
+
+                  return (
+                    <div
+                      key={exercise.id}
+                      role="button"
+                      aria-label={exercise.name}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleSelect(exercise.id);
+                        }
+                      }}
+                      className="w-full text-left py-3 px-2 flex items-center justify-between hover:bg-muted/50 rounded-xl transition-colors group cursor-pointer"
+                      onClick={() => handleSelect(exercise.id)}
+                    >
+                      <div className="flex flex-col min-w-0 pr-2">
+                        <span className="font-heading text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                          {exercise.name}
+                        </span>
+
+                        <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                          {hasMuscles ? (
+                            <>
+                              <span className="text-[11px] font-semibold text-primary">
+                                {getMuscleGroupLabel(
+                                  primaryMuscleObj?.muscleGroup,
+                                )}
+                              </span>
+                              {exercise.muscles!.filter((m) => m.role === "SECONDARY").length > 0 && (
+                                <span className="text-[10px] text-muted-foreground">
+                                  •{" "}
+                                  {exercise.muscles!
+                                    .filter((m) => m.role === "SECONDARY")
+                                    .map((m) =>
+                                      getMuscleGroupLabel(m.muscleGroup),
+                                    )
+                                    .join(", ")}
+                                </span>
+                              )}
+                            </>
+                          ) : isCustom ? (
+                            <div className="flex items-center gap-1">
+                              <span className="text-[10px] text-amber-500 font-medium">
+                                Sem classificação
+                              </span>
+                              <span
+                                role="button"
+                                tabIndex={0}
+                                aria-label="Classificar"
+                                onClick={(e) => openEditMuscles(exercise, e)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    openEditMuscles(exercise, e as unknown as React.MouseEvent);
+                                  }
+                                }}
+                                className="text-[10px] font-semibold text-primary underline underline-offset-2 hover:text-primary/80 ml-1 cursor-pointer"
+                              >
+                                Classificar
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-muted-foreground">
+                              Global
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        {isCustom && hasMuscles && (
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            title="Editar classificação"
+                            aria-label="Editar classificação"
+                            onClick={(e) => openEditMuscles(exercise, e)}
+                            className="p-1 rounded text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 cursor-pointer"
+                          >
+                            <Tag className="size-3.5" />
+                          </span>
+                        )}
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          disabled={isSubmitting}
+                          className="size-8 rounded-full text-muted-foreground group-hover:text-primary"
+                        >
+                          <Plus className="size-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </>
+        )}
+
+        {/* ===================== VIEW: CRIAR PERSONALIZADO ===================== */}
+        {view === "CREATE_CUSTOM" && (
+          <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setView("LIST");
+                    setErrorMessage(null);
+                  }}
+                  className="rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <ArrowLeft className="size-5" />
+                  <span className="sr-only">Voltar</span>
+                </button>
+                <h2 className="font-heading text-lg font-bold text-foreground">
+                  Novo Exercício
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={handleClose}
+                className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <X className="size-5" />
+                <span className="sr-only">Fechar</span>
               </button>
-            ))
-          )}
-        </div>
+            </div>
+
+            {/* Mensagem de Erro Inline */}
+            {errorMessage && (
+              <div
+                role="alert"
+                className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-destructive font-heading text-xs font-semibold"
+              >
+                <AlertCircle className="size-4 shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {/* Campo Nome * */}
+            <div className="space-y-1.5">
+              <label
+                htmlFor="custom-exercise-name"
+                className="font-heading text-xs font-semibold text-foreground"
+              >
+                Nome do exercício *
+              </label>
+              <Input
+                id="custom-exercise-name"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                placeholder="Ex: Supino Inclinado com Halteres"
+                className="h-11 rounded-xl text-sm"
+                autoFocus
+                required
+              />
+            </div>
+
+            {/* Campo Músculo Principal * */}
+            <div className="space-y-1.5">
+              <label
+                htmlFor="custom-exercise-primary-muscle"
+                className="font-heading text-xs font-semibold text-foreground flex items-center justify-between"
+              >
+                <span>Músculo principal *</span>
+                <span className="text-[10px] text-muted-foreground font-normal">
+                  Série direta
+                </span>
+              </label>
+              <select
+                id="custom-exercise-primary-muscle"
+                value={primaryMuscle}
+                onChange={(e) => {
+                  const val = e.target.value as MuscleGroup | "";
+                  setPrimaryMuscle(val);
+                  // Remove do secundário se foi escolhido como primário
+                  if (val && secondaryMuscles.includes(val)) {
+                    setSecondaryMuscles(
+                      secondaryMuscles.filter((m) => m !== val),
+                    );
+                  }
+                }}
+                required
+                className="w-full h-11 px-3 rounded-xl border border-input bg-background font-heading text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">Selecione o músculo principal...</option>
+                {ALL_MUSCLE_GROUPS.map((mg) => (
+                  <option key={mg.value} value={mg.value}>
+                    {mg.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Campo Músculos Auxiliares */}
+            <div className="space-y-1.5">
+              <label className="font-heading text-xs font-semibold text-foreground flex items-center justify-between">
+                <span>Músculos auxiliares (opcional)</span>
+                <span className="text-[10px] text-muted-foreground font-normal">
+                  Série indireta
+                </span>
+              </label>
+              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 border border-border/50 rounded-xl bg-muted/20">
+                {ALL_MUSCLE_GROUPS.filter(
+                  (mg) => mg.value !== primaryMuscle,
+                ).map((mg) => {
+                  const isSelected = secondaryMuscles.includes(mg.value);
+                  return (
+                    <button
+                      key={mg.value}
+                      type="button"
+                      onClick={() => toggleSecondaryMuscle(mg.value)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-heading transition-all ${
+                        isSelected
+                          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                      }`}
+                    >
+                      {isSelected && <Check className="size-3" />}
+                      {mg.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Botões de Ação */}
+            <div className="flex items-center gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setView("LIST");
+                  setErrorMessage(null);
+                }}
+                disabled={isSubmitting}
+                className="flex-1 rounded-xl"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting || !customName.trim() || !primaryMuscle}
+                className="flex-1 rounded-xl font-heading font-semibold"
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="size-4 animate-spin" />
+                    Salvando...
+                  </span>
+                ) : (
+                  "Salvar e Adicionar"
+                )}
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {/* ===================== VIEW: EDITAR CLASSIFICAÇÃO ===================== */}
+        {view === "EDIT_MUSCLES" && editingExercise && (
+          <form onSubmit={handleEditMusclesSubmit} className="flex flex-col gap-4">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setView("LIST");
+                    setErrorMessage(null);
+                  }}
+                  className="rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <ArrowLeft className="size-5" />
+                  <span className="sr-only">Voltar</span>
+                </button>
+                <div className="flex flex-col">
+                  <h2 className="font-heading text-base font-bold text-foreground">
+                    Classificar Músculos
+                  </h2>
+                  <span className="text-xs text-muted-foreground truncate max-w-[220px]">
+                    {editingExercise.name}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleClose}
+                className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <X className="size-5" />
+                <span className="sr-only">Fechar</span>
+              </button>
+            </div>
+
+            {/* Mensagem de Erro Inline */}
+            {errorMessage && (
+              <div
+                role="alert"
+                className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-destructive font-heading text-xs font-semibold"
+              >
+                <AlertCircle className="size-4 shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {/* Campo Músculo Principal * */}
+            <div className="space-y-1.5">
+              <label
+                htmlFor="edit-exercise-primary-muscle"
+                className="font-heading text-xs font-semibold text-foreground flex items-center justify-between"
+              >
+                <span>Músculo principal *</span>
+                <span className="text-[10px] text-muted-foreground font-normal">
+                  Série direta
+                </span>
+              </label>
+              <select
+                id="edit-exercise-primary-muscle"
+                value={primaryMuscle}
+                onChange={(e) => {
+                  const val = e.target.value as MuscleGroup | "";
+                  setPrimaryMuscle(val);
+                  if (val && secondaryMuscles.includes(val)) {
+                    setSecondaryMuscles(
+                      secondaryMuscles.filter((m) => m !== val),
+                    );
+                  }
+                }}
+                required
+                className="w-full h-11 px-3 rounded-xl border border-input bg-background font-heading text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">Selecione o músculo principal...</option>
+                {ALL_MUSCLE_GROUPS.map((mg) => (
+                  <option key={mg.value} value={mg.value}>
+                    {mg.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Campo Músculos Auxiliares */}
+            <div className="space-y-1.5">
+              <label className="font-heading text-xs font-semibold text-foreground flex items-center justify-between">
+                <span>Músculos auxiliares (opcional)</span>
+                <span className="text-[10px] text-muted-foreground font-normal">
+                  Série indireta
+                </span>
+              </label>
+              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 border border-border/50 rounded-xl bg-muted/20">
+                {ALL_MUSCLE_GROUPS.filter(
+                  (mg) => mg.value !== primaryMuscle,
+                ).map((mg) => {
+                  const isSelected = secondaryMuscles.includes(mg.value);
+                  return (
+                    <button
+                      key={mg.value}
+                      type="button"
+                      onClick={() => toggleSecondaryMuscle(mg.value)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-heading transition-all ${
+                        isSelected
+                          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                      }`}
+                    >
+                      {isSelected && <Check className="size-3" />}
+                      {mg.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Botões de Ação */}
+            <div className="flex items-center gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setView("LIST");
+                  setErrorMessage(null);
+                }}
+                disabled={isSubmitting}
+                className="flex-1 rounded-xl"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting || !primaryMuscle}
+                className="flex-1 rounded-xl font-heading font-semibold"
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="size-4 animate-spin" />
+                    Salvando...
+                  </span>
+                ) : (
+                  "Salvar Classificação"
+                )}
+              </Button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

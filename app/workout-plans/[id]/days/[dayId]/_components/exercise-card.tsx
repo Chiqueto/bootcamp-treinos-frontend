@@ -22,6 +22,8 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
     });
   };
 
+  const warmup = exercise.warmupSets ?? 0;
+
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-border p-5">
       <div className="flex items-center justify-between">
@@ -32,13 +34,21 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
           <CircleHelp className="size-5 text-muted-foreground" />
         </Button>
       </div>
-      <div className="flex items-center gap-1.5">
-        <span className="rounded-full bg-muted px-2.5 py-1 font-heading text-xs font-semibold uppercase text-muted-foreground">
-          {exercise.sets} séries
-        </span>
-        <span className="rounded-full bg-muted px-2.5 py-1 font-heading text-xs font-semibold uppercase text-muted-foreground">
-          {exercise.reps} reps
-        </span>
+      <div className="flex flex-wrap items-center gap-1.5">
+        {warmup > 0 ? (
+          <span className="rounded-full bg-amber-500/10 px-2.5 py-1 font-heading text-xs font-semibold text-amber-700 dark:text-amber-400">
+            {warmup} aquecimento • {exercise.sets} séries × {exercise.reps} reps
+          </span>
+        ) : (
+          <>
+            <span className="rounded-full bg-muted px-2.5 py-1 font-heading text-xs font-semibold uppercase text-muted-foreground">
+              {exercise.sets} séries
+            </span>
+            <span className="rounded-full bg-muted px-2.5 py-1 font-heading text-xs font-semibold uppercase text-muted-foreground">
+              {exercise.reps} reps
+            </span>
+          </>
+        )}
         <span className="flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 font-heading text-xs font-semibold uppercase text-muted-foreground">
           <Zap className="size-3.5" />
           {exercise.restTimeInSeconds}s

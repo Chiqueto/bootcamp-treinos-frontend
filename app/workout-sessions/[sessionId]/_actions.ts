@@ -11,14 +11,20 @@ import {
   listExercises,
   removeExerciseFromWorkoutSession,
   startFreeWorkoutSession,
+  updateExerciseMuscles,
   updateWorkoutSet,
   type AddExerciseToWorkoutSession201,
   type CompleteWorkoutSession200,
   type CreateExercise201,
+  type CreateExerciseBodyPrimaryMuscleGroupsItem,
+  type CreateExerciseBodySecondaryMuscleGroupsItem,
   type CreateWorkoutSet201,
   type CreateWorkoutSetBody,
   type ListExercises200Item,
   type RemoveExerciseFromWorkoutSession200,
+  type UpdateExerciseMuscles200,
+  type UpdateExerciseMusclesBodyPrimaryMuscleGroupsItem,
+  type UpdateExerciseMusclesBodySecondaryMuscleGroupsItem,
   type UpdateWorkoutSet200,
   type UpdateWorkoutSetBody,
 } from "@/app/_lib/api/fetch-generated";
@@ -169,18 +175,34 @@ export async function listExercisesAction(
 }
 
 /**
- * Cria um exercício personalizado para o usuário logado.
+ * Cria um exercício personalizado para o usuário logado com suporte a grupos musculares.
  */
 export async function createExerciseAction(
-  name: string,
+  input:
+    | string
+    | {
+        name: string;
+        primaryMuscleGroups?: CreateExerciseBodyPrimaryMuscleGroupsItem[];
+        secondaryMuscleGroups?: CreateExerciseBodySecondaryMuscleGroupsItem[];
+      },
 ): Promise<ActionResult<CreateExercise201>> {
   try {
-    const trimmed = name.trim();
+    const name = typeof input === "string" ? input : input.name;
+    const trimmed = name?.trim();
     if (!trimmed) {
       return { success: false, error: "Nome do exercício é obrigatório" };
     }
 
-    const response = await createExercise({ name: trimmed });
+    const primaryMuscleGroups =
+      typeof input === "object" ? input.primaryMuscleGroups : undefined;
+    const secondaryMuscleGroups =
+      typeof input === "object" ? input.secondaryMuscleGroups : undefined;
+
+    const response = await createExercise({
+      name: trimmed,
+      primaryMuscleGroups,
+      secondaryMuscleGroups,
+    });
     if (response.status !== 201) {
       const errorMsg =
         (response.data as { error?: string })?.error ||
@@ -193,6 +215,36 @@ export async function createExerciseAction(
     return {
       success: false,
       error: (err as Error)?.message || "Erro de conexão ao criar exercício",
+    };
+  }
+}
+
+/**
+ * Atualiza a classificação de grupos musculares de um exercício personalizado.
+ */
+export async function updateExerciseMusclesAction(
+  exerciseId: string,
+  input: {
+    primaryMuscleGroups: UpdateExerciseMusclesBodyPrimaryMuscleGroupsItem[];
+    secondaryMuscleGroups?: UpdateExerciseMusclesBodySecondaryMuscleGroupsItem[];
+  },
+): Promise<ActionResult<UpdateExerciseMuscles200>> {
+  try {
+    const response = await updateExerciseMuscles(exerciseId, input);
+    if (response.status !== 200) {
+      const errorMsg =
+        (response.data as { error?: string })?.error ||
+        "Erro ao atualizar classificação muscular";
+      return { success: false, error: errorMsg };
+    }
+
+    return { success: true, data: response.data };
+  } catch (err: unknown) {
+    return {
+      success: false,
+      error:
+        (err as Error)?.message ||
+        "Erro de conexão ao atualizar classificação muscular",
     };
   }
 }

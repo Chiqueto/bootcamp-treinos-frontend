@@ -12,6 +12,7 @@ export const WEEK_DAYS = [
 
 export type WorkoutPlanDraftExercise = {
   name: string;
+  warmupSets?: number;
   sets: number;
   reps: number;
   restTimeInSeconds: number;
@@ -27,7 +28,7 @@ export type WorkoutPlanDraftDay = {
 };
 
 export function createDraftExercise(): WorkoutPlanDraftExercise {
-  return { name: "", sets: 3, reps: 10, restTimeInSeconds: 60 };
+  return { name: "", warmupSets: 0, sets: 3, reps: 10, restTimeInSeconds: 60 };
 }
 
 export function createInitialWorkoutDays(): WorkoutPlanDraftDay[] {
@@ -66,11 +67,13 @@ export function validateWorkoutPlanDraft(
         return `Informe o nome de todos os exercícios de ${day.label}.`;
       }
       if (
+        (exercise.warmupSets !== undefined &&
+          (exercise.warmupSets < 0 || !Number.isInteger(exercise.warmupSets))) ||
         exercise.sets < 1 ||
         exercise.reps < 1 ||
         exercise.restTimeInSeconds < 1
       ) {
-        return `Revise séries, repetições e descanso em ${day.label}.`;
+        return `Revise aquecimento, séries, repetições e descanso em ${day.label}.`;
       }
     }
   }
@@ -94,6 +97,7 @@ export function serializeWorkoutDays(
       : day.exercises.map((exercise, order) => ({
           order,
           name: exercise.name.trim(),
+          warmupSets: exercise.warmupSets ?? 0,
           sets: exercise.sets,
           reps: exercise.reps,
           restTimeInSeconds: exercise.restTimeInSeconds,
