@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useQueryStates, parseAsBoolean, parseAsString } from "nuqs";
-import { Sparkles, X, ArrowUp } from "lucide-react";
+import { Sparkles, X, ArrowUp, Check } from "lucide-react";
 import { Streamdown } from "streamdown";
 import "streamdown/styles.css";
 import { useForm } from "react-hook-form";
@@ -15,7 +15,11 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 
-const SUGGESTED_MESSAGES = ["Monte meu plano de treino"];
+const SUGGESTED_MESSAGES = [
+  "Monte um plano de treino para mim",
+  "Monte uma periodização para mim",
+  "Explique meu planejamento atual",
+];
 
 const chatFormSchema = z.object({
   message: z.string().min(1),
@@ -28,13 +32,106 @@ interface ChatProps {
   initialMessage?: string;
 }
 
+interface ToolApprovalCardProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  part: any;
+  onApprove: () => void;
+  onReject: () => void;
+}
+
+function ToolApprovalCard({
+  part,
+  onApprove,
+  onReject,
+}: ToolApprovalCardProps) {
+  const isPeriodization =
+    part.type?.toLowerCase().includes("periodization") ||
+    Boolean(part.input && "blocks" in part.input);
+  const name = part.input?.name || "Sem título";
+  const days = part.input?.workoutDays;
+  const blocks = part.input?.blocks;
+
+  return (
+    <div className="mt-3 rounded-xl border border-border bg-card p-3.5 text-card-foreground shadow-xs">
+      <div className="flex items-center justify-between gap-2 border-b border-border/60 pb-2">
+        <div className="flex items-center gap-1.5 font-heading text-sm font-semibold text-foreground">
+          <Sparkles className="size-4 text-primary" />
+          <span>{isPeriodization ? "Periodização Proposta" : "Plano Proposto"}</span>
+        </div>
+        <span className="rounded-full bg-primary/10 px-2 py-0.5 font-heading text-[10px] font-medium text-primary">
+          Aprovação necessária
+        </span>
+      </div>
+
+      <div className="mt-2 space-y-1.5">
+        <p className="font-heading text-sm font-medium text-foreground">{name}</p>
+        {isPeriodization && Array.isArray(blocks) && (
+          <div className="space-y-1 text-xs text-muted-foreground">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {blocks.map((b: any, i: number) => (
+              <div key={i} className="flex items-center gap-1.5">
+                <span className="font-mono text-[11px] font-semibold text-foreground">
+                  {i + 1}.
+                </span>
+                <span>{b.plan?.name || `Etapa ${i + 1}`}</span>
+                {b.plannedStartDate && b.plannedEndDate && (
+                  <span className="text-[11px] opacity-80">
+                    ({b.plannedStartDate} → {b.plannedEndDate})
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        {!isPeriodization && Array.isArray(days) && (
+          <div className="grid grid-cols-1 gap-1 text-xs text-muted-foreground">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {days.map((d: any) => (
+              <div key={d.weekDay} className="flex items-center justify-between">
+                <span className="font-medium text-foreground/80">
+                  {d.name || d.weekDay}:
+                </span>
+                <span>
+                  {d.isRest
+                    ? "Descanso"
+                    : `${d.exercises?.length ?? 0} exercícios (${Math.round((d.estimatedDurationInSeconds ?? 0) / 60)} min)`}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border/60 pt-2.5">
+        <Button
+          size="sm"
+          type="button"
+          onClick={onApprove}
+          className="h-8 font-heading text-xs"
+        >
+          Salvar como rascunho
+        </Button>
+        <Button
+          size="sm"
+          type="button"
+          variant="outline"
+          onClick={onReject}
+          className="h-8 font-heading text-xs"
+        >
+          Continuar ajustando
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export function Chat({ embedded = false, initialMessage }: ChatProps) {
   const [chatParams, setChatParams] = useQueryStates({
     chat_open: parseAsBoolean.withDefault(false),
     chat_initial_message: parseAsString,
   });
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, addToolApprovalResponse } = useChat({
     transport: new DefaultChatTransport({
       api: `${process.env.NEXT_PUBLIC_API_URL}/ai`,
       credentials: "include",
@@ -130,7 +227,7 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
         </div>
         {embedded ? (
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/">Acessar FIT.AI</Link>
+            <Link href="/">Acessar Trainvy</Link>
           </Button>
         ) : (
           <Button variant="ghost" size="icon" onClick={handleClose}>
@@ -157,20 +254,77 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
               }
             >
               {message.role === "assistant" ? (
-                message.parts.map((part, index) =>
-                  part.type === "text" ? (
-                    <Streamdown
-                      key={index}
-                      isAnimating={
-                        isStreaming &&
-                        messages[messages.length - 1]?.id === message.id
-                      }
-                      className="font-heading text-sm leading-relaxed text-foreground"
-                    >
-                      {part.text}
-                    </Streamdown>
-                  ) : null
-                )
+                <>
+                  {message.parts.map((part, index) => {
+                    if (part.type === "text") {
+                      return (
+                        <Streamdown
+                          key={index}
+                          isAnimating={
+                            isStreaming &&
+                            messages[messages.length - 1]?.id === message.id
+                          }
+                          className="font-heading text-sm leading-relaxed text-foreground"
+                        >
+                          {part.text}
+                        </Streamdown>
+                      );
+                    }
+
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const anyPart = part as any;
+                    if (
+                      anyPart.state === "approval-requested" &&
+                      anyPart.approval?.id
+                    ) {
+                      return (
+                        <ToolApprovalCard
+                          key={index}
+                          part={anyPart}
+                          onApprove={() =>
+                            addToolApprovalResponse({
+                              id: anyPart.approval.id,
+                              approved: true,
+                            })
+                          }
+                          onReject={() =>
+                            addToolApprovalResponse({
+                              id: anyPart.approval.id,
+                              approved: false,
+                              reason: "Continuar ajustando",
+                            })
+                          }
+                        />
+                      );
+                    }
+
+                    if (
+                      anyPart.state === "approval-responded" &&
+                      anyPart.approval
+                    ) {
+                      return (
+                        <div
+                          key={index}
+                          className="mt-2 rounded-lg border border-border/70 bg-card/60 p-2 text-xs text-muted-foreground"
+                        >
+                          {anyPart.approval.approved ? (
+                            <div className="flex items-center gap-1.5 font-medium text-primary">
+                              <Check className="size-3.5" />
+                              <span>Proposta aprovada — Salva como rascunho</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <X className="size-3.5" />
+                              <span>Ajustes solicitados — Rascunho não persistido</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+
+                    return null;
+                  })}
+                </>
               ) : (
                 <p className="font-heading text-sm leading-relaxed text-primary-foreground">
                   {message.parts
