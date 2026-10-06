@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, lastAssistantMessageIsCompleteWithApprovalResponses } from "ai";
+import {
+  DefaultChatTransport,
+  lastAssistantMessageIsCompleteWithApprovalResponses,
+} from "ai";
 import { useQueryStates, parseAsBoolean, parseAsString } from "nuqs";
 import {
   Sparkles,
@@ -81,6 +84,27 @@ type ChatFormValues = z.infer<typeof chatFormSchema>;
 
 export type AiToolKind = "PROPOSAL" | "READ" | "MUTATION_DRAFT" | "OTHER";
 
+const READ_TOOL_NAMES = new Set([
+  "getPlanningOverview",
+  "getWorkoutPlan",
+  "getPeriodization",
+  "getUserTrainData",
+  "getRecentTrainingHistory",
+  "getWorkoutHistorySession",
+  "searchExercises",
+  "getExerciseEvolution",
+  "getWeeklyTrainingAnalytics",
+  "getMuscleTrainingAnalytics",
+]);
+
+export function getChatRequestBody(conversationId: string | null) {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return {
+    ...(conversationId ? { conversationId } : {}),
+    ...(timezone ? { timezone } : {}),
+  };
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getAiToolName(part: any): string {
   if (!part) return "";
@@ -104,18 +128,45 @@ export function getAiToolKind(part: any): AiToolKind {
   if (name === "proposeWorkoutPlan" || name === "proposePeriodization") {
     return "PROPOSAL";
   }
-  if (
-    name === "getPlanningOverview" ||
-    name === "getWorkoutPlan" ||
-    name === "getPeriodization" ||
-    name === "getUserTrainData"
-  ) {
+  if (READ_TOOL_NAMES.has(name)) {
     return "READ";
   }
-  if (name === "createWorkoutPlanDraft" || name === "createPeriodizationDraft") {
+  if (
+    name === "createWorkoutPlanDraft" ||
+    name === "createPeriodizationDraft"
+  ) {
     return "MUTATION_DRAFT";
   }
   return "OTHER";
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getReadToolStatusLabel(part: any): string | null {
+  if (getAiToolKind(part) !== "READ") return null;
+  if (
+    part.state === "output-available" ||
+    part.state === "output-error" ||
+    part.state === "output-denied"
+  ) {
+    return null;
+  }
+
+  const name = getAiToolName(part);
+  if (
+    name === "getRecentTrainingHistory" ||
+    name === "getWorkoutHistorySession"
+  ) {
+    return "Consultando histórico...";
+  }
+  if (name === "searchExercises") return "Buscando exercício...";
+  if (name === "getExerciseEvolution") return "Analisando evolução...";
+  if (
+    name === "getWeeklyTrainingAnalytics" ||
+    name === "getMuscleTrainingAnalytics"
+  ) {
+    return "Verificando volume...";
+  }
+  return "Consultando seus dados...";
 }
 
 interface ChatProps {
@@ -147,7 +198,9 @@ function ToolApprovalCard({
       <div className="flex items-center justify-between gap-2 border-b border-border/60 pb-2">
         <div className="flex items-center gap-1.5 font-heading text-sm font-semibold text-foreground">
           <Sparkles className="size-4 text-primary" />
-          <span>{isPeriodization ? "Periodização Proposta" : "Plano Proposto"}</span>
+          <span>
+            {isPeriodization ? "Periodização Proposta" : "Plano Proposto"}
+          </span>
         </div>
         <span className="rounded-full bg-primary/10 px-2 py-0.5 font-heading text-[10px] font-medium text-primary">
           Aprovação necessária
@@ -155,7 +208,9 @@ function ToolApprovalCard({
       </div>
 
       <div className="mt-2 space-y-1.5">
-        <p className="font-heading text-sm font-medium text-foreground">{name}</p>
+        <p className="font-heading text-sm font-medium text-foreground">
+          {name}
+        </p>
         {isPeriodization && Array.isArray(blocks) && (
           <div className="space-y-1 text-xs text-muted-foreground">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -178,7 +233,10 @@ function ToolApprovalCard({
           <div className="grid grid-cols-1 gap-1 text-xs text-muted-foreground">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {days.map((d: any) => (
-              <div key={d.weekDay} className="flex items-center justify-between">
+              <div
+                key={d.weekDay}
+                className="flex items-center justify-between"
+              >
                 <span className="font-medium text-foreground/80">
                   {d.name || d.weekDay}:
                 </span>
@@ -231,8 +289,12 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
     chat_initial_message: parseAsString,
   });
 
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
-  const [activeConversationTitle, setActiveConversationTitle] = useState<string | null>(null);
+  const [activeConversationId, setActiveConversationId] = useState<
+    string | null
+  >(null);
+  const [activeConversationTitle, setActiveConversationTitle] = useState<
+    string | null
+  >(null);
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [loadingConversations, setLoadingConversations] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
@@ -245,9 +307,12 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
   const fetchConversations = useCallback(async () => {
     try {
       setLoadingConversations(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ai/conversations`, {
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/conversations`,
+        {
+          credentials: "include",
+        },
+      );
       if (res.ok) {
         const data = await res.json();
         const convList: ConversationItem[] = data.conversations || [];
@@ -267,12 +332,18 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
     }
   }, []);
 
-  const { messages, sendMessage, status, addToolApprovalResponse, setMessages } = useChat({
+  const {
+    messages,
+    sendMessage,
+    status,
+    addToolApprovalResponse,
+    setMessages,
+  } = useChat({
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithApprovalResponses,
     transport: new DefaultChatTransport({
       api: `${process.env.NEXT_PUBLIC_API_URL}/ai`,
       credentials: "include",
-      body: () => (activeConversationIdRef.current ? { conversationId: activeConversationIdRef.current } : {}),
+      body: () => getChatRequestBody(activeConversationIdRef.current),
     }),
     onFinish: () => {
       fetchConversations();
@@ -289,6 +360,11 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
 
   const isStreaming = status === "streaming";
   const isLoading = status === "submitted" || isStreaming;
+  const activeReadToolLabel = messages
+    .flatMap((message) => message.parts)
+    .map((part) => getReadToolStatusLabel(part))
+    .filter((label): label is string => label !== null)
+    .pop();
 
   // Ciclo dinâmico das frases de Thinking
   useEffect(() => {
@@ -370,9 +446,12 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
 
   const handleSelectConversation = async (id: string, title: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ai/conversations/${id}`, {
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/conversations/${id}`,
+        {
+          credentials: "include",
+        },
+      );
       if (res.ok) {
         const data = await res.json();
         setActiveConversationId(id);
@@ -390,10 +469,13 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
 
   const handleDeleteConversation = async (id: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ai/conversations/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/conversations/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
       if (res.ok) {
         if (activeConversationId === id) {
           handleNewConversation();
@@ -468,7 +550,12 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
               <Link href="/">Acessar Trainvy</Link>
             </Button>
           ) : (
-            <Button variant="ghost" size="icon" onClick={handleClose} className="size-8">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleClose}
+              className="size-8"
+            >
               <X className="size-5 text-foreground" />
             </Button>
           )}
@@ -570,7 +657,9 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
               Excluir conversa?
             </h4>
             <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">
-              Esta conversa e mensagens serão removidas. Planos e periodizações criados pelo Coach <strong className="text-foreground">não</strong> serão apagados.
+              Esta conversa e mensagens serão removidas. Planos e periodizações
+              criados pelo Coach{" "}
+              <strong className="text-foreground">não</strong> serão apagados.
             </p>
             <div className="mt-4 flex justify-end gap-2">
               <Button
@@ -687,7 +776,9 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
                               className="mt-2 flex items-center gap-1.5 rounded-lg border border-border/70 bg-card/60 p-2 text-xs text-muted-foreground"
                             >
                               <X className="size-3.5" />
-                              <span>Ajustes solicitados — Rascunho não persistido</span>
+                              <span>
+                                Ajustes solicitados — Rascunho não persistido
+                              </span>
                             </div>
                           );
                         }
@@ -715,7 +806,9 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
                                   className="h-7 border-emerald-500/40 text-xs hover:bg-emerald-500/20"
                                   onClick={() => router.refresh()}
                                 >
-                                  <Link href="/planning">Ver em Planejamento</Link>
+                                  <Link href="/planning">
+                                    Ver em Planejamento
+                                  </Link>
                                 </Button>
                               </div>
                             )}
@@ -789,8 +882,7 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
                   {message.parts
                     .filter((part) => part.type === "text")
                     .map(
-                      (part) =>
-                        (part as { type: "text"; text: string }).text,
+                      (part) => (part as { type: "text"; text: string }).text,
                     )
                     .join("")}
                 </p>
@@ -809,7 +901,7 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
               </span>
               <Dumbbell className="size-3.5 animate-bounce text-primary" />
               <span className="font-heading text-xs font-medium text-primary">
-                {THINKING_PHRASES[thinkingPhraseIndex]}
+                {activeReadToolLabel ?? THINKING_PHRASES[thinkingPhraseIndex]}
               </span>
             </div>
           </div>

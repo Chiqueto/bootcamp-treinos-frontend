@@ -1,8 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { render, screen, cleanup, fireEvent, act } from "@testing-library/react";
+import {
+  render,
+  screen,
+  cleanup,
+  fireEvent,
+  act,
+} from "@testing-library/react";
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import React from "react";
-import { Chat, formatRelativeDate } from "@/app/_components/chat";
+import {
+  Chat,
+  formatRelativeDate,
+  getAiToolKind,
+  getChatRequestBody,
+} from "@/app/_components/chat";
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
@@ -14,7 +25,10 @@ vi.mock("next/navigation", () => ({
 
 // Mock nuqs
 const mockSetChatParams = vi.fn();
-let mockChatParams = { chat_open: true, chat_initial_message: null as string | null };
+let mockChatParams = {
+  chat_open: true,
+  chat_initial_message: null as string | null,
+};
 
 vi.mock("nuqs", () => ({
   useQueryStates: () => [mockChatParams, mockSetChatParams],
@@ -41,7 +55,13 @@ vi.mock("@ai-sdk/react", () => ({
 
 // Mock streamdown
 vi.mock("streamdown", () => ({
-  Streamdown: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  Streamdown: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <div data-testid="streamdown" className={className}>
       {children}
     </div>
@@ -101,16 +121,34 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
   it("renderiza as sugestões iniciais atualizadas quando não há mensagens", () => {
     render(<Chat embedded={false} />);
 
-    const suggestion1 = screen.getByRole("button", { name: "Monte um plano de treino para mim" });
-    const suggestion2 = screen.getByRole("button", { name: "Monte uma periodização para mim" });
-    const suggestion3 = screen.getByRole("button", { name: "Explique meu planejamento atual" });
+    const suggestion1 = screen.getByRole("button", {
+      name: "Monte um plano de treino para mim",
+    });
+    const suggestion2 = screen.getByRole("button", {
+      name: "Monte uma periodização para mim",
+    });
+    const suggestion3 = screen.getByRole("button", {
+      name: "Explique meu planejamento atual",
+    });
 
     expect(suggestion1).toBeDefined();
     expect(suggestion2).toBeDefined();
     expect(suggestion3).toBeDefined();
 
     fireEvent.click(suggestion1);
-    expect(mockSendMessage).toHaveBeenCalledWith({ text: "Monte um plano de treino para mim" });
+    expect(mockSendMessage).toHaveBeenCalledWith({
+      text: "Monte um plano de treino para mim",
+    });
+  });
+
+  it("envia timezone em nova conversa e preserva conversationId em conversa existente", () => {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    expect(getChatRequestBody(null)).toEqual({ timezone });
+    expect(getChatRequestBody("conversation-123")).toEqual({
+      conversationId: "conversation-123",
+      timezone,
+    });
   });
 
   it("renderiza a resposta textual do assistente após uso de tool e criação de rascunho", () => {
@@ -136,7 +174,9 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
 
     expect(screen.getByText("Salva esse plano")).toBeDefined();
     const assistantText = screen.getByTestId("streamdown");
-    expect(assistantText.textContent).toContain("Salvei seu plano de treino 'Hipertrofia 4 Dias' como rascunho");
+    expect(assistantText.textContent).toContain(
+      "Salvei seu plano de treino 'Hipertrofia 4 Dias' como rascunho",
+    );
     expect(assistantText.textContent).toContain("[Planejamento](/planning)");
   });
 
@@ -156,9 +196,24 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
             input: {
               name: "Upper / Lower 4 Dias",
               workoutDays: [
-                { weekDay: "MONDAY", name: "Upper A", isRest: false, exercises: [{ name: "Supino" }] },
-                { weekDay: "TUESDAY", name: "Lower A", isRest: false, exercises: [{ name: "Agachamento" }] },
-                { weekDay: "WEDNESDAY", name: "Descanso", isRest: true, exercises: [] },
+                {
+                  weekDay: "MONDAY",
+                  name: "Upper A",
+                  isRest: false,
+                  exercises: [{ name: "Supino" }],
+                },
+                {
+                  weekDay: "TUESDAY",
+                  name: "Lower A",
+                  isRest: false,
+                  exercises: [{ name: "Agachamento" }],
+                },
+                {
+                  weekDay: "WEDNESDAY",
+                  name: "Descanso",
+                  isRest: true,
+                  exercises: [],
+                },
               ],
             },
             approval: {
@@ -175,8 +230,12 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
     expect(screen.getByText("Upper / Lower 4 Dias")).toBeDefined();
     expect(screen.getByText("Aprovação necessária")).toBeDefined();
 
-    const approveButton = screen.getByRole("button", { name: "Salvar como rascunho" });
-    const rejectButton = screen.getByRole("button", { name: "Continuar ajustando" });
+    const approveButton = screen.getByRole("button", {
+      name: "Salvar como rascunho",
+    });
+    const rejectButton = screen.getByRole("button", {
+      name: "Continuar ajustando",
+    });
     expect(approveButton).toBeDefined();
     expect(rejectButton).toBeDefined();
 
@@ -210,7 +269,9 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
 
     render(<Chat embedded={false} />);
 
-    const rejectButton = screen.getByRole("button", { name: "Continuar ajustando" });
+    const rejectButton = screen.getByRole("button", {
+      name: "Continuar ajustando",
+    });
     fireEvent.click(rejectButton);
 
     expect(mockAddToolApprovalResponse).toHaveBeenCalledWith({
@@ -246,7 +307,9 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
     expect(screen.queryByText(/Salva como rascunho/i)).toBeNull();
     // Deve dizer "Proposta aprovada — salvando..."
     expect(screen.getByText(/Proposta aprovada — salvando.../i)).toBeDefined();
-    expect(screen.getByText(/Ajustes solicitados — Rascunho não persistido/i)).toBeDefined();
+    expect(
+      screen.getByText(/Ajustes solicitados — Rascunho não persistido/i),
+    ).toBeDefined();
   });
 
   it("Task 2.8: output-available exibe 'Rascunho salvo' e link para [Ver em Planejamento] quando tem planId", () => {
@@ -271,7 +334,9 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
     render(<Chat embedded={false} />);
 
     expect(screen.getByText(/Rascunho salvo/i)).toBeDefined();
-    const planningLink = screen.getByRole("link", { name: /Ver em Planejamento/i });
+    const planningLink = screen.getByRole("link", {
+      name: /Ver em Planejamento/i,
+    });
     expect(planningLink).toBeDefined();
     expect(planningLink.getAttribute("href")).toBe("/planning");
   });
@@ -298,9 +363,13 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
     render(<Chat embedded={false} />);
 
     expect(screen.getByText(/Rascunho salvo/i)).toBeDefined();
-    const periodizationLink = screen.getByRole("link", { name: /Ver periodização/i });
+    const periodizationLink = screen.getByRole("link", {
+      name: /Ver periodização/i,
+    });
     expect(periodizationLink).toBeDefined();
-    expect(periodizationLink.getAttribute("href")).toBe("/planning/periodizations/per-999");
+    expect(periodizationLink.getAttribute("href")).toBe(
+      "/planning/periodizations/per-999",
+    );
   });
 
   it("Task 2.8: trata estados de erro (output-error) e negação (output-denied)", () => {
@@ -367,10 +436,14 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
     });
 
     expect(screen.getByText("Suas conversas")).toBeDefined();
-    expect(screen.getAllByText("Periodização para vôlei").length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText("Periodização para vôlei").length,
+    ).toBeGreaterThanOrEqual(1);
 
     // Botão Nova conversa limpa mensagens
-    const newConvBtn = screen.getAllByRole("button", { name: /\+ Nova conversa/i })[0];
+    const newConvBtn = screen.getAllByRole("button", {
+      name: /\+ Nova conversa/i,
+    })[0];
     fireEvent.click(newConvBtn);
 
     expect(mockSetMessages).toHaveBeenCalledWith([]);
@@ -386,7 +459,10 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
             {
               type: "tool-proposePeriodization",
               state: "output-available",
-              output: { status: "PROPOSED", periodization: { name: "Ciclo Hipertrofia" } },
+              output: {
+                status: "PROPOSED",
+                periodization: { name: "Ciclo Hipertrofia" },
+              },
             },
             {
               type: "tool-proposeWorkoutPlan",
@@ -428,6 +504,45 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
       expect(screen.queryByText(/Não foi possível salvar/i)).toBeNull();
     });
 
+    it("classifica todas as training context tools como READ", () => {
+      const toolNames = [
+        "getRecentTrainingHistory",
+        "getWorkoutHistorySession",
+        "searchExercises",
+        "getExerciseEvolution",
+        "getWeeklyTrainingAnalytics",
+        "getMuscleTrainingAnalytics",
+      ];
+
+      for (const toolName of toolNames) {
+        expect(getAiToolKind({ type: `tool-${toolName}` })).toBe("READ");
+      }
+    });
+
+    it("mostra feedback discreto durante consulta de evolução sem card de aprovação", () => {
+      mockStatus = "streaming";
+      mockMessages = [
+        {
+          id: "msg-read-progress",
+          role: "assistant",
+          parts: [
+            {
+              type: "tool-getExerciseEvolution",
+              state: "input-available",
+              input: { exerciseId: "exercise-1" },
+            },
+          ],
+        },
+      ];
+
+      render(<Chat embedded={false} />);
+
+      expect(screen.getByText("Analisando evolução...")).toBeDefined();
+      expect(
+        screen.queryByRole("button", { name: "Salvar como rascunho" }),
+      ).toBeNull();
+    });
+
     it("createPeriodizationDraft output-available mostra exatamente 1 'Rascunho salvo'", () => {
       mockMessages = [
         {
@@ -458,7 +573,9 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
       const savedCards = screen.getAllByText(/Rascunho salvo/i);
       expect(savedCards).toHaveLength(1);
       const link = screen.getByRole("link", { name: /Ver periodização/i });
-      expect(link.getAttribute("href")).toBe("/planning/periodizations/per-real-123");
+      expect(link.getAttribute("href")).toBe(
+        "/planning/periodizations/per-real-123",
+      );
     });
 
     it("createWorkoutPlanDraft output-available mostra exatamente 1 'Rascunho salvo'", () => {
@@ -510,8 +627,12 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
       ];
 
       const { unmount } = render(<Chat embedded={false} />);
-      expect(screen.getByRole("button", { name: "Salvar como rascunho" })).toBeDefined();
-      expect(screen.getByRole("button", { name: "Continuar ajustando" })).toBeDefined();
+      expect(
+        screen.getByRole("button", { name: "Salvar como rascunho" }),
+      ).toBeDefined();
+      expect(
+        screen.getByRole("button", { name: "Continuar ajustando" }),
+      ).toBeDefined();
       unmount();
 
       // 2. approval responded: botões somem
@@ -531,9 +652,15 @@ describe("Chat — Trainvy Planning Coach V1 & Task 2.8 Persistent Chat", () => 
       ];
 
       render(<Chat embedded={false} />);
-      expect(screen.queryByRole("button", { name: "Salvar como rascunho" })).toBeNull();
-      expect(screen.queryByRole("button", { name: "Continuar ajustando" })).toBeNull();
-      expect(screen.getByText(/Proposta aprovada — salvando.../i)).toBeDefined();
+      expect(
+        screen.queryByRole("button", { name: "Salvar como rascunho" }),
+      ).toBeNull();
+      expect(
+        screen.queryByRole("button", { name: "Continuar ajustando" }),
+      ).toBeNull();
+      expect(
+        screen.getByText(/Proposta aprovada — salvando.../i),
+      ).toBeDefined();
     });
   });
 });
