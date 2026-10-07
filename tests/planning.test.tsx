@@ -655,6 +655,9 @@ describe("Trainvy — Fase 2 / Task 2.5A: Hub de Planejamento, Navegação e Est
 
       // Branding Trainvy na Home
       expect(screen.getByText("Trainvy")).toBeDefined();
+
+      const historyLink = screen.getByRole("link", { name: /ver histórico/i });
+      expect(historyLink.getAttribute("href")).toBe("/history");
     });
 
     it("redireciona para /onboarding SOMENTE quando faltam dados de treino iniciais (trainData vazio)", async () => {

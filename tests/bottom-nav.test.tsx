@@ -89,16 +89,19 @@ describe("BottomNav — Task 2.8.2 Mobile Polish & Route-derived State", () => {
     expect(planejarLink.className).toContain("bg-primary/10");
   });
 
-  it("marca 'Evolução' como ativo em /stats/**", () => {
-    mockPathname = "/stats";
-    render(<BottomNav />);
+  it("marca 'Evolução' como ativo em /stats, /history e /history/**", () => {
+    for (const pathname of ["/stats", "/history", "/history/session-123"]) {
+      mockPathname = pathname;
+      const { unmount } = render(<BottomNav />);
 
-    const evolucaoLink = screen.getByRole("link", { name: /Evolução/i });
-    expect(evolucaoLink.className).toContain("text-primary");
-    expect(evolucaoLink.className).toContain("bg-primary/10");
+      const evolucaoLink = screen.getByRole("link", { name: /Evolução/i });
+      expect(evolucaoLink.className).toContain("text-primary");
+      expect(evolucaoLink.className).toContain("bg-primary/10");
 
-    const inicioLink = screen.getByRole("link", { name: /Início/i });
-    expect(inicioLink.className).toContain("text-muted-foreground");
+      const inicioLink = screen.getByRole("link", { name: /Início/i });
+      expect(inicioLink.className).toContain("text-muted-foreground");
+      unmount();
+    }
   });
 
   it("preserva o prop activePage manual se fornecido explicitamente", () => {

@@ -157,9 +157,12 @@ export default async function Home() {
           <h2 className="font-heading text-lg font-semibold text-foreground">
             Consistência
           </h2>
-          <button className="font-heading text-xs text-primary">
+          <Link
+            href="/history"
+            className="rounded-sm font-heading text-xs text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
             Ver histórico
-          </button>
+          </Link>
         </div>
 
         <div className="flex items-center gap-3">

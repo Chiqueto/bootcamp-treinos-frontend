@@ -34,7 +34,10 @@ export function BottomNav({ activePage }: BottomNavProps) {
     ? activePage === "stats" || activePage === "evolution"
     : Boolean(
         pathname &&
-          (pathname === "/stats" || pathname.startsWith("/stats/"))
+          (pathname === "/stats" ||
+            pathname.startsWith("/stats/") ||
+            pathname === "/history" ||
+            pathname.startsWith("/history/"))
       );
 
   const isProfileActive = activePage
@@ -183,4 +186,3 @@ export function BottomNav({ activePage }: BottomNavProps) {
     </nav>
   );
 }
-
