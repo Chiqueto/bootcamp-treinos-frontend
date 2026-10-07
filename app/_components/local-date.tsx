@@ -2,9 +2,9 @@
 
 import { useSyncExternalStore } from "react";
 
-import { formatHistoryDate } from "../_lib/history-formatters";
+import { formatHistoryDate } from "@/app/_lib/training-formatters";
 
-export function HistoryLocalDate({
+export function LocalDate({
   isoDate,
   long = false,
   className,

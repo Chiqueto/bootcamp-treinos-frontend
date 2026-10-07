@@ -8,6 +8,7 @@ import { BottomNav } from "@/app/_components/bottom-nav";
 import { StreakBanner } from "./_components/streak-banner";
 import { StatsHeatmap } from "./_components/stats-heatmap";
 import { StatCard } from "./_components/stat-card";
+import { EvolutionDashboard } from "./_components/evolution-dashboard";
 
 function formatTotalTime(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600);
@@ -51,7 +52,7 @@ export default async function StatsPage() {
 
   return (
     <div className="flex min-h-svh flex-col bg-background pb-24">
-      <div className="flex h-14 items-center px-5">
+      <div className="mx-auto flex h-14 w-full max-w-3xl items-center px-5">
         <p
           className="text-[22px] uppercase leading-[1.15] text-foreground"
           style={{ fontFamily: "var(--font-anton)" }}
@@ -60,36 +61,55 @@ export default async function StatsPage() {
         </p>
       </div>
 
-      <div className="px-5">
-        <StreakBanner workoutStreak={workoutStreak} />
-      </div>
+      <main className="mx-auto w-full max-w-3xl px-4 pb-6 sm:px-6">
+        <header className="pb-5 pt-1">
+          <h1 className="font-heading text-2xl font-semibold text-foreground">
+            Evolução
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Acompanhe seu treino ao longo do tempo
+          </p>
+        </header>
 
-      <div className="flex flex-col gap-3 p-5">
-        <h2 className="font-heading text-lg font-semibold text-foreground">
-          Consistência
-        </h2>
+        <EvolutionDashboard />
 
-        <StatsHeatmap consistencyByDay={consistencyByDay} today={today} />
+        <section aria-labelledby="consistency-title" className="mt-8">
+          <div className="mb-3">
+            <p className="text-xs text-muted-foreground">Visão complementar</p>
+            <h2
+              id="consistency-title"
+              className="font-heading text-lg font-semibold text-foreground"
+            >
+              Consistência
+            </h2>
+          </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <StatCard
-            icon={CircleCheck}
-            value={String(completedWorkoutsCount)}
-            label="Treinos Feitos"
-          />
-          <StatCard
-            icon={CirclePercent}
-            value={`${Math.round(conclusionRate * 100)}%`}
-            label="Taxa de conclusão"
-          />
-        </div>
+          <StreakBanner workoutStreak={workoutStreak} />
 
-        <StatCard
-          icon={Hourglass}
-          value={formatTotalTime(totalTimeInSeconds)}
-          label="Tempo Total"
-        />
-      </div>
+          <div className="mt-3 flex flex-col gap-3">
+            <StatsHeatmap consistencyByDay={consistencyByDay} today={today} />
+
+            <div className="grid grid-cols-2 gap-3">
+              <StatCard
+                icon={CircleCheck}
+                value={String(completedWorkoutsCount)}
+                label="Treinos Feitos"
+              />
+              <StatCard
+                icon={CirclePercent}
+                value={`${Math.round(conclusionRate * 100)}%`}
+                label="Taxa de conclusão"
+              />
+            </div>
+
+            <StatCard
+              icon={Hourglass}
+              value={formatTotalTime(totalTimeInSeconds)}
+              label="Tempo Total"
+            />
+          </div>
+        </section>
+      </main>
 
       <BottomNav activePage="stats" />
     </div>

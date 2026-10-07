@@ -41,7 +41,7 @@ describe("Task 3.1C - Grupos Musculares no Frontend", () => {
       expect(getMuscleGroupLabel("HAMSTRINGS")).toBe("Posteriores");
       expect(getMuscleGroupLabel("GLUTES")).toBe("Glúteos");
       expect(getMuscleGroupLabel("ADDUCTORS")).toBe("Adutores");
-      expect(getMuscleGroupLabel("HIP_ABDUCTORS")).toBe("Abdutores do quadril");
+      expect(getMuscleGroupLabel("HIP_ABDUCTORS")).toBe("Abdutores");
       expect(getMuscleGroupLabel("CALVES")).toBe("Panturrilhas");
       expect(getMuscleGroupLabel("CORE")).toBe("Core");
     });

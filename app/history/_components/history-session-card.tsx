@@ -2,14 +2,13 @@ import Link from "next/link";
 import { Clock3, Dumbbell, Layers3, Scale } from "lucide-react";
 
 import type { ListWorkoutHistory200ItemsItem } from "@/app/_lib/api/fetch-generated";
-import { Badge } from "@/components/ui/badge";
-
+import { LocalDate } from "@/app/_components/local-date";
 import {
   formatDuration,
   formatWeightKg,
   getHistorySessionTitle,
-} from "../_lib/history-formatters";
-import { HistoryLocalDate } from "./history-local-date";
+} from "@/app/_lib/training-formatters";
+import { Badge } from "@/components/ui/badge";
 
 export function HistorySessionCard({
   session,
@@ -45,7 +44,7 @@ export function HistorySessionCard({
         </Badge>
       </div>
 
-      <HistoryLocalDate
+      <LocalDate
         isoDate={session.completedAt}
         className="mt-2 block text-xs text-muted-foreground"
       />

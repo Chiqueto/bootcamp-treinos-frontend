@@ -7,7 +7,7 @@ import {
   formatWeightInGrams,
   formatWeightKg,
   getSetTypeLabel,
-} from "@/app/history/_lib/history-formatters";
+} from "@/app/_lib/training-formatters";
 
 describe("History formatters", () => {
   it("preserva decimais e usa formatação pt-BR para pesos", () => {

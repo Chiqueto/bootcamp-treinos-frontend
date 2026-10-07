@@ -26,7 +26,7 @@ export const MUSCLE_GROUP_LABELS: Record<MuscleGroup, string> = {
   HAMSTRINGS: "Posteriores",
   GLUTES: "Glúteos",
   ADDUCTORS: "Adutores",
-  HIP_ABDUCTORS: "Abdutores do quadril",
+  HIP_ABDUCTORS: "Abdutores",
   CALVES: "Panturrilhas",
   CORE: "Core",
 };
@@ -42,7 +42,7 @@ export const ALL_MUSCLE_GROUPS: Array<{ value: MuscleGroup; label: string }> = [
   { value: "HAMSTRINGS", label: "Posteriores" },
   { value: "GLUTES", label: "Glúteos" },
   { value: "ADDUCTORS", label: "Adutores" },
-  { value: "HIP_ABDUCTORS", label: "Abdutores do quadril" },
+  { value: "HIP_ABDUCTORS", label: "Abdutores" },
   { value: "CALVES", label: "Panturrilhas" },
   { value: "CORE", label: "Core" },
 ];

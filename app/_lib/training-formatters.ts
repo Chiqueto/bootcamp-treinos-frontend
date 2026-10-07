@@ -61,6 +61,20 @@ export function formatHistoryDate(
   return `${dateLabel} • ${value("hour")}:${value("minute")}`;
 }
 
+export function formatDateOnly(
+  dateValue: string,
+  options: { long?: boolean } = {},
+): string {
+  const date = new Date(`${dateValue.slice(0, 10)}T00:00:00.000Z`);
+  if (Number.isNaN(date.getTime())) return "Data inválida";
+
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: options.long ? "long" : "2-digit",
+    timeZone: "UTC",
+  }).format(date);
+}
+
 export function getHistorySessionTitle(session: {
   origin: "PLANNED" | "FREE";
   workoutDayNameSnapshot: string | null;

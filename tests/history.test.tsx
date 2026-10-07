@@ -411,6 +411,9 @@ describe("Workout history UI — Task 3.5", () => {
     expect(screen.getByText("82,5 kg")).toBeDefined();
     expect(screen.getByText("1min 15s")).toBeDefined();
     expect(screen.getByText("Manter escápulas estáveis.")).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Ver evolução" }).getAttribute("href"),
+    ).toBe("/stats/exercises/00000000-0000-4000-8000-000000000012");
     expect(screen.getByText("Aquecimento controlado.")).toBeDefined();
     expect(screen.getByText("Respiração contínua.")).toBeDefined();
     expect(screen.getByText("Aquec.")).toBeDefined();
@@ -440,6 +443,19 @@ describe("Workout history UI — Task 3.5", () => {
     expect(screen.getByText("Avulso")).toBeDefined();
     expect(screen.queryByText("Planejado")).toBeNull();
     expect(screen.getByText("Realizado")).toBeDefined();
+  });
+
+  it("não mostra link de evolução para exercício histórico sem exerciseId", () => {
+    render(
+      <HistorySessionDetail
+        session={{
+          ...plannedDetail,
+          exercises: [plannedDetail.exercises[1]],
+        }}
+      />,
+    );
+
+    expect(screen.queryByRole("link", { name: "Ver evolução" })).toBeNull();
   });
 
   it("mostra erro inicial e permite retry sem depender do observer", async () => {

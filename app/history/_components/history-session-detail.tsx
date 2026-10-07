@@ -1,13 +1,19 @@
 import Link from "next/link";
-import { ArrowLeft, Clock3, Dumbbell, Layers3, Scale } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Clock3,
+  Dumbbell,
+  Layers3,
+  Scale,
+} from "lucide-react";
 
 import type {
   GetWorkoutHistorySession200,
   GetWorkoutHistorySession200ExercisesItem,
   GetWorkoutHistorySession200ExercisesItemSetsItem,
 } from "@/app/_lib/api/fetch-generated";
-import { Badge } from "@/components/ui/badge";
-
+import { LocalDate } from "@/app/_components/local-date";
 import {
   formatDuration,
   formatSetDuration,
@@ -15,8 +21,8 @@ import {
   formatWeightKg,
   getHistorySessionTitle,
   getSetTypeLabel,
-} from "../_lib/history-formatters";
-import { HistoryLocalDate } from "./history-local-date";
+} from "@/app/_lib/training-formatters";
+import { Badge } from "@/components/ui/badge";
 
 export function HistorySessionDetail({
   session,
@@ -41,7 +47,7 @@ export function HistorySessionDetail({
             <h1 className="font-heading text-2xl font-semibold text-foreground">
               {title}
             </h1>
-            <HistoryLocalDate
+            <LocalDate
               isoDate={session.completedAt}
               long
               className="mt-1 block text-sm text-muted-foreground"
@@ -174,6 +180,15 @@ function ExerciseSection({
       <h2 className="font-heading text-base font-semibold text-foreground">
         {exercise.exerciseNameSnapshot}
       </h2>
+      {exercise.exerciseId && (
+        <Link
+          href={`/stats/exercises/${exercise.exerciseId}`}
+          className="mt-1 inline-flex min-h-9 items-center gap-1 rounded-md pr-2 font-heading text-xs font-medium text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Ver evolução
+          <ArrowRight className="size-3.5" aria-hidden="true" />
+        </Link>
+      )}
       {exercise.notes && (
         <p className="mt-2 rounded-lg bg-secondary/70 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
           {exercise.notes}

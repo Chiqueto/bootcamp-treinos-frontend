@@ -89,8 +89,13 @@ describe("BottomNav — Task 2.8.2 Mobile Polish & Route-derived State", () => {
     expect(planejarLink.className).toContain("bg-primary/10");
   });
 
-  it("marca 'Evolução' como ativo em /stats, /history e /history/**", () => {
-    for (const pathname of ["/stats", "/history", "/history/session-123"]) {
+  it("marca 'Evolução' como ativo em /stats/** e /history/**", () => {
+    for (const pathname of [
+      "/stats",
+      "/stats/exercises/exercise-123",
+      "/history",
+      "/history/session-123",
+    ]) {
       mockPathname = pathname;
       const { unmount } = render(<BottomNav />);
 
