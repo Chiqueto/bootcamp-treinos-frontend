@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useState, useTransition } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   Calendar,
@@ -8,6 +10,7 @@ import {
   Dumbbell,
   Loader2,
   Plus,
+  Sparkles,
   X,
 } from "lucide-react";
 import dayjs from "dayjs";
@@ -31,6 +34,7 @@ interface WorkoutSessionTrackerProps {
 }
 
 export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
+  const router = useRouter();
   const [sessionData, setSessionData] = useState(() => session);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -142,6 +146,7 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
           completedAt: res.data.completedAt,
         }));
         setShowConfirmModal(false);
+        router.push(`/workout-sessions/${sessionData.id}/summary`);
       }
     });
   };
@@ -169,6 +174,27 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
         </div>
       )}
 
+      {/* Banner de Conclusão / Acesso à Tela Bonitinha */}
+      {isReadOnly && (
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-card p-4 shadow-sm">
+          <div className="flex flex-col gap-0.5">
+            <span className="font-heading text-sm font-semibold text-foreground">
+              Treino concluído! 🎉
+            </span>
+            <span className="text-xs text-muted-foreground">
+              Veja suas estatísticas e o próximo treino na tela de conclusão.
+            </span>
+          </div>
+          <Link
+            href={`/workout-sessions/${sessionData.id}/summary`}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3.5 py-2 font-heading text-xs font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90"
+          >
+            <span>Ver Resumo</span>
+            <Sparkles className="size-3.5" />
+          </Link>
+        </div>
+      )}
+
       {/* Card de Informações e Status da Sessão */}
       <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm">
         <div className="flex items-center justify-between">
@@ -185,10 +211,13 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
           </div>
 
           {isReadOnly ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 font-heading text-xs font-semibold text-primary">
+            <Link
+              href={`/workout-sessions/${sessionData.id}/summary`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 font-heading text-xs font-semibold text-primary transition hover:bg-primary/25"
+            >
               <CheckCircle2 className="size-3.5" />
-              Treino Concluído
-            </span>
+              <span>Concluído • Ver Resumo</span>
+            </Link>
           ) : (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 font-heading text-xs font-semibold text-primary">
               <span className="relative flex size-2">

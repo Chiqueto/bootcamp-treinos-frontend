@@ -31,4 +31,6 @@ export async function completeWorkoutAction(
     completedAt: new Date().toISOString(),
   });
   revalidatePath(`/workout-plans/${workoutPlanId}/days/${workoutDayId}`);
+  redirect(`/workout-sessions/${sessionId}/summary`);
 }
+

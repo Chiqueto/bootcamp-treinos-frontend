@@ -19,8 +19,8 @@ export type WorkoutPlanDraftExercise = {
 };
 
 export type WorkoutPlanDraftDay = {
-  weekDay: (typeof WEEK_DAYS)[number]["value"];
-  label: string;
+  weekDay?: (typeof WEEK_DAYS)[number]["value"];
+  label?: string;
   isRest: boolean;
   name: string;
   estimatedDurationInMinutes: number;
@@ -31,15 +31,36 @@ export function createDraftExercise(): WorkoutPlanDraftExercise {
   return { name: "", warmupSets: 0, sets: 3, reps: 10, restTimeInSeconds: 60 };
 }
 
+export function createDraftWorkoutDay(letter: string): WorkoutPlanDraftDay {
+  return {
+    name: `Treino ${letter}`,
+    isRest: false,
+    estimatedDurationInMinutes: 60,
+    exercises: [createDraftExercise()],
+  };
+}
+
 export function createInitialWorkoutDays(): WorkoutPlanDraftDay[] {
-  return WEEK_DAYS.map(({ value, label }) => ({
-    weekDay: value,
-    label,
-    isRest: true,
-    name: label,
-    estimatedDurationInMinutes: 0,
-    exercises: [],
-  }));
+  return [
+    {
+      name: "Treino A - Peito e Tríceps",
+      isRest: false,
+      estimatedDurationInMinutes: 60,
+      exercises: [createDraftExercise()],
+    },
+    {
+      name: "Treino B - Costas e Bíceps",
+      isRest: false,
+      estimatedDurationInMinutes: 60,
+      exercises: [createDraftExercise()],
+    },
+    {
+      name: "Treino C - Pernas e Ombros",
+      isRest: false,
+      estimatedDurationInMinutes: 60,
+      exercises: [createDraftExercise()],
+    },
+  ];
 }
 
 export function validateWorkoutPlanDraft(
@@ -49,22 +70,25 @@ export function validateWorkoutPlanDraft(
   plannedEndDate?: string,
 ): string | null {
   if (!name.trim()) return "Informe o nome do plano.";
+  if (days.length === 0) return "Adicione pelo menos um treino à sua rotina.";
   if (plannedStartDate && plannedEndDate && plannedEndDate < plannedStartDate) {
     return "A data final não pode ser anterior à data inicial.";
   }
 
-  for (const day of days) {
+  for (let i = 0; i < days.length; i++) {
+    const day = days[i];
     if (day.isRest) continue;
-    if (!day.name.trim()) return `Informe o nome do treino de ${day.label}.`;
+    const dayLabel = day.name.trim() || `Treino ${i + 1}`;
+    if (!day.name.trim()) return `Informe o nome do treino ${i + 1}.`;
     if (day.estimatedDurationInMinutes < 1) {
-      return `Informe uma duração válida para ${day.label}.`;
+      return `Informe uma duração válida para ${dayLabel}.`;
     }
     if (day.exercises.length === 0) {
-      return `Adicione ao menos um exercício em ${day.label}.`;
+      return `Adicione ao menos um exercício em ${dayLabel}.`;
     }
     for (const exercise of day.exercises) {
       if (!exercise.name.trim()) {
-        return `Informe o nome de todos os exercícios de ${day.label}.`;
+        return `Informe o nome de todos os exercícios de ${dayLabel}.`;
       }
       if (
         (exercise.warmupSets !== undefined &&
@@ -73,7 +97,7 @@ export function validateWorkoutPlanDraft(
         exercise.reps < 1 ||
         exercise.restTimeInSeconds < 1
       ) {
-        return `Revise aquecimento, séries, repetições e descanso em ${day.label}.`;
+        return `Revise aquecimento, séries, repetições e descanso em ${dayLabel}.`;
       }
     }
   }
@@ -84,10 +108,11 @@ export function validateWorkoutPlanDraft(
 export function serializeWorkoutDays(
   days: WorkoutPlanDraftDay[],
 ): CreateWorkoutPlanBody["workoutDays"] {
-  return days.map((day) => ({
-    name: day.isRest ? day.label : day.name.trim(),
-    weekDay: day.weekDay,
-    isRest: day.isRest,
+  return days.map((day, index) => ({
+    order: index,
+    name: day.name.trim(),
+    weekDay: day.weekDay ?? WEEK_DAYS[index % 7].value,
+    isRest: day.isRest ?? false,
     estimatedDurationInSeconds: day.isRest
       ? 0
       : Math.round(day.estimatedDurationInMinutes * 60),

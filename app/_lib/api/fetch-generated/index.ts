@@ -47,6 +47,7 @@ export type ListWorkoutPlans200WorkoutPlansItemWorkoutDaysItemExercisesItem = {
 export type ListWorkoutPlans200WorkoutPlansItemWorkoutDaysItem = {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   id: string;
+  order: number;
   name: string;
   weekDay: ListWorkoutPlans200WorkoutPlansItemWorkoutDaysItemWeekDay;
   isRest: boolean;
@@ -112,7 +113,12 @@ export type CreateWorkoutPlanBodyWorkoutDaysItemExercisesItem = {
 export type CreateWorkoutPlanBodyWorkoutDaysItem = {
   /** @minLength 1 */
   name: string;
-  weekDay: CreateWorkoutPlanBodyWorkoutDaysItemWeekDay;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  order?: number;
+  weekDay?: CreateWorkoutPlanBodyWorkoutDaysItemWeekDay;
   isRest?: boolean;
   /** @minimum 0 */
   estimatedDurationInSeconds: number;
@@ -163,6 +169,11 @@ export type CreateWorkoutPlan201WorkoutDaysItemExercisesItem = {
 export type CreateWorkoutPlan201WorkoutDaysItem = {
   /** @minLength 1 */
   name: string;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  order: number;
   weekDay: CreateWorkoutPlan201WorkoutDaysItemWeekDay;
   isRest: boolean;
   /** @minimum 0 */
@@ -222,6 +233,7 @@ export const GetWorkoutPlan200WorkoutDaysItemWeekDay = {
 export type GetWorkoutPlan200WorkoutDaysItem = {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   id: string;
+  order: number;
   weekDay: GetWorkoutPlan200WorkoutDaysItemWeekDay;
   name: string;
   isRest: boolean;
@@ -235,6 +247,16 @@ export type GetWorkoutPlan200 = {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   id: string;
   name: string;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  nextWorkoutDayId?: string | null;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  lastCompletedWorkoutDayId?: string | null;
   workoutDays: GetWorkoutPlan200WorkoutDaysItem[];
 };
 
@@ -303,6 +325,7 @@ export type GetWorkoutDay200 = {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   id: string;
   name: string;
+  order: number;
   isRest: boolean;
   /** @nullable */
   coverImageUrl?: string | null;
@@ -420,6 +443,11 @@ export type DuplicateWorkoutPlan201WorkoutDaysItemExercisesItem = {
 export type DuplicateWorkoutPlan201WorkoutDaysItem = {
   /** @minLength 1 */
   name: string;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  order: number;
   weekDay: DuplicateWorkoutPlan201WorkoutDaysItemWeekDay;
   isRest: boolean;
   /** @minimum 0 */
@@ -937,7 +965,12 @@ export type CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItemExercisesItem = {
 export type CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItem = {
   /** @minLength 1 */
   name: string;
-  weekDay: CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItemWeekDay;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  order?: number;
+  weekDay?: CreateWorkoutPlanInPeriodizationBodyWorkoutDaysItemWeekDay;
   isRest?: boolean;
   /** @minimum 0 */
   estimatedDurationInSeconds: number;
@@ -994,6 +1027,11 @@ export type CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItemExercis
 export type CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItem = {
   /** @minLength 1 */
   name: string;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  order: number;
   weekDay: CreateWorkoutPlanInPeriodization201WorkoutPlanWorkoutDaysItemWeekDay;
   isRest: boolean;
   /** @minimum 0 */
@@ -1662,12 +1700,20 @@ export type GetHomeData200TodayWorkoutDay = {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   id: string;
   name: string;
+  order?: number;
   isRest: boolean;
   weekDay: GetHomeData200TodayWorkoutDayWeekDay;
   estimatedDurationInSeconds: number;
   /** @nullable */
   coverImageUrl?: string | null;
   exercisesCount: number;
+};
+
+export type GetHomeData200LastCompletedWorkoutDay = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  completedAt: string;
 };
 
 export type GetHomeData200ConsistencyByDay = {
@@ -1681,6 +1727,10 @@ export type GetHomeData200 = {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   activeWorkoutPlanId: string;
   todayWorkoutDay?: GetHomeData200TodayWorkoutDay;
+  lastCompletedWorkoutDay?: GetHomeData200LastCompletedWorkoutDay;
+  isLastWorkoutCompletedToday?: boolean;
+  rotationIndex?: number;
+  totalWorkoutsInRotation?: number;
   workoutStreak: number;
   consistencyByDay: GetHomeData200ConsistencyByDay;
 };
@@ -1811,6 +1861,8 @@ export type PostAiBody = {
   messages: unknown[];
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   conversationId?: string;
+  /** @maxLength 255 */
+  timezone?: string;
 };
 
 export type GetAiConversations200ConversationsItem = {
@@ -2175,6 +2227,654 @@ export type UpdateExerciseMuscles404 = {
 };
 
 export type UpdateExerciseMuscles500 = {
+  error: string;
+  code: string;
+};
+
+export type GetWeeklyTrainingAnalyticsParams = {
+  tz: string;
+  startDate?: string;
+  endDate?: string;
+  /**
+   * @minimum 1
+   * @maximum 52
+   */
+  weeksCount?: number;
+};
+
+export type GetWeeklyTrainingAnalytics200WeeksItem = {
+  weekStartDate: string;
+  weekEndDate: string;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  workoutsCompleted: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  workingSets: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  warmupSets: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  loadVolumeGrams: number;
+  /** @minimum 0 */
+  loadVolumeKg: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  totalDurationInSeconds: number;
+  /** @minimum 0 */
+  averageDurationInSeconds: number;
+};
+
+export type GetWeeklyTrainingAnalytics200 = {
+  startDate: string;
+  endDate: string;
+  timezone: string;
+  weeks: GetWeeklyTrainingAnalytics200WeeksItem[];
+};
+
+export type GetWeeklyTrainingAnalytics400 = {
+  error: string;
+  code: string;
+};
+
+export type GetWeeklyTrainingAnalytics401 = {
+  error: string;
+  code: string;
+};
+
+export type GetWeeklyTrainingAnalytics500 = {
+  error: string;
+  code: string;
+};
+
+export type GetMuscleTrainingAnalyticsParams = {
+  tz: string;
+  startDate: string;
+  endDate: string;
+};
+
+export type GetMuscleTrainingAnalytics200MusclesItemMuscleGroup =
+  (typeof GetMuscleTrainingAnalytics200MusclesItemMuscleGroup)[keyof typeof GetMuscleTrainingAnalytics200MusclesItemMuscleGroup];
+
+export const GetMuscleTrainingAnalytics200MusclesItemMuscleGroup = {
+  CHEST: "CHEST",
+  BACK: "BACK",
+  SHOULDERS: "SHOULDERS",
+  BICEPS: "BICEPS",
+  TRICEPS: "TRICEPS",
+  FOREARMS: "FOREARMS",
+  QUADRICEPS: "QUADRICEPS",
+  HAMSTRINGS: "HAMSTRINGS",
+  GLUTES: "GLUTES",
+  ADDUCTORS: "ADDUCTORS",
+  HIP_ABDUCTORS: "HIP_ABDUCTORS",
+  CALVES: "CALVES",
+  CORE: "CORE",
+} as const;
+
+export type GetMuscleTrainingAnalytics200MusclesItem = {
+  muscleGroup: GetMuscleTrainingAnalytics200MusclesItemMuscleGroup;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  directWorkingSets: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  indirectWorkingSets: number;
+};
+
+export type GetMuscleTrainingAnalytics200 = {
+  startDate: string;
+  endDate: string;
+  timezone: string;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  totalWorkingSets: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  classifiedWorkingSets: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  unclassifiedWorkingSets: number;
+  muscles: GetMuscleTrainingAnalytics200MusclesItem[];
+};
+
+export type GetMuscleTrainingAnalytics400 = {
+  error: string;
+  code: string;
+};
+
+export type GetMuscleTrainingAnalytics401 = {
+  error: string;
+  code: string;
+};
+
+export type GetMuscleTrainingAnalytics500 = {
+  error: string;
+  code: string;
+};
+
+export type ListWorkoutHistoryParams = {
+  cursor?: string;
+  /**
+   * @minimum 1
+   * @maximum 50
+   */
+  limit?: number;
+  origin?: ListWorkoutHistoryOrigin;
+};
+
+export type ListWorkoutHistoryOrigin =
+  (typeof ListWorkoutHistoryOrigin)[keyof typeof ListWorkoutHistoryOrigin];
+
+export const ListWorkoutHistoryOrigin = {
+  PLANNED: "PLANNED",
+  FREE: "FREE",
+} as const;
+
+export type ListWorkoutHistory200ItemsItemOrigin =
+  (typeof ListWorkoutHistory200ItemsItemOrigin)[keyof typeof ListWorkoutHistory200ItemsItemOrigin];
+
+export const ListWorkoutHistory200ItemsItemOrigin = {
+  PLANNED: "PLANNED",
+  FREE: "FREE",
+} as const;
+
+export type ListWorkoutHistory200ItemsItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  origin: ListWorkoutHistory200ItemsItemOrigin;
+  startedAt: string;
+  completedAt: string;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  durationInSeconds: number;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  workoutPlanId: string | null;
+  /** @nullable */
+  workoutPlanNameSnapshot: string | null;
+  /** @nullable */
+  workoutDayNameSnapshot: string | null;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  exercisesCount: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  workingSetsCount: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  warmupSetsCount: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  totalLoadVolumeGrams: number;
+  /** @minimum 0 */
+  totalLoadVolumeKg: number;
+};
+
+export type ListWorkoutHistory200 = {
+  items: ListWorkoutHistory200ItemsItem[];
+  /** @nullable */
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
+export type ListWorkoutHistory400 = {
+  error: string;
+  code: string;
+};
+
+export type ListWorkoutHistory401 = {
+  error: string;
+  code: string;
+};
+
+export type ListWorkoutHistory500 = {
+  error: string;
+  code: string;
+};
+
+export type GetWorkoutHistorySession200Origin =
+  (typeof GetWorkoutHistorySession200Origin)[keyof typeof GetWorkoutHistorySession200Origin];
+
+export const GetWorkoutHistorySession200Origin = {
+  PLANNED: "PLANNED",
+  FREE: "FREE",
+} as const;
+
+export type GetWorkoutHistorySession200Summary = {
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  exercisesCount: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  workingSetsCount: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  warmupSetsCount: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  totalLoadVolumeGrams: number;
+  /** @minimum 0 */
+  totalLoadVolumeKg: number;
+};
+
+export type GetWorkoutHistorySession200ExercisesItemPlanned = {
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  warmupSets: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  workingSets: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  restTimeInSeconds: number | null;
+};
+
+export type GetWorkoutHistorySession200ExercisesItemPerformed = {
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  warmupSetsCount: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  workingSetsCount: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  loadVolumeGrams: number;
+  /** @minimum 0 */
+  loadVolumeKg: number;
+};
+
+export type GetWorkoutHistorySession200ExercisesItemSetsItemType =
+  (typeof GetWorkoutHistorySession200ExercisesItemSetsItemType)[keyof typeof GetWorkoutHistorySession200ExercisesItemSetsItemType];
+
+export const GetWorkoutHistorySession200ExercisesItemSetsItemType = {
+  WARMUP: "WARMUP",
+  WORKING: "WORKING",
+} as const;
+
+export type GetWorkoutHistorySession200ExercisesItemSetsItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  type: GetWorkoutHistorySession200ExercisesItemSetsItemType;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  weightInGrams: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  rir: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  durationInSeconds: number | null;
+  /** @nullable */
+  notes: string | null;
+  completedAt: string;
+};
+
+export type GetWorkoutHistorySession200ExercisesItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  exerciseId: string | null;
+  exerciseNameSnapshot: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /** @nullable */
+  notes: string | null;
+  planned: GetWorkoutHistorySession200ExercisesItemPlanned;
+  performed: GetWorkoutHistorySession200ExercisesItemPerformed;
+  sets: GetWorkoutHistorySession200ExercisesItemSetsItem[];
+};
+
+export type GetWorkoutHistorySession200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  origin: GetWorkoutHistorySession200Origin;
+  startedAt: string;
+  completedAt: string;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  durationInSeconds: number;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  workoutPlanId: string | null;
+  /** @nullable */
+  workoutPlanNameSnapshot: string | null;
+  /** @nullable */
+  workoutDayNameSnapshot: string | null;
+  summary: GetWorkoutHistorySession200Summary;
+  exercises: GetWorkoutHistorySession200ExercisesItem[];
+};
+
+export type GetWorkoutHistorySession401 = {
+  error: string;
+  code: string;
+};
+
+export type GetWorkoutHistorySession404 = {
+  error: string;
+  code: string;
+};
+
+export type GetWorkoutHistorySession500 = {
+  error: string;
+  code: string;
+};
+
+export type GetExerciseEvolutionParams = {
+  cursor?: string;
+  /**
+   * @minimum 1
+   * @maximum 50
+   */
+  limit?: number;
+};
+
+export type GetExerciseEvolution200ExerciseMusclesItemMuscleGroup =
+  (typeof GetExerciseEvolution200ExerciseMusclesItemMuscleGroup)[keyof typeof GetExerciseEvolution200ExerciseMusclesItemMuscleGroup];
+
+export const GetExerciseEvolution200ExerciseMusclesItemMuscleGroup = {
+  CHEST: "CHEST",
+  BACK: "BACK",
+  SHOULDERS: "SHOULDERS",
+  BICEPS: "BICEPS",
+  TRICEPS: "TRICEPS",
+  FOREARMS: "FOREARMS",
+  QUADRICEPS: "QUADRICEPS",
+  HAMSTRINGS: "HAMSTRINGS",
+  GLUTES: "GLUTES",
+  ADDUCTORS: "ADDUCTORS",
+  HIP_ABDUCTORS: "HIP_ABDUCTORS",
+  CALVES: "CALVES",
+  CORE: "CORE",
+} as const;
+
+export type GetExerciseEvolution200ExerciseMusclesItemRole =
+  (typeof GetExerciseEvolution200ExerciseMusclesItemRole)[keyof typeof GetExerciseEvolution200ExerciseMusclesItemRole];
+
+export const GetExerciseEvolution200ExerciseMusclesItemRole = {
+  PRIMARY: "PRIMARY",
+  SECONDARY: "SECONDARY",
+} as const;
+
+export type GetExerciseEvolution200ExerciseMusclesItem = {
+  muscleGroup: GetExerciseEvolution200ExerciseMusclesItemMuscleGroup;
+  role: GetExerciseEvolution200ExerciseMusclesItemRole;
+};
+
+export type GetExerciseEvolution200Exercise = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  name: string;
+  /** @nullable */
+  ownerUserId: string | null;
+  muscles: GetExerciseEvolution200ExerciseMusclesItem[];
+};
+
+/**
+ * @nullable
+ */
+export type GetExerciseEvolution200LoadPR = {
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  weightInGrams: number;
+  /** @minimum 0 */
+  weightKg: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  rir: number | null;
+  completedAt: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutSessionId: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  sessionExerciseId: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutSetId: string;
+  origin: "PLANNED" | "FREE";
+  /** @nullable */
+  workoutPlanNameSnapshot: string | null;
+  /** @nullable */
+  workoutDayNameSnapshot: string | null;
+} | null;
+
+export type GetExerciseEvolution200ItemsItemOrigin =
+  (typeof GetExerciseEvolution200ItemsItemOrigin)[keyof typeof GetExerciseEvolution200ItemsItemOrigin];
+
+export const GetExerciseEvolution200ItemsItemOrigin = {
+  PLANNED: "PLANNED",
+  FREE: "FREE",
+} as const;
+
+/**
+ * @nullable
+ */
+export type GetExerciseEvolution200ItemsItemTopSet = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutSetId: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  weightInGrams: number | null;
+  /** @nullable */
+  weightKg: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  rir: number | null;
+} | null;
+
+export type GetExerciseEvolution200ItemsItemSetsItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  sessionExerciseId: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  weightInGrams: number | null;
+  /** @nullable */
+  weightKg: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  rir: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  durationInSeconds: number | null;
+  /** @nullable */
+  notes: string | null;
+  completedAt: string;
+};
+
+export type GetExerciseEvolution200ItemsItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutSessionId: string;
+  startedAt: string;
+  completedAt: string;
+  origin: GetExerciseEvolution200ItemsItemOrigin;
+  /** @nullable */
+  workoutPlanNameSnapshot: string | null;
+  /** @nullable */
+  workoutDayNameSnapshot: string | null;
+  exerciseNameSnapshot: string;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  workingSetsCount: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  totalReps: number;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  loadVolumeGrams: number;
+  /** @minimum 0 */
+  loadVolumeKg: number;
+  /** @nullable */
+  topSet: GetExerciseEvolution200ItemsItemTopSet;
+  sets: GetExerciseEvolution200ItemsItemSetsItem[];
+};
+
+export type GetExerciseEvolution200 = {
+  exercise: GetExerciseEvolution200Exercise;
+  /** @nullable */
+  loadPR: GetExerciseEvolution200LoadPR;
+  items: GetExerciseEvolution200ItemsItem[];
+  /** @nullable */
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
+export type GetExerciseEvolution400 = {
+  error: string;
+  code: string;
+};
+
+export type GetExerciseEvolution401 = {
+  error: string;
+  code: string;
+};
+
+export type GetExerciseEvolution404 = {
+  error: string;
+  code: string;
+};
+
+export type GetExerciseEvolution500 = {
   error: string;
   code: string;
 };
@@ -2919,654 +3619,6 @@ export type RemoveExerciseFromWorkoutSession409 = {
 };
 
 export type RemoveExerciseFromWorkoutSession500 = {
-  error: string;
-  code: string;
-};
-
-export type GetWeeklyTrainingAnalyticsParams = {
-  tz: string;
-  startDate?: string;
-  endDate?: string;
-  /**
-   * @minimum 1
-   * @maximum 52
-   */
-  weeksCount?: number;
-};
-
-export type GetWeeklyTrainingAnalytics200WeeksItem = {
-  weekStartDate: string;
-  weekEndDate: string;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  workoutsCompleted: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  workingSets: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  warmupSets: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  loadVolumeGrams: number;
-  /** @minimum 0 */
-  loadVolumeKg: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  totalDurationInSeconds: number;
-  /** @minimum 0 */
-  averageDurationInSeconds: number;
-};
-
-export type GetWeeklyTrainingAnalytics200 = {
-  startDate: string;
-  endDate: string;
-  timezone: string;
-  weeks: GetWeeklyTrainingAnalytics200WeeksItem[];
-};
-
-export type GetWeeklyTrainingAnalytics400 = {
-  error: string;
-  code: string;
-};
-
-export type GetWeeklyTrainingAnalytics401 = {
-  error: string;
-  code: string;
-};
-
-export type GetWeeklyTrainingAnalytics500 = {
-  error: string;
-  code: string;
-};
-
-export type GetMuscleTrainingAnalyticsParams = {
-  tz: string;
-  startDate: string;
-  endDate: string;
-};
-
-export type GetMuscleTrainingAnalytics200MusclesItemMuscleGroup =
-  (typeof GetMuscleTrainingAnalytics200MusclesItemMuscleGroup)[keyof typeof GetMuscleTrainingAnalytics200MusclesItemMuscleGroup];
-
-export const GetMuscleTrainingAnalytics200MusclesItemMuscleGroup = {
-  CHEST: "CHEST",
-  BACK: "BACK",
-  SHOULDERS: "SHOULDERS",
-  BICEPS: "BICEPS",
-  TRICEPS: "TRICEPS",
-  FOREARMS: "FOREARMS",
-  QUADRICEPS: "QUADRICEPS",
-  HAMSTRINGS: "HAMSTRINGS",
-  GLUTES: "GLUTES",
-  ADDUCTORS: "ADDUCTORS",
-  HIP_ABDUCTORS: "HIP_ABDUCTORS",
-  CALVES: "CALVES",
-  CORE: "CORE",
-} as const;
-
-export type GetMuscleTrainingAnalytics200MusclesItem = {
-  muscleGroup: GetMuscleTrainingAnalytics200MusclesItemMuscleGroup;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  directWorkingSets: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  indirectWorkingSets: number;
-};
-
-export type GetMuscleTrainingAnalytics200 = {
-  startDate: string;
-  endDate: string;
-  timezone: string;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  totalWorkingSets: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  classifiedWorkingSets: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  unclassifiedWorkingSets: number;
-  muscles: GetMuscleTrainingAnalytics200MusclesItem[];
-};
-
-export type GetMuscleTrainingAnalytics400 = {
-  error: string;
-  code: string;
-};
-
-export type GetMuscleTrainingAnalytics401 = {
-  error: string;
-  code: string;
-};
-
-export type GetMuscleTrainingAnalytics500 = {
-  error: string;
-  code: string;
-};
-
-export type ListWorkoutHistoryParams = {
-  cursor?: string;
-  /**
-   * @minimum 1
-   * @maximum 50
-   */
-  limit?: number;
-  origin?: ListWorkoutHistoryOrigin;
-};
-
-export type ListWorkoutHistoryOrigin =
-  (typeof ListWorkoutHistoryOrigin)[keyof typeof ListWorkoutHistoryOrigin];
-
-export const ListWorkoutHistoryOrigin = {
-  PLANNED: "PLANNED",
-  FREE: "FREE",
-} as const;
-
-export type ListWorkoutHistory200ItemsItemOrigin =
-  (typeof ListWorkoutHistory200ItemsItemOrigin)[keyof typeof ListWorkoutHistory200ItemsItemOrigin];
-
-export const ListWorkoutHistory200ItemsItemOrigin = {
-  PLANNED: "PLANNED",
-  FREE: "FREE",
-} as const;
-
-export type ListWorkoutHistory200ItemsItem = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  origin: ListWorkoutHistory200ItemsItemOrigin;
-  startedAt: string;
-  completedAt: string;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  durationInSeconds: number;
-  /**
-   * @nullable
-   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-   */
-  workoutPlanId: string | null;
-  /** @nullable */
-  workoutPlanNameSnapshot: string | null;
-  /** @nullable */
-  workoutDayNameSnapshot: string | null;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  exercisesCount: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  workingSetsCount: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  warmupSetsCount: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  totalLoadVolumeGrams: number;
-  /** @minimum 0 */
-  totalLoadVolumeKg: number;
-};
-
-export type ListWorkoutHistory200 = {
-  items: ListWorkoutHistory200ItemsItem[];
-  /** @nullable */
-  nextCursor: string | null;
-  hasMore: boolean;
-};
-
-export type ListWorkoutHistory400 = {
-  error: string;
-  code: string;
-};
-
-export type ListWorkoutHistory401 = {
-  error: string;
-  code: string;
-};
-
-export type ListWorkoutHistory500 = {
-  error: string;
-  code: string;
-};
-
-export type GetWorkoutHistorySession200Origin =
-  (typeof GetWorkoutHistorySession200Origin)[keyof typeof GetWorkoutHistorySession200Origin];
-
-export const GetWorkoutHistorySession200Origin = {
-  PLANNED: "PLANNED",
-  FREE: "FREE",
-} as const;
-
-export type GetWorkoutHistorySession200Summary = {
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  exercisesCount: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  workingSetsCount: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  warmupSetsCount: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  totalLoadVolumeGrams: number;
-  /** @minimum 0 */
-  totalLoadVolumeKg: number;
-};
-
-export type GetWorkoutHistorySession200ExercisesItemPlanned = {
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  warmupSets: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  workingSets: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  restTimeInSeconds: number | null;
-};
-
-export type GetWorkoutHistorySession200ExercisesItemPerformed = {
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  warmupSetsCount: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  workingSetsCount: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  loadVolumeGrams: number;
-  /** @minimum 0 */
-  loadVolumeKg: number;
-};
-
-export type GetWorkoutHistorySession200ExercisesItemSetsItemType =
-  (typeof GetWorkoutHistorySession200ExercisesItemSetsItemType)[keyof typeof GetWorkoutHistorySession200ExercisesItemSetsItemType];
-
-export const GetWorkoutHistorySession200ExercisesItemSetsItemType = {
-  WARMUP: "WARMUP",
-  WORKING: "WORKING",
-} as const;
-
-export type GetWorkoutHistorySession200ExercisesItemSetsItem = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  type: GetWorkoutHistorySession200ExercisesItemSetsItemType;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  weightInGrams: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  rir: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  durationInSeconds: number | null;
-  /** @nullable */
-  notes: string | null;
-  completedAt: string;
-};
-
-export type GetWorkoutHistorySession200ExercisesItem = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  /**
-   * @nullable
-   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-   */
-  exerciseId: string | null;
-  exerciseNameSnapshot: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  /** @nullable */
-  notes: string | null;
-  planned: GetWorkoutHistorySession200ExercisesItemPlanned;
-  performed: GetWorkoutHistorySession200ExercisesItemPerformed;
-  sets: GetWorkoutHistorySession200ExercisesItemSetsItem[];
-};
-
-export type GetWorkoutHistorySession200 = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  origin: GetWorkoutHistorySession200Origin;
-  startedAt: string;
-  completedAt: string;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  durationInSeconds: number;
-  /**
-   * @nullable
-   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-   */
-  workoutPlanId: string | null;
-  /** @nullable */
-  workoutPlanNameSnapshot: string | null;
-  /** @nullable */
-  workoutDayNameSnapshot: string | null;
-  summary: GetWorkoutHistorySession200Summary;
-  exercises: GetWorkoutHistorySession200ExercisesItem[];
-};
-
-export type GetWorkoutHistorySession401 = {
-  error: string;
-  code: string;
-};
-
-export type GetWorkoutHistorySession404 = {
-  error: string;
-  code: string;
-};
-
-export type GetWorkoutHistorySession500 = {
-  error: string;
-  code: string;
-};
-
-export type GetExerciseEvolutionParams = {
-  cursor?: string;
-  /**
-   * @minimum 1
-   * @maximum 50
-   */
-  limit?: number;
-};
-
-export type GetExerciseEvolution200ExerciseMusclesItemMuscleGroup =
-  (typeof GetExerciseEvolution200ExerciseMusclesItemMuscleGroup)[keyof typeof GetExerciseEvolution200ExerciseMusclesItemMuscleGroup];
-
-export const GetExerciseEvolution200ExerciseMusclesItemMuscleGroup = {
-  CHEST: "CHEST",
-  BACK: "BACK",
-  SHOULDERS: "SHOULDERS",
-  BICEPS: "BICEPS",
-  TRICEPS: "TRICEPS",
-  FOREARMS: "FOREARMS",
-  QUADRICEPS: "QUADRICEPS",
-  HAMSTRINGS: "HAMSTRINGS",
-  GLUTES: "GLUTES",
-  ADDUCTORS: "ADDUCTORS",
-  HIP_ABDUCTORS: "HIP_ABDUCTORS",
-  CALVES: "CALVES",
-  CORE: "CORE",
-} as const;
-
-export type GetExerciseEvolution200ExerciseMusclesItemRole =
-  (typeof GetExerciseEvolution200ExerciseMusclesItemRole)[keyof typeof GetExerciseEvolution200ExerciseMusclesItemRole];
-
-export const GetExerciseEvolution200ExerciseMusclesItemRole = {
-  PRIMARY: "PRIMARY",
-  SECONDARY: "SECONDARY",
-} as const;
-
-export type GetExerciseEvolution200ExerciseMusclesItem = {
-  muscleGroup: GetExerciseEvolution200ExerciseMusclesItemMuscleGroup;
-  role: GetExerciseEvolution200ExerciseMusclesItemRole;
-};
-
-export type GetExerciseEvolution200Exercise = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  name: string;
-  /** @nullable */
-  ownerUserId: string | null;
-  muscles: GetExerciseEvolution200ExerciseMusclesItem[];
-};
-
-/**
- * @nullable
- */
-export type GetExerciseEvolution200LoadPR = {
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  weightInGrams: number;
-  /** @minimum 0 */
-  weightKg: number;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  rir: number | null;
-  completedAt: string;
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  workoutSessionId: string;
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  sessionExerciseId: string;
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  workoutSetId: string;
-  origin: "PLANNED" | "FREE";
-  /** @nullable */
-  workoutPlanNameSnapshot: string | null;
-  /** @nullable */
-  workoutDayNameSnapshot: string | null;
-} | null;
-
-export type GetExerciseEvolution200ItemsItemOrigin =
-  (typeof GetExerciseEvolution200ItemsItemOrigin)[keyof typeof GetExerciseEvolution200ItemsItemOrigin];
-
-export const GetExerciseEvolution200ItemsItemOrigin = {
-  PLANNED: "PLANNED",
-  FREE: "FREE",
-} as const;
-
-/**
- * @nullable
- */
-export type GetExerciseEvolution200ItemsItemTopSet = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12} | 00000000-0000-0000-0000-000000000000 | ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  workoutSetId: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  weightInGrams: number | null;
-  /** @nullable */
-  weightKg: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  rir: number | null;
-} | null;
-
-export type GetExerciseEvolution200ItemsItemSetsItem = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  sessionExerciseId: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  weightInGrams: number | null;
-  /** @nullable */
-  weightKg: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  rir: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  durationInSeconds: number | null;
-  /** @nullable */
-  notes: string | null;
-  completedAt: string;
-};
-
-export type GetExerciseEvolution200ItemsItem = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  workoutSessionId: string;
-  startedAt: string;
-  completedAt: string;
-  origin: GetExerciseEvolution200ItemsItemOrigin;
-  /** @nullable */
-  workoutPlanNameSnapshot: string | null;
-  /** @nullable */
-  workoutDayNameSnapshot: string | null;
-  exerciseNameSnapshot: string;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  workingSetsCount: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  totalReps: number;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   */
-  loadVolumeGrams: number;
-  /** @minimum 0 */
-  loadVolumeKg: number;
-  /** @nullable */
-  topSet: GetExerciseEvolution200ItemsItemTopSet;
-  sets: GetExerciseEvolution200ItemsItemSetsItem[];
-};
-
-export type GetExerciseEvolution200 = {
-  exercise: GetExerciseEvolution200Exercise;
-  /** @nullable */
-  loadPR: GetExerciseEvolution200LoadPR;
-  items: GetExerciseEvolution200ItemsItem[];
-  /** @nullable */
-  nextCursor: string | null;
-  hasMore: boolean;
-};
-
-export type GetExerciseEvolution400 = {
-  error: string;
-  code: string;
-};
-
-export type GetExerciseEvolution401 = {
-  error: string;
-  code: string;
-};
-
-export type GetExerciseEvolution404 = {
-  error: string;
-  code: string;
-};
-
-export type GetExerciseEvolution500 = {
   error: string;
   code: string;
 };
@@ -5727,6 +5779,348 @@ export const updateExerciseMuscles = async (
 };
 
 /**
+ * @summary Get weekly volume and duration training analytics
+ */
+export type getWeeklyTrainingAnalyticsResponse200 = {
+  data: GetWeeklyTrainingAnalytics200;
+  status: 200;
+};
+
+export type getWeeklyTrainingAnalyticsResponse400 = {
+  data: GetWeeklyTrainingAnalytics400;
+  status: 400;
+};
+
+export type getWeeklyTrainingAnalyticsResponse401 = {
+  data: GetWeeklyTrainingAnalytics401;
+  status: 401;
+};
+
+export type getWeeklyTrainingAnalyticsResponse500 = {
+  data: GetWeeklyTrainingAnalytics500;
+  status: 500;
+};
+
+export type getWeeklyTrainingAnalyticsResponseSuccess =
+  getWeeklyTrainingAnalyticsResponse200 & {
+    headers: Headers;
+  };
+export type getWeeklyTrainingAnalyticsResponseError = (
+  | getWeeklyTrainingAnalyticsResponse400
+  | getWeeklyTrainingAnalyticsResponse401
+  | getWeeklyTrainingAnalyticsResponse500
+) & {
+  headers: Headers;
+};
+
+export type getWeeklyTrainingAnalyticsResponse =
+  | getWeeklyTrainingAnalyticsResponseSuccess
+  | getWeeklyTrainingAnalyticsResponseError;
+
+export const getGetWeeklyTrainingAnalyticsUrl = (
+  params: GetWeeklyTrainingAnalyticsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/history/analytics/weekly?${stringifiedParams}`
+    : `/history/analytics/weekly`;
+};
+
+export const getWeeklyTrainingAnalytics = async (
+  params: GetWeeklyTrainingAnalyticsParams,
+  options?: RequestInit,
+): Promise<getWeeklyTrainingAnalyticsResponse> => {
+  return customFetch<getWeeklyTrainingAnalyticsResponse>(
+    getGetWeeklyTrainingAnalyticsUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+/**
+ * @summary Get muscle direct and indirect working sets analytics
+ */
+export type getMuscleTrainingAnalyticsResponse200 = {
+  data: GetMuscleTrainingAnalytics200;
+  status: 200;
+};
+
+export type getMuscleTrainingAnalyticsResponse400 = {
+  data: GetMuscleTrainingAnalytics400;
+  status: 400;
+};
+
+export type getMuscleTrainingAnalyticsResponse401 = {
+  data: GetMuscleTrainingAnalytics401;
+  status: 401;
+};
+
+export type getMuscleTrainingAnalyticsResponse500 = {
+  data: GetMuscleTrainingAnalytics500;
+  status: 500;
+};
+
+export type getMuscleTrainingAnalyticsResponseSuccess =
+  getMuscleTrainingAnalyticsResponse200 & {
+    headers: Headers;
+  };
+export type getMuscleTrainingAnalyticsResponseError = (
+  | getMuscleTrainingAnalyticsResponse400
+  | getMuscleTrainingAnalyticsResponse401
+  | getMuscleTrainingAnalyticsResponse500
+) & {
+  headers: Headers;
+};
+
+export type getMuscleTrainingAnalyticsResponse =
+  | getMuscleTrainingAnalyticsResponseSuccess
+  | getMuscleTrainingAnalyticsResponseError;
+
+export const getGetMuscleTrainingAnalyticsUrl = (
+  params: GetMuscleTrainingAnalyticsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/history/analytics/muscles?${stringifiedParams}`
+    : `/history/analytics/muscles`;
+};
+
+export const getMuscleTrainingAnalytics = async (
+  params: GetMuscleTrainingAnalyticsParams,
+  options?: RequestInit,
+): Promise<getMuscleTrainingAnalyticsResponse> => {
+  return customFetch<getMuscleTrainingAnalyticsResponse>(
+    getGetMuscleTrainingAnalyticsUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+/**
+ * @summary List completed workout sessions history with cursor pagination
+ */
+export type listWorkoutHistoryResponse200 = {
+  data: ListWorkoutHistory200;
+  status: 200;
+};
+
+export type listWorkoutHistoryResponse400 = {
+  data: ListWorkoutHistory400;
+  status: 400;
+};
+
+export type listWorkoutHistoryResponse401 = {
+  data: ListWorkoutHistory401;
+  status: 401;
+};
+
+export type listWorkoutHistoryResponse500 = {
+  data: ListWorkoutHistory500;
+  status: 500;
+};
+
+export type listWorkoutHistoryResponseSuccess =
+  listWorkoutHistoryResponse200 & {
+    headers: Headers;
+  };
+export type listWorkoutHistoryResponseError = (
+  | listWorkoutHistoryResponse400
+  | listWorkoutHistoryResponse401
+  | listWorkoutHistoryResponse500
+) & {
+  headers: Headers;
+};
+
+export type listWorkoutHistoryResponse =
+  | listWorkoutHistoryResponseSuccess
+  | listWorkoutHistoryResponseError;
+
+export const getListWorkoutHistoryUrl = (params?: ListWorkoutHistoryParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/history/sessions?${stringifiedParams}`
+    : `/history/sessions`;
+};
+
+export const listWorkoutHistory = async (
+  params?: ListWorkoutHistoryParams,
+  options?: RequestInit,
+): Promise<listWorkoutHistoryResponse> => {
+  return customFetch<listWorkoutHistoryResponse>(
+    getListWorkoutHistoryUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+/**
+ * @summary Get details of a completed workout session in history
+ */
+export type getWorkoutHistorySessionResponse200 = {
+  data: GetWorkoutHistorySession200;
+  status: 200;
+};
+
+export type getWorkoutHistorySessionResponse401 = {
+  data: GetWorkoutHistorySession401;
+  status: 401;
+};
+
+export type getWorkoutHistorySessionResponse404 = {
+  data: GetWorkoutHistorySession404;
+  status: 404;
+};
+
+export type getWorkoutHistorySessionResponse500 = {
+  data: GetWorkoutHistorySession500;
+  status: 500;
+};
+
+export type getWorkoutHistorySessionResponseSuccess =
+  getWorkoutHistorySessionResponse200 & {
+    headers: Headers;
+  };
+export type getWorkoutHistorySessionResponseError = (
+  | getWorkoutHistorySessionResponse401
+  | getWorkoutHistorySessionResponse404
+  | getWorkoutHistorySessionResponse500
+) & {
+  headers: Headers;
+};
+
+export type getWorkoutHistorySessionResponse =
+  | getWorkoutHistorySessionResponseSuccess
+  | getWorkoutHistorySessionResponseError;
+
+export const getGetWorkoutHistorySessionUrl = (sessionId: string) => {
+  return `/history/sessions/${sessionId}`;
+};
+
+export const getWorkoutHistorySession = async (
+  sessionId: string,
+  options?: RequestInit,
+): Promise<getWorkoutHistorySessionResponse> => {
+  return customFetch<getWorkoutHistorySessionResponse>(
+    getGetWorkoutHistorySessionUrl(sessionId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+/**
+ * @summary Get longitudinal evolution and load PR for a specific canonical exercise
+ */
+export type getExerciseEvolutionResponse200 = {
+  data: GetExerciseEvolution200;
+  status: 200;
+};
+
+export type getExerciseEvolutionResponse400 = {
+  data: GetExerciseEvolution400;
+  status: 400;
+};
+
+export type getExerciseEvolutionResponse401 = {
+  data: GetExerciseEvolution401;
+  status: 401;
+};
+
+export type getExerciseEvolutionResponse404 = {
+  data: GetExerciseEvolution404;
+  status: 404;
+};
+
+export type getExerciseEvolutionResponse500 = {
+  data: GetExerciseEvolution500;
+  status: 500;
+};
+
+export type getExerciseEvolutionResponseSuccess =
+  getExerciseEvolutionResponse200 & {
+    headers: Headers;
+  };
+export type getExerciseEvolutionResponseError = (
+  | getExerciseEvolutionResponse400
+  | getExerciseEvolutionResponse401
+  | getExerciseEvolutionResponse404
+  | getExerciseEvolutionResponse500
+) & {
+  headers: Headers;
+};
+
+export type getExerciseEvolutionResponse =
+  | getExerciseEvolutionResponseSuccess
+  | getExerciseEvolutionResponseError;
+
+export const getGetExerciseEvolutionUrl = (
+  exerciseId: string,
+  params?: GetExerciseEvolutionParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/history/exercises/${exerciseId}?${stringifiedParams}`
+    : `/history/exercises/${exerciseId}`;
+};
+
+export const getExerciseEvolution = async (
+  exerciseId: string,
+  params?: GetExerciseEvolutionParams,
+  options?: RequestInit,
+): Promise<getExerciseEvolutionResponse> => {
+  return customFetch<getExerciseEvolutionResponse>(
+    getGetExerciseEvolutionUrl(exerciseId, params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+/**
  * @summary Get current active workout session with all exercises and sets
  */
 export type getActiveWorkoutSessionResponse200 = {
@@ -6285,348 +6679,6 @@ export const removeExerciseFromWorkoutSession = async (
     {
       ...options,
       method: "DELETE",
-    },
-  );
-};
-
-/**
- * @summary Get weekly volume and duration training analytics
- */
-export type getWeeklyTrainingAnalyticsResponse200 = {
-  data: GetWeeklyTrainingAnalytics200;
-  status: 200;
-};
-
-export type getWeeklyTrainingAnalyticsResponse400 = {
-  data: GetWeeklyTrainingAnalytics400;
-  status: 400;
-};
-
-export type getWeeklyTrainingAnalyticsResponse401 = {
-  data: GetWeeklyTrainingAnalytics401;
-  status: 401;
-};
-
-export type getWeeklyTrainingAnalyticsResponse500 = {
-  data: GetWeeklyTrainingAnalytics500;
-  status: 500;
-};
-
-export type getWeeklyTrainingAnalyticsResponseSuccess =
-  getWeeklyTrainingAnalyticsResponse200 & {
-    headers: Headers;
-  };
-export type getWeeklyTrainingAnalyticsResponseError = (
-  | getWeeklyTrainingAnalyticsResponse400
-  | getWeeklyTrainingAnalyticsResponse401
-  | getWeeklyTrainingAnalyticsResponse500
-) & {
-  headers: Headers;
-};
-
-export type getWeeklyTrainingAnalyticsResponse =
-  | getWeeklyTrainingAnalyticsResponseSuccess
-  | getWeeklyTrainingAnalyticsResponseError;
-
-export const getGetWeeklyTrainingAnalyticsUrl = (
-  params: GetWeeklyTrainingAnalyticsParams,
-) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0
-    ? `/history/analytics/weekly?${stringifiedParams}`
-    : `/history/analytics/weekly`;
-};
-
-export const getWeeklyTrainingAnalytics = async (
-  params: GetWeeklyTrainingAnalyticsParams,
-  options?: RequestInit,
-): Promise<getWeeklyTrainingAnalyticsResponse> => {
-  return customFetch<getWeeklyTrainingAnalyticsResponse>(
-    getGetWeeklyTrainingAnalyticsUrl(params),
-    {
-      ...options,
-      method: "GET",
-    },
-  );
-};
-
-/**
- * @summary Get muscle direct and indirect working sets analytics
- */
-export type getMuscleTrainingAnalyticsResponse200 = {
-  data: GetMuscleTrainingAnalytics200;
-  status: 200;
-};
-
-export type getMuscleTrainingAnalyticsResponse400 = {
-  data: GetMuscleTrainingAnalytics400;
-  status: 400;
-};
-
-export type getMuscleTrainingAnalyticsResponse401 = {
-  data: GetMuscleTrainingAnalytics401;
-  status: 401;
-};
-
-export type getMuscleTrainingAnalyticsResponse500 = {
-  data: GetMuscleTrainingAnalytics500;
-  status: 500;
-};
-
-export type getMuscleTrainingAnalyticsResponseSuccess =
-  getMuscleTrainingAnalyticsResponse200 & {
-    headers: Headers;
-  };
-export type getMuscleTrainingAnalyticsResponseError = (
-  | getMuscleTrainingAnalyticsResponse400
-  | getMuscleTrainingAnalyticsResponse401
-  | getMuscleTrainingAnalyticsResponse500
-) & {
-  headers: Headers;
-};
-
-export type getMuscleTrainingAnalyticsResponse =
-  | getMuscleTrainingAnalyticsResponseSuccess
-  | getMuscleTrainingAnalyticsResponseError;
-
-export const getGetMuscleTrainingAnalyticsUrl = (
-  params: GetMuscleTrainingAnalyticsParams,
-) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0
-    ? `/history/analytics/muscles?${stringifiedParams}`
-    : `/history/analytics/muscles`;
-};
-
-export const getMuscleTrainingAnalytics = async (
-  params: GetMuscleTrainingAnalyticsParams,
-  options?: RequestInit,
-): Promise<getMuscleTrainingAnalyticsResponse> => {
-  return customFetch<getMuscleTrainingAnalyticsResponse>(
-    getGetMuscleTrainingAnalyticsUrl(params),
-    {
-      ...options,
-      method: "GET",
-    },
-  );
-};
-
-/**
- * @summary List completed workout sessions history with cursor pagination
- */
-export type listWorkoutHistoryResponse200 = {
-  data: ListWorkoutHistory200;
-  status: 200;
-};
-
-export type listWorkoutHistoryResponse400 = {
-  data: ListWorkoutHistory400;
-  status: 400;
-};
-
-export type listWorkoutHistoryResponse401 = {
-  data: ListWorkoutHistory401;
-  status: 401;
-};
-
-export type listWorkoutHistoryResponse500 = {
-  data: ListWorkoutHistory500;
-  status: 500;
-};
-
-export type listWorkoutHistoryResponseSuccess =
-  listWorkoutHistoryResponse200 & {
-    headers: Headers;
-  };
-export type listWorkoutHistoryResponseError = (
-  | listWorkoutHistoryResponse400
-  | listWorkoutHistoryResponse401
-  | listWorkoutHistoryResponse500
-) & {
-  headers: Headers;
-};
-
-export type listWorkoutHistoryResponse =
-  | listWorkoutHistoryResponseSuccess
-  | listWorkoutHistoryResponseError;
-
-export const getListWorkoutHistoryUrl = (params?: ListWorkoutHistoryParams) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0
-    ? `/history/sessions?${stringifiedParams}`
-    : `/history/sessions`;
-};
-
-export const listWorkoutHistory = async (
-  params?: ListWorkoutHistoryParams,
-  options?: RequestInit,
-): Promise<listWorkoutHistoryResponse> => {
-  return customFetch<listWorkoutHistoryResponse>(
-    getListWorkoutHistoryUrl(params),
-    {
-      ...options,
-      method: "GET",
-    },
-  );
-};
-
-/**
- * @summary Get details of a completed workout session in history
- */
-export type getWorkoutHistorySessionResponse200 = {
-  data: GetWorkoutHistorySession200;
-  status: 200;
-};
-
-export type getWorkoutHistorySessionResponse401 = {
-  data: GetWorkoutHistorySession401;
-  status: 401;
-};
-
-export type getWorkoutHistorySessionResponse404 = {
-  data: GetWorkoutHistorySession404;
-  status: 404;
-};
-
-export type getWorkoutHistorySessionResponse500 = {
-  data: GetWorkoutHistorySession500;
-  status: 500;
-};
-
-export type getWorkoutHistorySessionResponseSuccess =
-  getWorkoutHistorySessionResponse200 & {
-    headers: Headers;
-  };
-export type getWorkoutHistorySessionResponseError = (
-  | getWorkoutHistorySessionResponse401
-  | getWorkoutHistorySessionResponse404
-  | getWorkoutHistorySessionResponse500
-) & {
-  headers: Headers;
-};
-
-export type getWorkoutHistorySessionResponse =
-  | getWorkoutHistorySessionResponseSuccess
-  | getWorkoutHistorySessionResponseError;
-
-export const getGetWorkoutHistorySessionUrl = (sessionId: string) => {
-  return `/history/sessions/${sessionId}`;
-};
-
-export const getWorkoutHistorySession = async (
-  sessionId: string,
-  options?: RequestInit,
-): Promise<getWorkoutHistorySessionResponse> => {
-  return customFetch<getWorkoutHistorySessionResponse>(
-    getGetWorkoutHistorySessionUrl(sessionId),
-    {
-      ...options,
-      method: "GET",
-    },
-  );
-};
-
-/**
- * @summary Get longitudinal evolution and load PR for a specific canonical exercise
- */
-export type getExerciseEvolutionResponse200 = {
-  data: GetExerciseEvolution200;
-  status: 200;
-};
-
-export type getExerciseEvolutionResponse400 = {
-  data: GetExerciseEvolution400;
-  status: 400;
-};
-
-export type getExerciseEvolutionResponse401 = {
-  data: GetExerciseEvolution401;
-  status: 401;
-};
-
-export type getExerciseEvolutionResponse404 = {
-  data: GetExerciseEvolution404;
-  status: 404;
-};
-
-export type getExerciseEvolutionResponse500 = {
-  data: GetExerciseEvolution500;
-  status: 500;
-};
-
-export type getExerciseEvolutionResponseSuccess =
-  getExerciseEvolutionResponse200 & {
-    headers: Headers;
-  };
-export type getExerciseEvolutionResponseError = (
-  | getExerciseEvolutionResponse400
-  | getExerciseEvolutionResponse401
-  | getExerciseEvolutionResponse404
-  | getExerciseEvolutionResponse500
-) & {
-  headers: Headers;
-};
-
-export type getExerciseEvolutionResponse =
-  | getExerciseEvolutionResponseSuccess
-  | getExerciseEvolutionResponseError;
-
-export const getGetExerciseEvolutionUrl = (
-  exerciseId: string,
-  params?: GetExerciseEvolutionParams,
-) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0
-    ? `/history/exercises/${exerciseId}?${stringifiedParams}`
-    : `/history/exercises/${exerciseId}`;
-};
-
-export const getExerciseEvolution = async (
-  exerciseId: string,
-  params?: GetExerciseEvolutionParams,
-  options?: RequestInit,
-): Promise<getExerciseEvolutionResponse> => {
-  return customFetch<getExerciseEvolutionResponse>(
-    getGetExerciseEvolutionUrl(exerciseId, params),
-    {
-      ...options,
-      method: "GET",
     },
   );
 };

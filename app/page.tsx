@@ -43,6 +43,12 @@ export default async function Home() {
 
   let activeWorkoutPlanId: string | null = null;
   let todayWorkoutDay: GetHomeData200TodayWorkoutDay | undefined = undefined;
+  let lastCompletedWorkoutDay:
+    | { id: string; name: string; completedAt: string }
+    | undefined = undefined;
+  let isLastWorkoutCompletedToday = false;
+  let rotationIndex: number | undefined = undefined;
+  let totalWorkoutsInRotation: number | undefined = undefined;
   let workoutStreak = 0;
   let consistencyByDay: Record<
     string,
@@ -52,6 +58,10 @@ export default async function Home() {
   if (homeData.status === 200) {
     activeWorkoutPlanId = homeData.data.activeWorkoutPlanId;
     todayWorkoutDay = homeData.data.todayWorkoutDay;
+    lastCompletedWorkoutDay = homeData.data.lastCompletedWorkoutDay;
+    isLastWorkoutCompletedToday = !!homeData.data.isLastWorkoutCompletedToday;
+    rotationIndex = homeData.data.rotationIndex;
+    totalWorkoutsInRotation = homeData.data.totalWorkoutsInRotation;
     workoutStreak = homeData.data.workoutStreak;
     consistencyByDay = homeData.data.consistencyByDay;
   } else if (homeData.status !== 404) {
@@ -184,15 +194,26 @@ export default async function Home() {
       {todayWorkoutDay ? (
         <div className="flex flex-col gap-3 p-5">
           <div className="flex items-center justify-between">
-            <h2 className="font-heading text-lg font-semibold text-foreground">
-              Treino de Hoje
-            </h2>
+            <div className="flex flex-col">
+              <h2 className="font-heading text-lg font-semibold text-foreground">
+                {isLastWorkoutCompletedToday
+                  ? "Próximo Treino na Rotação"
+                  : "Treino Sugerido"}
+              </h2>
+              {lastCompletedWorkoutDay && (
+                <p className="font-heading text-xs text-muted-foreground">
+                  {isLastWorkoutCompletedToday
+                    ? `Hoje você fez ${lastCompletedWorkoutDay.name} 🔥`
+                    : `Último realizado: ${lastCompletedWorkoutDay.name}`}
+                </p>
+              )}
+            </div>
             {activeWorkoutPlanId && (
               <Link
                 href={`/workout-plans/${activeWorkoutPlanId}`}
-                className="font-heading text-xs text-primary"
+                className="font-heading text-xs font-semibold text-primary hover:underline"
               >
-                Ver treinos
+                Ver plano completo
               </Link>
             )}
           </div>
@@ -203,6 +224,16 @@ export default async function Home() {
             <WorkoutDayCard
               name={todayWorkoutDay.name}
               weekDay={todayWorkoutDay.weekDay}
+              tag={
+                isLastWorkoutCompletedToday
+                  ? "PRÓXIMO NA FILA"
+                  : "TREINO DA VEZ"
+              }
+              rotationLabel={
+                rotationIndex && totalWorkoutsInRotation
+                  ? `${rotationIndex} de ${totalWorkoutsInRotation}`
+                  : undefined
+              }
               estimatedDurationInSeconds={
                 todayWorkoutDay.estimatedDurationInSeconds
               }
