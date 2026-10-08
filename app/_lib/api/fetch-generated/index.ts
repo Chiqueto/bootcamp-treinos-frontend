@@ -1716,6 +1716,17 @@ export type GetHomeData200LastCompletedWorkoutDay = {
   completedAt: string;
 };
 
+export type GetHomeData200GamificationTheme =
+  (typeof GetHomeData200GamificationTheme)[keyof typeof GetHomeData200GamificationTheme];
+
+export const GetHomeData200GamificationTheme = {
+  ALL: "ALL",
+  ANIMES: "ANIMES",
+  VEHICLES: "VEHICLES",
+  ANIMALS: "ANIMALS",
+  MOVIES_SERIES: "MOVIES_SERIES",
+} as const;
+
 export type GetHomeData200ConsistencyByDay = {
   [key: string]: {
     workoutDayCompleted: boolean;
@@ -1731,6 +1742,7 @@ export type GetHomeData200 = {
   isLastWorkoutCompletedToday?: boolean;
   rotationIndex?: number;
   totalWorkoutsInRotation?: number;
+  gamificationTheme?: GetHomeData200GamificationTheme;
   workoutStreak: number;
   consistencyByDay: GetHomeData200ConsistencyByDay;
 };
@@ -1801,6 +1813,12 @@ export type GetUserTrainData200 = {
   heightInCentimeters: number;
   age: number;
   bodyFatPercentage: number;
+  gamificationTheme:
+    | "ALL"
+    | "ANIMES"
+    | "VEHICLES"
+    | "ANIMALS"
+    | "MOVIES_SERIES";
 } | null;
 
 export type GetUserTrainData401 = {
@@ -1818,6 +1836,17 @@ export type GetUserTrainData500 = {
   code: string;
 };
 
+export type UpsertUserTrainDataBodyGamificationTheme =
+  (typeof UpsertUserTrainDataBodyGamificationTheme)[keyof typeof UpsertUserTrainDataBodyGamificationTheme];
+
+export const UpsertUserTrainDataBodyGamificationTheme = {
+  ALL: "ALL",
+  ANIMES: "ANIMES",
+  VEHICLES: "VEHICLES",
+  ANIMALS: "ANIMALS",
+  MOVIES_SERIES: "MOVIES_SERIES",
+} as const;
+
 export type UpsertUserTrainDataBody = {
   /** @minimum 1 */
   weightInGrams: number;
@@ -1830,7 +1859,19 @@ export type UpsertUserTrainDataBody = {
    * @maximum 100
    */
   bodyFatPercentage: number;
+  gamificationTheme?: UpsertUserTrainDataBodyGamificationTheme;
 };
+
+export type UpsertUserTrainData200GamificationTheme =
+  (typeof UpsertUserTrainData200GamificationTheme)[keyof typeof UpsertUserTrainData200GamificationTheme];
+
+export const UpsertUserTrainData200GamificationTheme = {
+  ALL: "ALL",
+  ANIMES: "ANIMES",
+  VEHICLES: "VEHICLES",
+  ANIMALS: "ANIMALS",
+  MOVIES_SERIES: "MOVIES_SERIES",
+} as const;
 
 export type UpsertUserTrainData200 = {
   userId: string;
@@ -1838,6 +1879,7 @@ export type UpsertUserTrainData200 = {
   heightInCentimeters: number;
   age: number;
   bodyFatPercentage: number;
+  gamificationTheme: UpsertUserTrainData200GamificationTheme;
 };
 
 export type UpsertUserTrainData401 = {
@@ -1846,6 +1888,47 @@ export type UpsertUserTrainData401 = {
 };
 
 export type UpsertUserTrainData500 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateGamificationThemeBodyTheme =
+  (typeof UpdateGamificationThemeBodyTheme)[keyof typeof UpdateGamificationThemeBodyTheme];
+
+export const UpdateGamificationThemeBodyTheme = {
+  ALL: "ALL",
+  ANIMES: "ANIMES",
+  VEHICLES: "VEHICLES",
+  ANIMALS: "ANIMALS",
+  MOVIES_SERIES: "MOVIES_SERIES",
+} as const;
+
+export type UpdateGamificationThemeBody = {
+  theme: UpdateGamificationThemeBodyTheme;
+};
+
+export type UpdateGamificationTheme200GamificationTheme =
+  (typeof UpdateGamificationTheme200GamificationTheme)[keyof typeof UpdateGamificationTheme200GamificationTheme];
+
+export const UpdateGamificationTheme200GamificationTheme = {
+  ALL: "ALL",
+  ANIMES: "ANIMES",
+  VEHICLES: "VEHICLES",
+  ANIMALS: "ANIMALS",
+  MOVIES_SERIES: "MOVIES_SERIES",
+} as const;
+
+export type UpdateGamificationTheme200 = {
+  userId: string;
+  gamificationTheme: UpdateGamificationTheme200GamificationTheme;
+};
+
+export type UpdateGamificationTheme401 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateGamificationTheme500 = {
   error: string;
   code: string;
 };
@@ -5346,6 +5429,58 @@ export const upsertUserTrainData = async (
     headers: { "Content-Type": "application/json", ...options?.headers },
     body: JSON.stringify(upsertUserTrainDataBody),
   });
+};
+
+/**
+ * @summary Update user gamification theme preference
+ */
+export type updateGamificationThemeResponse200 = {
+  data: UpdateGamificationTheme200;
+  status: 200;
+};
+
+export type updateGamificationThemeResponse401 = {
+  data: UpdateGamificationTheme401;
+  status: 401;
+};
+
+export type updateGamificationThemeResponse500 = {
+  data: UpdateGamificationTheme500;
+  status: 500;
+};
+
+export type updateGamificationThemeResponseSuccess =
+  updateGamificationThemeResponse200 & {
+    headers: Headers;
+  };
+export type updateGamificationThemeResponseError = (
+  | updateGamificationThemeResponse401
+  | updateGamificationThemeResponse500
+) & {
+  headers: Headers;
+};
+
+export type updateGamificationThemeResponse =
+  | updateGamificationThemeResponseSuccess
+  | updateGamificationThemeResponseError;
+
+export const getUpdateGamificationThemeUrl = () => {
+  return `/me/theme`;
+};
+
+export const updateGamificationTheme = async (
+  updateGamificationThemeBody: UpdateGamificationThemeBody,
+  options?: RequestInit,
+): Promise<updateGamificationThemeResponse> => {
+  return customFetch<updateGamificationThemeResponse>(
+    getUpdateGamificationThemeUrl(),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(updateGamificationThemeBody),
+    },
+  );
 };
 
 /**

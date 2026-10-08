@@ -5683,6 +5683,16 @@
                     "totalWorkoutsInRotation": {
                       "type": "number"
                     },
+                    "gamificationTheme": {
+                      "type": "string",
+                      "enum": [
+                        "ALL",
+                        "ANIMES",
+                        "VEHICLES",
+                        "ANIMALS",
+                        "MOVIES_SERIES"
+                      ]
+                    },
                     "workoutStreak": {
                       "type": "number"
                     },
@@ -5961,6 +5971,16 @@
                     },
                     "bodyFatPercentage": {
                       "type": "number"
+                    },
+                    "gamificationTheme": {
+                      "type": "string",
+                      "enum": [
+                        "ALL",
+                        "ANIMES",
+                        "VEHICLES",
+                        "ANIMALS",
+                        "MOVIES_SERIES"
+                      ]
                     }
                   },
                   "required": [
@@ -5969,7 +5989,8 @@
                     "weightInGrams",
                     "heightInCentimeters",
                     "age",
-                    "bodyFatPercentage"
+                    "bodyFatPercentage",
+                    "gamificationTheme"
                   ],
                   "additionalProperties": false
                 }
@@ -6076,6 +6097,16 @@
                     "type": "number",
                     "minimum": 0,
                     "maximum": 100
+                  },
+                  "gamificationTheme": {
+                    "type": "string",
+                    "enum": [
+                      "ALL",
+                      "ANIMES",
+                      "VEHICLES",
+                      "ANIMALS",
+                      "MOVIES_SERIES"
+                    ]
                   }
                 },
                 "required": [
@@ -6110,6 +6141,16 @@
                     },
                     "bodyFatPercentage": {
                       "type": "number"
+                    },
+                    "gamificationTheme": {
+                      "type": "string",
+                      "enum": [
+                        "ALL",
+                        "ANIMES",
+                        "VEHICLES",
+                        "ANIMALS",
+                        "MOVIES_SERIES"
+                      ]
                     }
                   },
                   "required": [
@@ -6117,7 +6158,120 @@
                     "weightInGrams",
                     "heightInCentimeters",
                     "age",
-                    "bodyFatPercentage"
+                    "bodyFatPercentage",
+                    "gamificationTheme"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/theme": {
+      "patch": {
+        "operationId": "updateGamificationTheme",
+        "summary": "Update user gamification theme preference",
+        "tags": [
+          "Me"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "theme": {
+                    "type": "string",
+                    "enum": [
+                      "ALL",
+                      "ANIMES",
+                      "VEHICLES",
+                      "ANIMALS",
+                      "MOVIES_SERIES"
+                    ]
+                  }
+                },
+                "required": [
+                  "theme"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string"
+                    },
+                    "gamificationTheme": {
+                      "type": "string",
+                      "enum": [
+                        "ALL",
+                        "ANIMES",
+                        "VEHICLES",
+                        "ANIMALS",
+                        "MOVIES_SERIES"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "userId",
+                    "gamificationTheme"
                   ],
                   "additionalProperties": false
                 }

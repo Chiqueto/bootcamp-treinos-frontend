@@ -17,6 +17,7 @@ import {
 
 import {
   getHomeData,
+  getUserTrainData,
   getWorkoutSession,
 } from "@/app/_lib/api/fetch-generated";
 import { authClient } from "@/app/_lib/auth-client";
@@ -25,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import { SummaryFeedbackWidget } from "./_components/summary-feedback-widget";
+import { ThematicCelebrationCard } from "./_components/thematic-celebration-card";
 
 export default async function WorkoutSummaryPage({
   params,
@@ -39,11 +41,12 @@ export default async function WorkoutSummaryPage({
   const { sessionId } = await params;
   const today = dayjs();
 
-  const [sessionRes, homeDataRes] = await Promise.all([
+  const [sessionRes, homeDataRes, trainDataRes] = await Promise.all([
     getWorkoutSession(sessionId).catch(() => null),
     getHomeData(today.format("YYYY-MM-DD"), {
       timezoneOffset: today.utcOffset(),
     }).catch(() => null),
+    getUserTrainData().catch(() => null),
   ]);
 
   if (!sessionRes || sessionRes.status !== 200) {
@@ -52,6 +55,11 @@ export default async function WorkoutSummaryPage({
 
   const workoutSession = sessionRes.data;
   const homeData = homeDataRes?.status === 200 ? homeDataRes.data : null;
+  const userTheme =
+    (trainDataRes?.status === 200 && trainDataRes.data?.gamificationTheme) ||
+    homeData?.gamificationTheme ||
+    "ALL";
+
 
   // Cálculos de métricas da sessão
   const startedAt = dayjs(workoutSession.startedAt);
@@ -159,7 +167,15 @@ export default async function WorkoutSummaryPage({
           </div>
         </div>
 
+        {/* Elogio Temático e Equivalência de Carga (Gamificação) */}
+        <ThematicCelebrationCard
+          totalVolumeKg={totalVolumeKg}
+          initialTheme={userTheme}
+          sessionId={sessionId}
+        />
+
         {/* 4 High-Impact Metrics Grid */}
+
         <section
           aria-labelledby="metrics-title"
           className="grid grid-cols-2 gap-3"
