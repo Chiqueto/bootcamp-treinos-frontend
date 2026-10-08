@@ -14,10 +14,12 @@ const WEEKDAY_LABELS: Record<string, string> = {
 
 interface WorkoutDayCardProps {
   name: string;
-  weekDay: GetHomeData200TodayWorkoutDayWeekDay;
+  weekDay?: GetHomeData200TodayWorkoutDayWeekDay | string;
   estimatedDurationInSeconds: number;
   exercisesCount: number;
   coverImageUrl?: string | null;
+  tag?: string;
+  rotationLabel?: string;
 }
 
 export function WorkoutDayCard({
@@ -26,11 +28,13 @@ export function WorkoutDayCard({
   estimatedDurationInSeconds,
   exercisesCount,
   coverImageUrl,
+  tag,
+  rotationLabel,
 }: WorkoutDayCardProps) {
   const durationInMinutes = Math.round(estimatedDurationInSeconds / 60);
 
   return (
-    <div className="relative flex h-[200px] w-full flex-col items-start justify-between overflow-hidden rounded-xl p-5">
+    <div className="relative flex h-[200px] w-full flex-col items-start justify-between overflow-hidden rounded-xl p-5 shadow-sm transition hover:shadow-md">
       {coverImageUrl && (
         <Image
           src={coverImageUrl}
@@ -39,14 +43,19 @@ export function WorkoutDayCard({
           className="pointer-events-none object-cover"
         />
       )}
-      <div className="absolute inset-0 bg-foreground/40" />
-      <div className="relative">
-        <div className="flex items-center gap-1 rounded-full bg-background/16 px-2.5 py-1.5 backdrop-blur-sm">
+      <div className="absolute inset-0 bg-foreground/45" />
+      <div className="relative flex items-center gap-2">
+        <div className="flex items-center gap-1.5 rounded-full bg-background/20 px-2.5 py-1.5 backdrop-blur-sm">
           <Calendar className="size-3.5 text-background" />
           <span className="font-heading text-xs font-semibold uppercase text-background">
-            {WEEKDAY_LABELS[weekDay]}
+            {tag || (weekDay && WEEKDAY_LABELS[weekDay] ? WEEKDAY_LABELS[weekDay] : "Treino")}
           </span>
         </div>
+        {rotationLabel && (
+          <div className="rounded-full bg-primary px-2.5 py-1 font-heading text-[10px] font-bold uppercase tracking-wider text-primary-foreground backdrop-blur-sm">
+            {rotationLabel}
+          </div>
+        )}
       </div>
       <div className="relative flex flex-col gap-2">
         <h3 className="font-heading text-2xl font-semibold leading-[1.05] text-background">

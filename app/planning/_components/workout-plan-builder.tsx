@@ -17,6 +17,7 @@ import {
 } from "@/app/planning/_actions";
 import {
   createDraftExercise,
+  createDraftWorkoutDay,
   createInitialWorkoutDays,
   serializeWorkoutDays,
   validateWorkoutPlanDraft,
@@ -53,17 +54,23 @@ export function WorkoutPlanBuilder({
     );
   }
 
-  function toggleRest(index: number, isRest: boolean) {
-    const day = days[index];
-    updateDay(index, {
-      isRest,
-      estimatedDurationInMinutes: isRest
-        ? 0
-        : Math.max(day.estimatedDurationInMinutes, 45),
-      exercises:
-        isRest || day.exercises.length > 0
-          ? day.exercises
-          : [createDraftExercise()],
+  function addWorkout() {
+    const nextLetter = String.fromCharCode(65 + (days.length % 26));
+    setDays((current) => [...current, createDraftWorkoutDay(nextLetter)]);
+  }
+
+  function removeWorkout(index: number) {
+    if (days.length <= 1) return;
+    setDays((current) => current.filter((_, i) => i !== index));
+  }
+
+  function moveWorkout(index: number, offset: -1 | 1) {
+    const targetIndex = index + offset;
+    if (targetIndex < 0 || targetIndex >= days.length) return;
+    setDays((current) => {
+      const copy = [...current];
+      [copy[index], copy[targetIndex]] = [copy[targetIndex], copy[index]];
+      return copy;
     });
   }
 
@@ -204,69 +211,106 @@ export function WorkoutPlanBuilder({
         className="flex flex-col gap-3"
         aria-labelledby="workout-days-title"
       >
-        <div>
-          <h2
-            id="workout-days-title"
-            className="font-heading text-base font-semibold"
+        <div className="flex items-center justify-between">
+          <div>
+            <h2
+              id="workout-days-title"
+              className="font-heading text-base font-semibold"
+            >
+              Divisão de Treinos (Rotina Sequencial)
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Configure os treinos da sua divisão. O próximo treino será sugerido automaticamente com base no último realizado.
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={addWorkout}
+            disabled={isPending}
+            className="gap-1.5 rounded-full font-heading text-xs"
           >
-            Dias da semana
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            Marque os descansos e configure os dias de treino.
-          </p>
+            <Plus className="size-3.5" />
+            Adicionar Treino
+          </Button>
         </div>
 
         {days.map((day, dayIndex) => (
           <article
-            key={day.weekDay}
+            key={dayIndex}
             className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4"
           >
             <div className="flex items-center justify-between gap-3">
-              <h3 className="font-heading text-sm font-semibold">
-                {day.label}
-              </h3>
-              <label className="flex min-h-11 items-center gap-2 text-xs font-medium text-muted-foreground">
-                <input
-                  type="checkbox"
-                  checked={day.isRest}
-                  onChange={(event) =>
-                    toggleRest(dayIndex, event.target.checked)
-                  }
-                  className="size-5 accent-primary"
-                />
-                Dia de descanso
-              </label>
+              <div className="flex items-center gap-2">
+                <span className="flex size-7 items-center justify-center rounded-full bg-primary/10 font-heading text-xs font-bold text-primary">
+                  {String.fromCharCode(65 + (dayIndex % 26))}
+                </span>
+                <h3 className="font-heading text-sm font-semibold">
+                  {day.name || `Treino ${String.fromCharCode(65 + (dayIndex % 26))}`}
+                </h3>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  aria-label={`Mover treino para cima`}
+                  disabled={dayIndex === 0 || isPending}
+                  onClick={() => moveWorkout(dayIndex, -1)}
+                  className="flex size-9 items-center justify-center rounded-full hover:bg-accent disabled:opacity-30"
+                >
+                  <ArrowUp className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Mover treino para baixo`}
+                  disabled={dayIndex === days.length - 1 || isPending}
+                  onClick={() => moveWorkout(dayIndex, 1)}
+                  className="flex size-9 items-center justify-center rounded-full hover:bg-accent disabled:opacity-30"
+                >
+                  <ArrowDown className="size-4" />
+                </button>
+                {days.length > 1 && (
+                  <button
+                    type="button"
+                    aria-label={`Remover treino`}
+                    disabled={isPending}
+                    onClick={() => removeWorkout(dayIndex)}
+                    className="flex size-9 items-center justify-center rounded-full text-destructive hover:bg-destructive/10 disabled:opacity-30"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                )}
+              </div>
             </div>
 
-            {!day.isRest && (
-              <>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_10rem]">
-                  <label className="flex flex-col gap-2 text-sm font-medium">
-                    Nome do treino
-                    <Input
-                      value={day.name}
-                      onChange={(event) =>
-                        updateDay(dayIndex, { name: event.target.value })
-                      }
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2 text-sm font-medium">
-                    Duração (min)
-                    <Input
-                      type="number"
-                      inputMode="numeric"
-                      min={1}
-                      value={day.estimatedDurationInMinutes}
-                      onChange={(event) =>
-                        updateDay(dayIndex, {
-                          estimatedDurationInMinutes: Number(
-                            event.target.value,
-                          ),
-                        })
-                      }
-                    />
-                  </label>
-                </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_10rem]">
+              <label className="flex flex-col gap-2 text-sm font-medium">
+                Nome do treino
+                <Input
+                  value={day.name}
+                  placeholder={`Ex: Treino ${String.fromCharCode(65 + (dayIndex % 26))} - Peito`}
+                  onChange={(event) =>
+                    updateDay(dayIndex, { name: event.target.value })
+                  }
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-sm font-medium">
+                Duração (min)
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  value={day.estimatedDurationInMinutes}
+                  onChange={(event) =>
+                    updateDay(dayIndex, {
+                      estimatedDurationInMinutes: Number(
+                        event.target.value,
+                      ),
+                    })
+                  }
+                />
+              </label>
+            </div>
 
                 <div className="flex flex-col gap-3">
                   {day.exercises.map((exercise, exerciseIndex) => (
@@ -399,7 +443,7 @@ export function WorkoutPlanBuilder({
                   <Button
                     type="button"
                     variant="outline"
-                    className="h-11 rounded-full"
+                    className="h-11 rounded-full font-heading text-xs"
                     disabled={isPending}
                     onClick={() =>
                       updateDay(dayIndex, {
@@ -407,14 +451,23 @@ export function WorkoutPlanBuilder({
                       })
                     }
                   >
-                    <Plus />
+                    <Plus className="size-3.5" />
                     Adicionar exercício
                   </Button>
                 </div>
-              </>
-            )}
           </article>
         ))}
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={addWorkout}
+          disabled={isPending}
+          className="mt-2 w-full gap-2 rounded-xl py-6 font-heading text-sm"
+        >
+          <Plus className="size-4" />
+          Adicionar Mais um Treino na Rotina
+        </Button>
       </section>
 
       {error && (

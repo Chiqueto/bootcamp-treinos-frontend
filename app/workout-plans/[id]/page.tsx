@@ -45,12 +45,21 @@ export default async function WorkoutPlanPage({
 
   if (workoutPlanData.status !== 200) redirect("/");
 
-  const { name, workoutDays } = workoutPlanData.data;
+  const { name, workoutDays, nextWorkoutDayId, lastCompletedWorkoutDayId } =
+    workoutPlanData.data;
 
-  const sortedDays = [...workoutDays].sort(
-    (a, b) =>
-      WEEKDAY_ORDER.indexOf(a.weekDay) - WEEKDAY_ORDER.indexOf(b.weekDay),
-  );
+  const sortedDays = [...workoutDays].sort((a, b) => {
+    if (
+      typeof a.order === "number" &&
+      typeof b.order === "number" &&
+      a.order !== b.order
+    ) {
+      return a.order - b.order;
+    }
+    return (
+      WEEKDAY_ORDER.indexOf(a.weekDay) - WEEKDAY_ORDER.indexOf(b.weekDay)
+    );
+  });
 
   return (
     <div className="flex min-h-svh flex-col bg-background pb-24">
@@ -86,31 +95,42 @@ export default async function WorkoutPlanPage({
               {name}
             </Badge>
             <h1 className="font-heading text-2xl font-semibold leading-[1.05] text-background">
-              Plano de Treino
+              Rotina de Treinos
             </h1>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col gap-3 p-5">
-        {sortedDays.map((day) =>
-          day.isRest ? (
+        {sortedDays.map((day, index) => {
+          const isNext = day.id === nextWorkoutDayId;
+          const isLastCompleted = day.id === lastCompletedWorkoutDayId;
+          const tag = isNext
+            ? "PRÓXIMO NA FILA"
+            : isLastCompleted
+              ? "ÚLTIMO REALIZADO"
+              : `TREINO ${String.fromCharCode(65 + (index % 26))}`;
+
+          return day.isRest ? (
             <RestDayCard key={day.id} weekDay={day.weekDay} />
           ) : (
             <Link
               key={day.id}
               href={`/workout-plans/${id}/days/${day.id}`}
+              className={isNext ? "rounded-xl ring-2 ring-primary" : ""}
             >
               <WorkoutDayCard
                 name={day.name}
                 weekDay={day.weekDay}
+                tag={tag}
+                rotationLabel={isNext ? "Sua vez" : undefined}
                 estimatedDurationInSeconds={day.estimatedDurationInSeconds}
                 exercisesCount={day.exercisesCount}
                 coverImageUrl={day.coverImageUrl}
               />
             </Link>
-          ),
-        )}
+          );
+        })}
       </div>
 
       <BottomNav activePage="planning" />

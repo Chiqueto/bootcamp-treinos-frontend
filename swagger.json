@@ -64,6 +64,10 @@
                                   "format": "uuid",
                                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                                 },
+                                "order": {
+                                  "default": 0,
+                                  "type": "number"
+                                },
                                 "name": {
                                   "type": "string"
                                 },
@@ -140,6 +144,7 @@
                               },
                               "required": [
                                 "id",
+                                "order",
                                 "name",
                                 "weekDay",
                                 "isRest",
@@ -245,7 +250,14 @@
                           "type": "string",
                           "minLength": 1
                         },
+                        "order": {
+                          "default": 0,
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
                         "weekDay": {
+                          "default": "MONDAY",
                           "type": "string",
                           "enum": [
                             "MONDAY",
@@ -314,7 +326,6 @@
                       },
                       "required": [
                         "name",
-                        "weekDay",
                         "estimatedDurationInSeconds",
                         "exercises"
                       ]
@@ -361,7 +372,14 @@
                             "type": "string",
                             "minLength": 1
                           },
+                          "order": {
+                            "default": 0,
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
                           "weekDay": {
+                            "default": "MONDAY",
                             "type": "string",
                             "enum": [
                               "MONDAY",
@@ -432,6 +450,7 @@
                         },
                         "required": [
                           "name",
+                          "order",
                           "weekDay",
                           "isRest",
                           "estimatedDurationInSeconds",
@@ -604,6 +623,18 @@
                     "name": {
                       "type": "string"
                     },
+                    "nextWorkoutDayId": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "lastCompletedWorkoutDayId": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
                     "workoutDays": {
                       "type": "array",
                       "items": {
@@ -613,6 +644,10 @@
                             "type": "string",
                             "format": "uuid",
                             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "order": {
+                            "default": 0,
+                            "type": "number"
                           },
                           "weekDay": {
                             "type": "string",
@@ -645,6 +680,7 @@
                         },
                         "required": [
                           "id",
+                          "order",
                           "weekDay",
                           "name",
                           "isRest",
@@ -764,6 +800,14 @@
             "in": "path",
             "name": "dayId",
             "required": true
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "in": "path",
+            "name": "order",
+            "required": true
           }
         ],
         "responses": {
@@ -781,6 +825,10 @@
                     },
                     "name": {
                       "type": "string"
+                    },
+                    "order": {
+                      "default": 0,
+                      "type": "number"
                     },
                     "isRest": {
                       "type": "boolean"
@@ -894,6 +942,7 @@
                   "required": [
                     "id",
                     "name",
+                    "order",
                     "isRest",
                     "estimatedDurationInSeconds",
                     "weekDay",
@@ -1329,7 +1378,14 @@
                             "type": "string",
                             "minLength": 1
                           },
+                          "order": {
+                            "default": 0,
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
                           "weekDay": {
+                            "default": "MONDAY",
                             "type": "string",
                             "enum": [
                               "MONDAY",
@@ -1400,6 +1456,7 @@
                         },
                         "required": [
                           "name",
+                          "order",
                           "weekDay",
                           "isRest",
                           "estimatedDurationInSeconds",
@@ -3142,7 +3199,14 @@
                           "type": "string",
                           "minLength": 1
                         },
+                        "order": {
+                          "default": 0,
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
                         "weekDay": {
+                          "default": "MONDAY",
                           "type": "string",
                           "enum": [
                             "MONDAY",
@@ -3211,7 +3275,6 @@
                       },
                       "required": [
                         "name",
-                        "weekDay",
                         "estimatedDurationInSeconds",
                         "exercises"
                       ]
@@ -3328,7 +3391,14 @@
                                 "type": "string",
                                 "minLength": 1
                               },
+                              "order": {
+                                "default": 0,
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
                               "weekDay": {
+                                "default": "MONDAY",
                                 "type": "string",
                                 "enum": [
                                   "MONDAY",
@@ -3399,6 +3469,7 @@
                             },
                             "required": [
                               "name",
+                              "order",
                               "weekDay",
                               "isRest",
                               "estimatedDurationInSeconds",
@@ -5541,6 +5612,9 @@
                         "name": {
                           "type": "string"
                         },
+                        "order": {
+                          "type": "number"
+                        },
                         "isRest": {
                           "type": "boolean"
                         },
@@ -5577,6 +5651,47 @@
                         "exercisesCount"
                       ],
                       "additionalProperties": false
+                    },
+                    "lastCompletedWorkoutDay": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "completedAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "completedAt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "isLastWorkoutCompletedToday": {
+                      "type": "boolean"
+                    },
+                    "rotationIndex": {
+                      "type": "number"
+                    },
+                    "totalWorkoutsInRotation": {
+                      "type": "number"
+                    },
+                    "gamificationTheme": {
+                      "type": "string",
+                      "enum": [
+                        "ALL",
+                        "ANIMES",
+                        "VEHICLES",
+                        "ANIMALS",
+                        "MOVIES_SERIES"
+                      ]
                     },
                     "workoutStreak": {
                       "type": "number"
@@ -5856,6 +5971,16 @@
                     },
                     "bodyFatPercentage": {
                       "type": "number"
+                    },
+                    "gamificationTheme": {
+                      "type": "string",
+                      "enum": [
+                        "ALL",
+                        "ANIMES",
+                        "VEHICLES",
+                        "ANIMALS",
+                        "MOVIES_SERIES"
+                      ]
                     }
                   },
                   "required": [
@@ -5864,7 +5989,8 @@
                     "weightInGrams",
                     "heightInCentimeters",
                     "age",
-                    "bodyFatPercentage"
+                    "bodyFatPercentage",
+                    "gamificationTheme"
                   ],
                   "additionalProperties": false
                 }
@@ -5971,6 +6097,16 @@
                     "type": "number",
                     "minimum": 0,
                     "maximum": 100
+                  },
+                  "gamificationTheme": {
+                    "type": "string",
+                    "enum": [
+                      "ALL",
+                      "ANIMES",
+                      "VEHICLES",
+                      "ANIMALS",
+                      "MOVIES_SERIES"
+                    ]
                   }
                 },
                 "required": [
@@ -6005,6 +6141,16 @@
                     },
                     "bodyFatPercentage": {
                       "type": "number"
+                    },
+                    "gamificationTheme": {
+                      "type": "string",
+                      "enum": [
+                        "ALL",
+                        "ANIMES",
+                        "VEHICLES",
+                        "ANIMALS",
+                        "MOVIES_SERIES"
+                      ]
                     }
                   },
                   "required": [
@@ -6012,7 +6158,120 @@
                     "weightInGrams",
                     "heightInCentimeters",
                     "age",
-                    "bodyFatPercentage"
+                    "bodyFatPercentage",
+                    "gamificationTheme"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/theme": {
+      "patch": {
+        "operationId": "updateGamificationTheme",
+        "summary": "Update user gamification theme preference",
+        "tags": [
+          "Me"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "theme": {
+                    "type": "string",
+                    "enum": [
+                      "ALL",
+                      "ANIMES",
+                      "VEHICLES",
+                      "ANIMALS",
+                      "MOVIES_SERIES"
+                    ]
+                  }
+                },
+                "required": [
+                  "theme"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string"
+                    },
+                    "gamificationTheme": {
+                      "type": "string",
+                      "enum": [
+                        "ALL",
+                        "ANIMES",
+                        "VEHICLES",
+                        "ANIMALS",
+                        "MOVIES_SERIES"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "userId",
+                    "gamificationTheme"
                   ],
                   "additionalProperties": false
                 }
@@ -6089,6 +6348,10 @@
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "timezone": {
+                    "type": "string",
+                    "maxLength": 255
                   }
                 },
                 "required": [
@@ -7100,6 +7363,1475 @@
                     "name",
                     "ownerUserId",
                     "muscles"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/history/analytics/weekly": {
+      "get": {
+        "operationId": "getWeeklyTrainingAnalytics",
+        "summary": "Get weekly volume and duration training analytics",
+        "tags": [
+          "History"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "tz",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "startDate",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "endDate",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 52
+            },
+            "in": "query",
+            "name": "weeksCount",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "startDate": {
+                      "type": "string"
+                    },
+                    "endDate": {
+                      "type": "string"
+                    },
+                    "timezone": {
+                      "type": "string"
+                    },
+                    "weeks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "weekStartDate": {
+                            "type": "string"
+                          },
+                          "weekEndDate": {
+                            "type": "string"
+                          },
+                          "workoutsCompleted": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "workingSets": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "warmupSets": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "loadVolumeGrams": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "loadVolumeKg": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "totalDurationInSeconds": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "averageDurationInSeconds": {
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "weekStartDate",
+                          "weekEndDate",
+                          "workoutsCompleted",
+                          "workingSets",
+                          "warmupSets",
+                          "loadVolumeGrams",
+                          "loadVolumeKg",
+                          "totalDurationInSeconds",
+                          "averageDurationInSeconds"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "startDate",
+                    "endDate",
+                    "timezone",
+                    "weeks"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/history/analytics/muscles": {
+      "get": {
+        "operationId": "getMuscleTrainingAnalytics",
+        "summary": "Get muscle direct and indirect working sets analytics",
+        "tags": [
+          "History"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "tz",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "startDate",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "endDate",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "startDate": {
+                      "type": "string"
+                    },
+                    "endDate": {
+                      "type": "string"
+                    },
+                    "timezone": {
+                      "type": "string"
+                    },
+                    "totalWorkingSets": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "classifiedWorkingSets": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "unclassifiedWorkingSets": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "muscles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "muscleGroup": {
+                            "type": "string",
+                            "enum": [
+                              "CHEST",
+                              "BACK",
+                              "SHOULDERS",
+                              "BICEPS",
+                              "TRICEPS",
+                              "FOREARMS",
+                              "QUADRICEPS",
+                              "HAMSTRINGS",
+                              "GLUTES",
+                              "ADDUCTORS",
+                              "HIP_ABDUCTORS",
+                              "CALVES",
+                              "CORE"
+                            ]
+                          },
+                          "directWorkingSets": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "indirectWorkingSets": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "muscleGroup",
+                          "directWorkingSets",
+                          "indirectWorkingSets"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "startDate",
+                    "endDate",
+                    "timezone",
+                    "totalWorkingSets",
+                    "classifiedWorkingSets",
+                    "unclassifiedWorkingSets",
+                    "muscles"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/history/sessions": {
+      "get": {
+        "operationId": "listWorkoutHistory",
+        "summary": "List completed workout sessions history with cursor pagination",
+        "tags": [
+          "History"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "cursor",
+            "required": false
+          },
+          {
+            "schema": {
+              "default": 15,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PLANNED",
+                "FREE"
+              ]
+            },
+            "in": "query",
+            "name": "origin",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "origin": {
+                            "type": "string",
+                            "enum": [
+                              "PLANNED",
+                              "FREE"
+                            ]
+                          },
+                          "startedAt": {
+                            "type": "string"
+                          },
+                          "completedAt": {
+                            "type": "string"
+                          },
+                          "durationInSeconds": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "workoutPlanId": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "workoutPlanNameSnapshot": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "workoutDayNameSnapshot": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "exercisesCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "workingSetsCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "warmupSetsCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "totalLoadVolumeGrams": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "totalLoadVolumeKg": {
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "origin",
+                          "startedAt",
+                          "completedAt",
+                          "durationInSeconds",
+                          "workoutPlanId",
+                          "workoutPlanNameSnapshot",
+                          "workoutDayNameSnapshot",
+                          "exercisesCount",
+                          "workingSetsCount",
+                          "warmupSetsCount",
+                          "totalLoadVolumeGrams",
+                          "totalLoadVolumeKg"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextCursor": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "hasMore": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "nextCursor",
+                    "hasMore"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/history/sessions/{sessionId}": {
+      "get": {
+        "operationId": "getWorkoutHistorySession",
+        "summary": "Get details of a completed workout session in history",
+        "tags": [
+          "History"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "sessionId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "origin": {
+                      "type": "string",
+                      "enum": [
+                        "PLANNED",
+                        "FREE"
+                      ]
+                    },
+                    "startedAt": {
+                      "type": "string"
+                    },
+                    "completedAt": {
+                      "type": "string"
+                    },
+                    "durationInSeconds": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "workoutPlanId": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "workoutPlanNameSnapshot": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "workoutDayNameSnapshot": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "summary": {
+                      "type": "object",
+                      "properties": {
+                        "exercisesCount": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "workingSetsCount": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "warmupSetsCount": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "totalLoadVolumeGrams": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "totalLoadVolumeKg": {
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "exercisesCount",
+                        "workingSetsCount",
+                        "warmupSetsCount",
+                        "totalLoadVolumeGrams",
+                        "totalLoadVolumeKg"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "exercises": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "exerciseId": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "exerciseNameSnapshot": {
+                            "type": "string"
+                          },
+                          "order": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "notes": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "planned": {
+                            "type": "object",
+                            "properties": {
+                              "warmupSets": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "workingSets": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "reps": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "restTimeInSeconds": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "warmupSets",
+                              "workingSets",
+                              "reps",
+                              "restTimeInSeconds"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "performed": {
+                            "type": "object",
+                            "properties": {
+                              "warmupSetsCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "workingSetsCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "loadVolumeGrams": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "loadVolumeKg": {
+                                "type": "number",
+                                "minimum": 0
+                              }
+                            },
+                            "required": [
+                              "warmupSetsCount",
+                              "workingSetsCount",
+                              "loadVolumeGrams",
+                              "loadVolumeKg"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "sets": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "order": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "WARMUP",
+                                    "WORKING"
+                                  ]
+                                },
+                                "weightInGrams": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "reps": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "rir": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "durationInSeconds": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "notes": {
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "completedAt": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "order",
+                                "type",
+                                "weightInGrams",
+                                "reps",
+                                "rir",
+                                "durationInSeconds",
+                                "notes",
+                                "completedAt"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "exerciseId",
+                          "exerciseNameSnapshot",
+                          "order",
+                          "notes",
+                          "planned",
+                          "performed",
+                          "sets"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "origin",
+                    "startedAt",
+                    "completedAt",
+                    "durationInSeconds",
+                    "workoutPlanId",
+                    "workoutPlanNameSnapshot",
+                    "workoutDayNameSnapshot",
+                    "summary",
+                    "exercises"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/history/exercises/{exerciseId}": {
+      "get": {
+        "operationId": "getExerciseEvolution",
+        "summary": "Get longitudinal evolution and load PR for a specific canonical exercise",
+        "tags": [
+          "History"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "cursor",
+            "required": false
+          },
+          {
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "exerciseId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "exercise": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "ownerUserId": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "muscles": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "muscleGroup": {
+                                "type": "string",
+                                "enum": [
+                                  "CHEST",
+                                  "BACK",
+                                  "SHOULDERS",
+                                  "BICEPS",
+                                  "TRICEPS",
+                                  "FOREARMS",
+                                  "QUADRICEPS",
+                                  "HAMSTRINGS",
+                                  "GLUTES",
+                                  "ADDUCTORS",
+                                  "HIP_ABDUCTORS",
+                                  "CALVES",
+                                  "CORE"
+                                ]
+                              },
+                              "role": {
+                                "type": "string",
+                                "enum": [
+                                  "PRIMARY",
+                                  "SECONDARY"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "muscleGroup",
+                              "role"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "ownerUserId",
+                        "muscles"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "loadPR": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "weightInGrams": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "weightKg": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "reps": {
+                          "nullable": true,
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "rir": {
+                          "nullable": true,
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "completedAt": {
+                          "type": "string"
+                        },
+                        "workoutSessionId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "sessionExerciseId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "workoutSetId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "origin": {
+                          "type": "string",
+                          "enum": [
+                            "PLANNED",
+                            "FREE"
+                          ]
+                        },
+                        "workoutPlanNameSnapshot": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "workoutDayNameSnapshot": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "weightInGrams",
+                        "weightKg",
+                        "reps",
+                        "rir",
+                        "completedAt",
+                        "workoutSessionId",
+                        "sessionExerciseId",
+                        "workoutSetId",
+                        "origin",
+                        "workoutPlanNameSnapshot",
+                        "workoutDayNameSnapshot"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "workoutSessionId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "startedAt": {
+                            "type": "string"
+                          },
+                          "completedAt": {
+                            "type": "string"
+                          },
+                          "origin": {
+                            "type": "string",
+                            "enum": [
+                              "PLANNED",
+                              "FREE"
+                            ]
+                          },
+                          "workoutPlanNameSnapshot": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "workoutDayNameSnapshot": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "exerciseNameSnapshot": {
+                            "type": "string"
+                          },
+                          "workingSetsCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "totalReps": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "loadVolumeGrams": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "loadVolumeKg": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "topSet": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "workoutSetId": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "weightInGrams": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "weightKg": {
+                                "nullable": true,
+                                "type": "number"
+                              },
+                              "reps": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "rir": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "workoutSetId",
+                              "weightInGrams",
+                              "weightKg",
+                              "reps",
+                              "rir"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "sets": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "sessionExerciseId": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "order": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "weightInGrams": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "weightKg": {
+                                  "nullable": true,
+                                  "type": "number"
+                                },
+                                "reps": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "rir": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "durationInSeconds": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "notes": {
+                                  "nullable": true,
+                                  "type": "string"
+                                },
+                                "completedAt": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "sessionExerciseId",
+                                "order",
+                                "weightInGrams",
+                                "weightKg",
+                                "reps",
+                                "rir",
+                                "durationInSeconds",
+                                "notes",
+                                "completedAt"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "workoutSessionId",
+                          "startedAt",
+                          "completedAt",
+                          "origin",
+                          "workoutPlanNameSnapshot",
+                          "workoutDayNameSnapshot",
+                          "exerciseNameSnapshot",
+                          "workingSetsCount",
+                          "totalReps",
+                          "loadVolumeGrams",
+                          "loadVolumeKg",
+                          "topSet",
+                          "sets"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextCursor": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "hasMore": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "exercise",
+                    "loadPR",
+                    "items",
+                    "nextCursor",
+                    "hasMore"
                   ],
                   "additionalProperties": false
                 }
@@ -9112,1475 +10844,6 @@
             }
           },
           "409": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/history/analytics/weekly": {
-      "get": {
-        "operationId": "getWeeklyTrainingAnalytics",
-        "summary": "Get weekly volume and duration training analytics",
-        "tags": [
-          "History"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "tz",
-            "required": true
-          },
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "startDate",
-            "required": false
-          },
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "endDate",
-            "required": false
-          },
-          {
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 52
-            },
-            "in": "query",
-            "name": "weeksCount",
-            "required": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "startDate": {
-                      "type": "string"
-                    },
-                    "endDate": {
-                      "type": "string"
-                    },
-                    "timezone": {
-                      "type": "string"
-                    },
-                    "weeks": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "weekStartDate": {
-                            "type": "string"
-                          },
-                          "weekEndDate": {
-                            "type": "string"
-                          },
-                          "workoutsCompleted": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "workingSets": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "warmupSets": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "loadVolumeGrams": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "loadVolumeKg": {
-                            "type": "number",
-                            "minimum": 0
-                          },
-                          "totalDurationInSeconds": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "averageDurationInSeconds": {
-                            "type": "number",
-                            "minimum": 0
-                          }
-                        },
-                        "required": [
-                          "weekStartDate",
-                          "weekEndDate",
-                          "workoutsCompleted",
-                          "workingSets",
-                          "warmupSets",
-                          "loadVolumeGrams",
-                          "loadVolumeKg",
-                          "totalDurationInSeconds",
-                          "averageDurationInSeconds"
-                        ],
-                        "additionalProperties": false
-                      }
-                    }
-                  },
-                  "required": [
-                    "startDate",
-                    "endDate",
-                    "timezone",
-                    "weeks"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/history/analytics/muscles": {
-      "get": {
-        "operationId": "getMuscleTrainingAnalytics",
-        "summary": "Get muscle direct and indirect working sets analytics",
-        "tags": [
-          "History"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "tz",
-            "required": true
-          },
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "startDate",
-            "required": true
-          },
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "endDate",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "startDate": {
-                      "type": "string"
-                    },
-                    "endDate": {
-                      "type": "string"
-                    },
-                    "timezone": {
-                      "type": "string"
-                    },
-                    "totalWorkingSets": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "classifiedWorkingSets": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "unclassifiedWorkingSets": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "muscles": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "muscleGroup": {
-                            "type": "string",
-                            "enum": [
-                              "CHEST",
-                              "BACK",
-                              "SHOULDERS",
-                              "BICEPS",
-                              "TRICEPS",
-                              "FOREARMS",
-                              "QUADRICEPS",
-                              "HAMSTRINGS",
-                              "GLUTES",
-                              "ADDUCTORS",
-                              "HIP_ABDUCTORS",
-                              "CALVES",
-                              "CORE"
-                            ]
-                          },
-                          "directWorkingSets": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "indirectWorkingSets": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          }
-                        },
-                        "required": [
-                          "muscleGroup",
-                          "directWorkingSets",
-                          "indirectWorkingSets"
-                        ],
-                        "additionalProperties": false
-                      }
-                    }
-                  },
-                  "required": [
-                    "startDate",
-                    "endDate",
-                    "timezone",
-                    "totalWorkingSets",
-                    "classifiedWorkingSets",
-                    "unclassifiedWorkingSets",
-                    "muscles"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/history/sessions": {
-      "get": {
-        "operationId": "listWorkoutHistory",
-        "summary": "List completed workout sessions history with cursor pagination",
-        "tags": [
-          "History"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "cursor",
-            "required": false
-          },
-          {
-            "schema": {
-              "default": 15,
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 50
-            },
-            "in": "query",
-            "name": "limit",
-            "required": false
-          },
-          {
-            "schema": {
-              "type": "string",
-              "enum": [
-                "PLANNED",
-                "FREE"
-              ]
-            },
-            "in": "query",
-            "name": "origin",
-            "required": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "items": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                          },
-                          "origin": {
-                            "type": "string",
-                            "enum": [
-                              "PLANNED",
-                              "FREE"
-                            ]
-                          },
-                          "startedAt": {
-                            "type": "string"
-                          },
-                          "completedAt": {
-                            "type": "string"
-                          },
-                          "durationInSeconds": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "workoutPlanId": {
-                            "nullable": true,
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                          },
-                          "workoutPlanNameSnapshot": {
-                            "nullable": true,
-                            "type": "string"
-                          },
-                          "workoutDayNameSnapshot": {
-                            "nullable": true,
-                            "type": "string"
-                          },
-                          "exercisesCount": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "workingSetsCount": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "warmupSetsCount": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "totalLoadVolumeGrams": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "totalLoadVolumeKg": {
-                            "type": "number",
-                            "minimum": 0
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "origin",
-                          "startedAt",
-                          "completedAt",
-                          "durationInSeconds",
-                          "workoutPlanId",
-                          "workoutPlanNameSnapshot",
-                          "workoutDayNameSnapshot",
-                          "exercisesCount",
-                          "workingSetsCount",
-                          "warmupSetsCount",
-                          "totalLoadVolumeGrams",
-                          "totalLoadVolumeKg"
-                        ],
-                        "additionalProperties": false
-                      }
-                    },
-                    "nextCursor": {
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "hasMore": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "items",
-                    "nextCursor",
-                    "hasMore"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/history/sessions/{sessionId}": {
-      "get": {
-        "operationId": "getWorkoutHistorySession",
-        "summary": "Get details of a completed workout session in history",
-        "tags": [
-          "History"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "in": "path",
-            "name": "sessionId",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "origin": {
-                      "type": "string",
-                      "enum": [
-                        "PLANNED",
-                        "FREE"
-                      ]
-                    },
-                    "startedAt": {
-                      "type": "string"
-                    },
-                    "completedAt": {
-                      "type": "string"
-                    },
-                    "durationInSeconds": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "workoutPlanId": {
-                      "nullable": true,
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "workoutPlanNameSnapshot": {
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "workoutDayNameSnapshot": {
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "summary": {
-                      "type": "object",
-                      "properties": {
-                        "exercisesCount": {
-                          "type": "integer",
-                          "minimum": 0,
-                          "maximum": 9007199254740991
-                        },
-                        "workingSetsCount": {
-                          "type": "integer",
-                          "minimum": 0,
-                          "maximum": 9007199254740991
-                        },
-                        "warmupSetsCount": {
-                          "type": "integer",
-                          "minimum": 0,
-                          "maximum": 9007199254740991
-                        },
-                        "totalLoadVolumeGrams": {
-                          "type": "integer",
-                          "minimum": 0,
-                          "maximum": 9007199254740991
-                        },
-                        "totalLoadVolumeKg": {
-                          "type": "number",
-                          "minimum": 0
-                        }
-                      },
-                      "required": [
-                        "exercisesCount",
-                        "workingSetsCount",
-                        "warmupSetsCount",
-                        "totalLoadVolumeGrams",
-                        "totalLoadVolumeKg"
-                      ],
-                      "additionalProperties": false
-                    },
-                    "exercises": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                          },
-                          "exerciseId": {
-                            "nullable": true,
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                          },
-                          "exerciseNameSnapshot": {
-                            "type": "string"
-                          },
-                          "order": {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991
-                          },
-                          "notes": {
-                            "nullable": true,
-                            "type": "string"
-                          },
-                          "planned": {
-                            "type": "object",
-                            "properties": {
-                              "warmupSets": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": -9007199254740991,
-                                "maximum": 9007199254740991
-                              },
-                              "workingSets": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": -9007199254740991,
-                                "maximum": 9007199254740991
-                              },
-                              "reps": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": -9007199254740991,
-                                "maximum": 9007199254740991
-                              },
-                              "restTimeInSeconds": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": -9007199254740991,
-                                "maximum": 9007199254740991
-                              }
-                            },
-                            "required": [
-                              "warmupSets",
-                              "workingSets",
-                              "reps",
-                              "restTimeInSeconds"
-                            ],
-                            "additionalProperties": false
-                          },
-                          "performed": {
-                            "type": "object",
-                            "properties": {
-                              "warmupSetsCount": {
-                                "type": "integer",
-                                "minimum": 0,
-                                "maximum": 9007199254740991
-                              },
-                              "workingSetsCount": {
-                                "type": "integer",
-                                "minimum": 0,
-                                "maximum": 9007199254740991
-                              },
-                              "loadVolumeGrams": {
-                                "type": "integer",
-                                "minimum": 0,
-                                "maximum": 9007199254740991
-                              },
-                              "loadVolumeKg": {
-                                "type": "number",
-                                "minimum": 0
-                              }
-                            },
-                            "required": [
-                              "warmupSetsCount",
-                              "workingSetsCount",
-                              "loadVolumeGrams",
-                              "loadVolumeKg"
-                            ],
-                            "additionalProperties": false
-                          },
-                          "sets": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string",
-                                  "format": "uuid",
-                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                                },
-                                "order": {
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "enum": [
-                                    "WARMUP",
-                                    "WORKING"
-                                  ]
-                                },
-                                "weightInGrams": {
-                                  "nullable": true,
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "reps": {
-                                  "nullable": true,
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "rir": {
-                                  "nullable": true,
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "durationInSeconds": {
-                                  "nullable": true,
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "notes": {
-                                  "nullable": true,
-                                  "type": "string"
-                                },
-                                "completedAt": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "order",
-                                "type",
-                                "weightInGrams",
-                                "reps",
-                                "rir",
-                                "durationInSeconds",
-                                "notes",
-                                "completedAt"
-                              ],
-                              "additionalProperties": false
-                            }
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "exerciseId",
-                          "exerciseNameSnapshot",
-                          "order",
-                          "notes",
-                          "planned",
-                          "performed",
-                          "sets"
-                        ],
-                        "additionalProperties": false
-                      }
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "origin",
-                    "startedAt",
-                    "completedAt",
-                    "durationInSeconds",
-                    "workoutPlanId",
-                    "workoutPlanNameSnapshot",
-                    "workoutDayNameSnapshot",
-                    "summary",
-                    "exercises"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/history/exercises/{exerciseId}": {
-      "get": {
-        "operationId": "getExerciseEvolution",
-        "summary": "Get longitudinal evolution and load PR for a specific canonical exercise",
-        "tags": [
-          "History"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "cursor",
-            "required": false
-          },
-          {
-            "schema": {
-              "default": 20,
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 50
-            },
-            "in": "query",
-            "name": "limit",
-            "required": false
-          },
-          {
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "in": "path",
-            "name": "exerciseId",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "exercise": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "ownerUserId": {
-                          "nullable": true,
-                          "type": "string"
-                        },
-                        "muscles": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "muscleGroup": {
-                                "type": "string",
-                                "enum": [
-                                  "CHEST",
-                                  "BACK",
-                                  "SHOULDERS",
-                                  "BICEPS",
-                                  "TRICEPS",
-                                  "FOREARMS",
-                                  "QUADRICEPS",
-                                  "HAMSTRINGS",
-                                  "GLUTES",
-                                  "ADDUCTORS",
-                                  "HIP_ABDUCTORS",
-                                  "CALVES",
-                                  "CORE"
-                                ]
-                              },
-                              "role": {
-                                "type": "string",
-                                "enum": [
-                                  "PRIMARY",
-                                  "SECONDARY"
-                                ]
-                              }
-                            },
-                            "required": [
-                              "muscleGroup",
-                              "role"
-                            ],
-                            "additionalProperties": false
-                          }
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "name",
-                        "ownerUserId",
-                        "muscles"
-                      ],
-                      "additionalProperties": false
-                    },
-                    "loadPR": {
-                      "nullable": true,
-                      "type": "object",
-                      "properties": {
-                        "weightInGrams": {
-                          "type": "integer",
-                          "minimum": 0,
-                          "maximum": 9007199254740991
-                        },
-                        "weightKg": {
-                          "type": "number",
-                          "minimum": 0
-                        },
-                        "reps": {
-                          "nullable": true,
-                          "type": "integer",
-                          "minimum": -9007199254740991,
-                          "maximum": 9007199254740991
-                        },
-                        "rir": {
-                          "nullable": true,
-                          "type": "integer",
-                          "minimum": -9007199254740991,
-                          "maximum": 9007199254740991
-                        },
-                        "completedAt": {
-                          "type": "string"
-                        },
-                        "workoutSessionId": {
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                        },
-                        "sessionExerciseId": {
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                        },
-                        "workoutSetId": {
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "enum": [
-                            "PLANNED",
-                            "FREE"
-                          ]
-                        },
-                        "workoutPlanNameSnapshot": {
-                          "nullable": true,
-                          "type": "string"
-                        },
-                        "workoutDayNameSnapshot": {
-                          "nullable": true,
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "weightInGrams",
-                        "weightKg",
-                        "reps",
-                        "rir",
-                        "completedAt",
-                        "workoutSessionId",
-                        "sessionExerciseId",
-                        "workoutSetId",
-                        "origin",
-                        "workoutPlanNameSnapshot",
-                        "workoutDayNameSnapshot"
-                      ],
-                      "additionalProperties": false
-                    },
-                    "items": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "workoutSessionId": {
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                          },
-                          "startedAt": {
-                            "type": "string"
-                          },
-                          "completedAt": {
-                            "type": "string"
-                          },
-                          "origin": {
-                            "type": "string",
-                            "enum": [
-                              "PLANNED",
-                              "FREE"
-                            ]
-                          },
-                          "workoutPlanNameSnapshot": {
-                            "nullable": true,
-                            "type": "string"
-                          },
-                          "workoutDayNameSnapshot": {
-                            "nullable": true,
-                            "type": "string"
-                          },
-                          "exerciseNameSnapshot": {
-                            "type": "string"
-                          },
-                          "workingSetsCount": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "totalReps": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "loadVolumeGrams": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "loadVolumeKg": {
-                            "type": "number",
-                            "minimum": 0
-                          },
-                          "topSet": {
-                            "nullable": true,
-                            "type": "object",
-                            "properties": {
-                              "workoutSetId": {
-                                "type": "string",
-                                "format": "uuid",
-                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                              },
-                              "weightInGrams": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": -9007199254740991,
-                                "maximum": 9007199254740991
-                              },
-                              "weightKg": {
-                                "nullable": true,
-                                "type": "number"
-                              },
-                              "reps": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": -9007199254740991,
-                                "maximum": 9007199254740991
-                              },
-                              "rir": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": -9007199254740991,
-                                "maximum": 9007199254740991
-                              }
-                            },
-                            "required": [
-                              "workoutSetId",
-                              "weightInGrams",
-                              "weightKg",
-                              "reps",
-                              "rir"
-                            ],
-                            "additionalProperties": false
-                          },
-                          "sets": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string",
-                                  "format": "uuid",
-                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                                },
-                                "sessionExerciseId": {
-                                  "type": "string",
-                                  "format": "uuid",
-                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                                },
-                                "order": {
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "weightInGrams": {
-                                  "nullable": true,
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "weightKg": {
-                                  "nullable": true,
-                                  "type": "number"
-                                },
-                                "reps": {
-                                  "nullable": true,
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "rir": {
-                                  "nullable": true,
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "durationInSeconds": {
-                                  "nullable": true,
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "notes": {
-                                  "nullable": true,
-                                  "type": "string"
-                                },
-                                "completedAt": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "sessionExerciseId",
-                                "order",
-                                "weightInGrams",
-                                "weightKg",
-                                "reps",
-                                "rir",
-                                "durationInSeconds",
-                                "notes",
-                                "completedAt"
-                              ],
-                              "additionalProperties": false
-                            }
-                          }
-                        },
-                        "required": [
-                          "workoutSessionId",
-                          "startedAt",
-                          "completedAt",
-                          "origin",
-                          "workoutPlanNameSnapshot",
-                          "workoutDayNameSnapshot",
-                          "exerciseNameSnapshot",
-                          "workingSetsCount",
-                          "totalReps",
-                          "loadVolumeGrams",
-                          "loadVolumeKg",
-                          "topSet",
-                          "sets"
-                        ],
-                        "additionalProperties": false
-                      }
-                    },
-                    "nextCursor": {
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "hasMore": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "exercise",
-                    "loadPR",
-                    "items",
-                    "nextCursor",
-                    "hasMore"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "404": {
             "description": "Default Response",
             "content": {
               "application/json": {
