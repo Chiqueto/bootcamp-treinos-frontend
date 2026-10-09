@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { customFetch } from "@/app/_lib/fetch";
 import {
   addExerciseToWorkoutSession,
   completeWorkoutSession,
@@ -298,6 +299,40 @@ export async function removeExerciseFromWorkoutSessionAction(
     return {
       success: false,
       error: (err as Error)?.message || "Erro de conexão ao remover exercício",
+    };
+  }
+}
+
+/**
+ * Cancela e descarta a sessão de treino ativa.
+ */
+export async function cancelWorkoutSessionAction(
+  sessionId: string,
+): Promise<ActionResult<{ success: boolean; sessionId: string }>> {
+  try {
+    const response = await customFetch<{
+      status: number;
+      data: { success: boolean; sessionId: string } | { error?: string };
+    }>(`/workout-sessions/${sessionId}`, {
+      method: "DELETE",
+    });
+
+    if (response.status !== 200) {
+      const errorMsg =
+        (response.data as { error?: string })?.error ||
+        "Erro ao cancelar treino";
+      return { success: false, error: errorMsg };
+    }
+
+    revalidatePath("/");
+    return {
+      success: true,
+      data: response.data as { success: boolean; sessionId: string },
+    };
+  } catch (err: unknown) {
+    return {
+      success: false,
+      error: (err as Error)?.message || "Erro de conexão ao cancelar treino",
     };
   }
 }

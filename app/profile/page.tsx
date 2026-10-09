@@ -7,6 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Weight, Ruler, BicepsFlexed, User } from "lucide-react";
 import { LogoutButton } from "./_components/logout-button";
 import { GamificationThemeSelector } from "./_components/gamification-theme-selector";
+import { Logo } from "@/app/_components/logo";
 
 
 export default async function ProfilePage() {
@@ -38,12 +39,7 @@ export default async function ProfilePage() {
   return (
     <div className="flex min-h-svh flex-col bg-background pb-24">
       <div className="flex h-[56px] items-center px-5">
-        <p
-          className="text-[22px] uppercase leading-[1.15] text-foreground"
-          style={{ fontFamily: "var(--font-anton)" }}
-        >
-          Trainvy
-        </p>
+        <Logo size="md" asLink />
       </div>
 
       <div className="flex flex-col items-center gap-5 px-5 pt-5">

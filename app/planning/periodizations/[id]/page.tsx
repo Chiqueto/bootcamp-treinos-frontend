@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { PeriodizationActions } from "../../_components/periodization-actions";
 import { PeriodizationManagement } from "../../_components/periodization-management";
 import { PeriodizationStructureEditor } from "../../_components/periodization-structure-editor";
+import { Logo } from "@/app/_components/logo";
 
 interface PeriodizationDetailPageProps {
   params: Promise<{ id: string }>;
@@ -90,12 +91,7 @@ export default async function PeriodizationDetailPage({
           <ArrowLeft className="size-4" />
           <span>Voltar ao Planejamento</span>
         </Link>
-        <p
-          className="text-[18px] uppercase leading-none text-foreground"
-          style={{ fontFamily: "var(--font-anton)" }}
-        >
-          Trainvy
-        </p>
+        <Logo size="sm" asLink />
       </header>
 
       <main className="flex flex-col gap-6 p-5">

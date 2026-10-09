@@ -118,12 +118,16 @@ export async function loadEvolutionDashboard(input: {
 
 export async function searchEvolutionExercises(
   query: string,
+  onlyWithHistory = false,
 ): Promise<EvolutionActionResult<ListExercises200Item[]>> {
   const normalizedQuery = query.trim();
-  if (!normalizedQuery) return { success: true, data: [] };
 
   try {
-    const response = await listExercises({ q: normalizedQuery });
+    const params: { q?: string; onlyWithHistory?: string } = {};
+    if (normalizedQuery) params.q = normalizedQuery;
+    if (onlyWithHistory) params.onlyWithHistory = "true";
+
+    const response = await listExercises(params);
     if (response.status !== 200) {
       return {
         success: false,
@@ -132,7 +136,16 @@ export async function searchEvolutionExercises(
       };
     }
 
-    return { success: true, data: response.data.slice(0, 12) };
+    // Deduplicação defensiva no frontend por nome normalizado
+    const uniqueMap = new Map<string, ListExercises200Item>();
+    for (const item of response.data) {
+      const key = item.name.toLowerCase().trim();
+      if (!uniqueMap.has(key) || item.ownerUserId !== null) {
+        uniqueMap.set(key, item);
+      }
+    }
+
+    return { success: true, data: Array.from(uniqueMap.values()).slice(0, 15) };
   } catch (error) {
     console.error("Failed to search evolution exercises:", error);
     return {
@@ -141,6 +154,12 @@ export async function searchEvolutionExercises(
       error: "Não foi possível buscar exercícios.",
     };
   }
+}
+
+export async function loadInitialEvolutionExercises(): Promise<
+  EvolutionActionResult<ListExercises200Item[]>
+> {
+  return searchEvolutionExercises("", true);
 }
 
 export async function loadExerciseEvolutionPage(input: {

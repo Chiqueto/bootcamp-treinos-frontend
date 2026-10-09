@@ -31,6 +31,10 @@ const anton = Anton({
 export const metadata: Metadata = {
   title: "Trainvy",
   description: "O app que vai transformar a forma como você treina.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({

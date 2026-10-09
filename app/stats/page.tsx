@@ -9,6 +9,7 @@ import { StreakBanner } from "./_components/streak-banner";
 import { StatsHeatmap } from "./_components/stats-heatmap";
 import { StatCard } from "./_components/stat-card";
 import { EvolutionDashboard } from "./_components/evolution-dashboard";
+import { Logo } from "@/app/_components/logo";
 
 function formatTotalTime(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600);
@@ -57,12 +58,7 @@ export default async function StatsPage() {
   return (
     <div className="flex min-h-svh flex-col bg-background pb-24">
       <div className="mx-auto flex h-14 w-full max-w-3xl items-center px-5">
-        <p
-          className="text-[22px] uppercase leading-[1.15] text-foreground"
-          style={{ fontFamily: "var(--font-anton)" }}
-        >
-          Trainvy
-        </p>
+        <Logo size="md" asLink />
       </div>
 
       <main className="mx-auto w-full max-w-3xl px-4 pb-6 sm:px-6">

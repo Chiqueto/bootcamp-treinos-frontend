@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { Dumbbell, Loader2, Plus, Trash2, Zap } from "lucide-react";
+import { ChevronDown, Dumbbell, Loader2, Plus, Trash2, Zap } from "lucide-react";
 
 import type {
   GetWorkoutSession200SessionExercisesItem,
@@ -33,12 +33,18 @@ export function SessionExerciseCard({
   onMutationStart,
   onMutationEnd,
 }: SessionExerciseCardProps) {
+  const [isExpanded, setIsExpanded] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isRemoving, startRemoveTransition] = useTransition();
   // Inicializa a lista local de séries
   const [sets, setSets] = useState<
     GetWorkoutSession200SessionExercisesItemSetsItem[]
   >(() => [...exercise.sets].sort((a, b) => a.order - b.order));
+
+  const completedSetsCount = useMemo(
+    () => sets.filter((s) => !!s.completedAt).length,
+    [sets],
+  );
 
   // Detecta se o exercício é naturalmente baseado em tempo (ex: pranchas, isometrias)
   const isDefaultDuration = useMemo(() => {
@@ -191,9 +197,9 @@ export function SessionExerciseCard({
             )}
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Seletor de Modo: Reps vs Tempo (habilitado apenas se editável) */}
-          {!isReadOnly && (
+        <div className="flex items-center gap-1.5">
+          {/* Seletor de Modo: Reps vs Tempo (habilitado apenas se editável e expandido) */}
+          {!isReadOnly && isExpanded && (
             <div className="flex items-center rounded-lg border border-border bg-muted/40 p-0.5 text-[11px] font-heading font-semibold">
               <button
                 type="button"
@@ -237,6 +243,21 @@ export function SessionExerciseCard({
               )}
             </button>
           )}
+
+          {/* Botão de Expandir / Recolher Séries */}
+          <button
+            type="button"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            title={isExpanded ? "Recolher séries" : "Expandir séries"}
+            aria-expanded={isExpanded}
+            className="flex size-7 items-center justify-center rounded-lg border border-border/60 bg-muted/30 text-muted-foreground hover:bg-muted/70 hover:text-foreground transition-all active:scale-95"
+          >
+            <ChevronDown
+              className={`size-4 transition-transform duration-200 ${
+                isExpanded ? "rotate-180" : ""
+              }`}
+            />
+          </button>
         </div>
       </div>
 
@@ -246,45 +267,85 @@ export function SessionExerciseCard({
         </p>
       )}
 
-      {/* Lista de Séries */}
-      <div className="flex flex-col gap-2 pt-1">
-        {sets.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/70 py-6 text-center">
-            <Dumbbell className="size-6 text-muted-foreground/40 mb-1.5" />
-            <p className="text-xs text-muted-foreground">
-              Nenhuma série registrada ainda.
-            </p>
-          </div>
-        ) : (
-          sets.map((set) => (
-            <WorkoutSetRow
-              key={set.id}
-              sessionId={sessionId}
-              set={set}
-              mode={mode}
-              isReadOnly={isReadOnly}
-              onUpdateSet={handleUpdateSet}
-              onDeleteSet={handleDeleteSet}
-              onError={onError}
-              onMutationStart={onMutationStart}
-              onMutationEnd={onMutationEnd}
-            />
-          ))
-        )}
-      </div>
-
-      {/* Botão + Adicionar Série */}
-      {!isReadOnly && (
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleAddSet}
-          disabled={isPending}
-          className="mt-1 h-11 w-full rounded-xl border-dashed font-heading text-xs font-semibold text-foreground hover:border-primary/50 hover:bg-primary/5 active:scale-[0.99]"
+      {/* Resumo compacto quando recolhido */}
+      {!isExpanded && (
+        <div
+          onClick={() => setIsExpanded(true)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") setIsExpanded(true);
+          }}
+          className="flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-border/80 bg-muted/20 px-3.5 py-2.5 transition-colors hover:bg-muted/40"
         >
-          <Plus className="mr-1.5 size-4 text-primary" />
-          <span>Adicionar série</span>
-        </Button>
+          <div className="flex items-center gap-2">
+            <span className="font-heading text-xs font-semibold text-foreground">
+              {sets.length === 0
+                ? "Nenhuma série"
+                : `${sets.length} ${sets.length === 1 ? "série" : "séries"}`}
+            </span>
+            {sets.length > 0 && (
+              <span
+                className={`rounded-full px-2 py-0.5 font-heading text-[10px] font-bold ${
+                  completedSetsCount === sets.length
+                    ? "bg-emerald-500/15 text-emerald-500"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {completedSetsCount}/{sets.length} concluídas
+              </span>
+            )}
+          </div>
+          <span className="font-heading text-xs font-semibold text-primary">
+            Toque para expandir
+          </span>
+        </div>
+      )}
+
+      {/* Conteúdo Expansível: Séries e Ações */}
+      {isExpanded && (
+        <>
+          {/* Lista de Séries */}
+          <div className="flex flex-col gap-2 pt-1 animate-in fade-in duration-200">
+            {sets.length === 0 ? (
+              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/70 py-6 text-center">
+                <Dumbbell className="size-6 text-muted-foreground/40 mb-1.5" />
+                <p className="text-xs text-muted-foreground">
+                  Nenhuma série registrada ainda.
+                </p>
+              </div>
+            ) : (
+              sets.map((set) => (
+                <WorkoutSetRow
+                  key={set.id}
+                  sessionId={sessionId}
+                  set={set}
+                  mode={mode}
+                  isReadOnly={isReadOnly}
+                  onUpdateSet={handleUpdateSet}
+                  onDeleteSet={handleDeleteSet}
+                  onError={onError}
+                  onMutationStart={onMutationStart}
+                  onMutationEnd={onMutationEnd}
+                />
+              ))
+            )}
+          </div>
+
+          {/* Botão + Adicionar Série */}
+          {!isReadOnly && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleAddSet}
+              disabled={isPending}
+              className="mt-1 h-11 w-full rounded-xl border-dashed font-heading text-xs font-semibold text-foreground hover:border-primary/50 hover:bg-primary/5 active:scale-[0.99]"
+            >
+              <Plus className="mr-1.5 size-4 text-primary" />
+              <span>Adicionar série</span>
+            </Button>
+          )}
+        </>
       )}
 
       {/* Modal de Confirmação para Excluir Exercício com Séries */}
