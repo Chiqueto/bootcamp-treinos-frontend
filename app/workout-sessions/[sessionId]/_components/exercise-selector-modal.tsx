@@ -395,29 +395,20 @@ export function ExerciseSelectorModal({
                               )}
                             </>
                           ) : isCustom ? (
-                            <div className="flex items-center gap-1">
-                              <span className="text-[10px] text-amber-500 font-medium">
-                                Sem classificação
-                              </span>
-                              <span
-                                role="button"
-                                tabIndex={0}
-                                aria-label="Classificar"
-                                onClick={(e) => openEditMuscles(exercise, e)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    openEditMuscles(exercise, e as unknown as React.MouseEvent);
-                                  }
-                                }}
-                                className="text-[10px] font-semibold text-primary underline underline-offset-2 hover:text-primary/80 ml-1 cursor-pointer"
-                              >
-                                Classificar
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="text-[10px] text-muted-foreground">
-                              Global
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              aria-label="Definir grupo muscular"
+                              onClick={(e) => openEditMuscles(exercise, e)}
+                              className="text-[10px] font-medium text-muted-foreground hover:text-primary underline underline-offset-2 cursor-pointer"
+                            >
+                              Definir grupo muscular
+                            </span>
+                          ) : null}
+
+                          {isCustom && (
+                            <span className="rounded-full bg-secondary/80 px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+                              Próprio
                             </span>
                           )}
                         </div>

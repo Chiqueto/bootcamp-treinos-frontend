@@ -22,8 +22,6 @@ export async function updateUserThemeAction(
       return { success: false, error: errorMsg };
     }
 
-    revalidatePath("/profile");
-    revalidatePath("/");
     return {
       success: true,
       data: { gamificationTheme: res.data.gamificationTheme },

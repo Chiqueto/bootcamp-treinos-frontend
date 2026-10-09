@@ -10,7 +10,7 @@ import {
 import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Flame } from "lucide-react";
+import { ArrowRight, Flame, Play } from "lucide-react";
 import { BottomNav } from "./_components/bottom-nav";
 import { ConsistencyTracker } from "./_components/consistency-tracker";
 import { StartFreeWorkoutButton } from "./_components/start-free-workout-button";
@@ -110,11 +110,31 @@ export default async function Home() {
               Bora treinar hoje?
             </p>
           </div>
-          <div className="rounded-full bg-primary px-4 py-2">
-            <span className="font-heading text-sm font-semibold text-primary-foreground">
-              Bora!
-            </span>
-          </div>
+          {activeSession ? (
+            <Link
+              href={`/workout-sessions/${activeSession.id}`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-heading text-xs font-bold text-primary-foreground shadow-md transition hover:bg-primary/90 active:scale-95"
+            >
+              <span>Continuar</span>
+              <Play className="size-3 fill-current" />
+            </Link>
+          ) : todayWorkoutDay && activeWorkoutPlanId ? (
+            <Link
+              href={`/workout-plans/${activeWorkoutPlanId}/days/${todayWorkoutDay.id}`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-heading text-xs font-bold text-primary-foreground shadow-md transition hover:bg-primary/90 active:scale-95"
+            >
+              <span>Bora treinar!</span>
+              <Play className="size-3 fill-current" />
+            </Link>
+          ) : (
+            <Link
+              href="/planning"
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-heading text-xs font-bold text-primary-foreground shadow-md transition hover:bg-primary/90 active:scale-95"
+            >
+              <span>Ver treinos</span>
+              <ArrowRight className="size-3.5" />
+            </Link>
+          )}
         </div>
       </div>
 

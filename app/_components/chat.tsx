@@ -8,7 +8,7 @@ import {
 } from "ai";
 import { useQueryStates, parseAsBoolean, parseAsString } from "nuqs";
 import {
-  Sparkles,
+  Bot,
   X,
   ArrowUp,
   Check,
@@ -197,7 +197,7 @@ function ToolApprovalCard({
     <div className="mt-3 rounded-xl border border-border bg-card p-3.5 text-card-foreground shadow-xs">
       <div className="flex items-center justify-between gap-2 border-b border-border/60 pb-2">
         <div className="flex items-center gap-1.5 font-heading text-sm font-semibold text-foreground">
-          <Sparkles className="size-4 text-primary" />
+          <Dumbbell className="size-4 text-primary" />
           <span>
             {isPeriodization ? "Periodização Proposta" : "Plano Proposto"}
           </span>
@@ -512,7 +512,7 @@ export function Chat({ embedded = false, initialMessage }: ChatProps) {
             <Menu className="size-4" />
           </Button>
           <div className="flex items-center justify-center rounded-full bg-primary/8 border border-primary/8 p-2.5">
-            <Sparkles className="size-4 text-primary" />
+            <Bot className="size-4 text-primary" />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">

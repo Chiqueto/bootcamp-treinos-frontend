@@ -90,6 +90,16 @@ export function WorkoutSetRow({
 
     const data = parseCurrentData();
 
+    // Evita mutação redundante e delay visual se nenhum dado foi alterado
+    const hasChanged =
+      data.weightInGrams !== (set.weightInGrams ?? null) ||
+      data.reps !== (set.reps ?? null) ||
+      data.rir !== (set.rir ?? null) ||
+      data.durationInSeconds !== (set.durationInSeconds ?? null) ||
+      data.type !== set.type;
+
+    if (!hasChanged) return;
+
     onMutationStart?.();
     startTransition(async () => {
       try {

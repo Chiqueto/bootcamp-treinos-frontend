@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react";
 
 import type {
   ListWorkoutHistory200,
@@ -149,7 +149,17 @@ export function HistoryTimeline({
         : "Nenhum treino concluído ainda";
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pb-6 pt-5 sm:px-6">
+    <div className="mx-auto w-full max-w-3xl px-4 pb-6 pt-4 sm:px-6">
+      <div className="mb-2">
+        <Link
+          href="/"
+          className="inline-flex min-h-10 items-center gap-1.5 font-heading text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          <span>Voltar ao início</span>
+        </Link>
+      </div>
+
       <header>
         <p className="font-heading text-xs font-semibold uppercase tracking-[0.18em] text-primary">
           Evolução

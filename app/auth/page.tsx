@@ -35,7 +35,12 @@ export default async function AuthPage() {
       </div>
 
       <div className="relative z-10 flex justify-center pt-12">
-        <Image src="/fit-ai-logo.svg" alt="Trainvy" width={85} height={38} />
+        <span
+          className="text-[36px] font-bold uppercase tracking-wider text-white drop-shadow-md select-none"
+          style={{ fontFamily: "var(--font-anton)" }}
+        >
+          Trainvy
+        </span>
       </div>
 
       <div className="flex-1" />
