@@ -6,7 +6,7 @@ import {
   type GamificationThemeKey,
 } from "@/app/_lib/gamification/theme-engine";
 import { updateUserThemeAction } from "../_actions";
-import { Sparkles, Check, Loader2, Quote, Dumbbell } from "lucide-react";
+import { Palette, Check, Loader2 } from "lucide-react";
 
 interface GamificationThemeSelectorProps {
   currentTheme?: string;
@@ -22,8 +22,6 @@ export function GamificationThemeSelector({
   );
   const [isPending, startTransition] = useTransition();
   const [savedFeedback, setSavedFeedback] = useState<string | null>(null);
-
-  const activeThemeInfo = GAMIFICATION_THEMES[selectedTheme] ?? GAMIFICATION_THEMES.ALL;
 
   const handleSelect = (themeKey: GamificationThemeKey) => {
     if (themeKey === selectedTheme && !isPending) return;
@@ -47,7 +45,7 @@ export function GamificationThemeSelector({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex size-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Sparkles className="size-4" />
+            <Palette className="size-4" />
           </div>
           <div>
             <h2 className="font-heading text-base font-semibold leading-tight text-foreground">
@@ -110,23 +108,6 @@ export function GamificationThemeSelector({
             );
           }
         )}
-      </div>
-
-      {/* Preview Card em Tempo Real */}
-      <div className="flex flex-col gap-2 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 via-background to-card p-3.5">
-        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
-          <Quote className="size-3" />
-          <span>Prévia do tema {activeThemeInfo.label}</span>
-        </div>
-
-        <p className="font-heading text-xs italic text-foreground">
-          &ldquo;{activeThemeInfo.samplePraise}&rdquo;
-        </p>
-
-        <div className="mt-1 flex items-center gap-2 rounded-lg bg-primary/10 px-2.5 py-1.5 text-[11px] text-foreground/90">
-          <Dumbbell className="size-3.5 shrink-0 text-primary" />
-          <span>{activeThemeInfo.sampleComparison}</span>
-        </div>
       </div>
     </div>
   );

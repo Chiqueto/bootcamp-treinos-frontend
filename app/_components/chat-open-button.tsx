@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { Bot } from "lucide-react";
 import { useQueryStates, parseAsBoolean, parseAsString } from "nuqs";
 import { cn } from "@/lib/utils";
 
@@ -32,7 +32,7 @@ export function ChatOpenButton({ className }: ChatOpenButtonProps) {
           isOpen && "ring-2 ring-primary ring-offset-2 ring-offset-background scale-105"
         )}
       >
-        <Sparkles className="size-5 text-primary-foreground" />
+        <Bot className="size-5 text-primary-foreground" />
       </div>
       <span
         className={cn(

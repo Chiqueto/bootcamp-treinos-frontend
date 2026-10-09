@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Flame, Heart, Sparkles, Zap, ShieldAlert } from "lucide-react";
+import { Check, Flame, Heart, Trophy, Zap, ShieldAlert } from "lucide-react";
 
 const FEELINGS = [
-  { id: "great", label: "Ótimo", icon: Sparkles, desc: "Rendimento no topo" },
+  { id: "great", label: "Ótimo", icon: Trophy, desc: "Rendimento no topo" },
   { id: "energized", label: "Energizado", icon: Zap, desc: "Força e foco" },
   { id: "intense", label: "Intenso", icon: Flame, desc: "No limite muscular" },
   { id: "fatigued", label: "Cansado", icon: ShieldAlert, desc: "Alta fadiga" },

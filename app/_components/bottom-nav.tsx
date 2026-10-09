@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   House,
-  CalendarRange,
+  Dumbbell,
   TrendingUp,
   UserRound,
 } from "lucide-react";
@@ -90,7 +90,7 @@ export function BottomNav({ activePage }: BottomNavProps) {
           )}
         </Link>
 
-        {/* 2. Planejar */}
+        {/* 2. Treinos */}
         <Link
           href="/planning"
           className={cn(
@@ -99,9 +99,9 @@ export function BottomNav({ activePage }: BottomNavProps) {
               ? "bg-primary/10 font-semibold text-primary"
               : "font-medium text-muted-foreground hover:text-foreground"
           )}
-          aria-label="Planejar (Planejamento)"
+          aria-label="Treinos"
         >
-          <CalendarRange
+          <Dumbbell
             className={cn(
               "size-5 transition-transform duration-150 group-active:scale-90",
               isPlanningActive
@@ -110,7 +110,7 @@ export function BottomNav({ activePage }: BottomNavProps) {
             )}
           />
           <span className="mt-0.5 font-heading text-[11px] leading-tight tracking-tight">
-            Planejar
+            Treinos
           </span>
           {isPlanningActive && (
             <span className="mt-0.5 h-0.5 w-4 rounded-full bg-primary" />

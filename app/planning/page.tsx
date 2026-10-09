@@ -113,16 +113,16 @@ export default async function PlanningPage() {
 
         <div className="flex flex-col gap-0.5">
           <h1 className="font-heading text-xl font-bold tracking-tight text-foreground">
-            Planejamento
+            Rotinas de Treino
           </h1>
           <p className="font-heading text-xs text-muted-foreground">
-            Organize seus planos e ciclos de treino
+            Gerencie seus planos, divisões e ciclos de treino
           </p>
         </div>
       </header>
 
       <main className="flex flex-col gap-6 p-5">
-        {/* Seção 1: Ativo agora */}
+        {/* Seção 1: Plano em Execução */}
         <section
           className="flex flex-col gap-3"
           aria-labelledby="section-active-now"
@@ -132,7 +132,7 @@ export default async function PlanningPage() {
               id="section-active-now"
               className="font-heading text-xs font-semibold uppercase tracking-wider text-muted-foreground"
             >
-              Ativo agora
+              Plano em Execução
             </h2>
           </div>
 

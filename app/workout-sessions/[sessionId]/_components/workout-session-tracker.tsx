@@ -10,7 +10,7 @@ import {
   Dumbbell,
   Loader2,
   Plus,
-  Sparkles,
+  Trophy,
   X,
 } from "lucide-react";
 import dayjs from "dayjs";
@@ -190,7 +190,7 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
             className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3.5 py-2 font-heading text-xs font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90"
           >
             <span>Ver Resumo</span>
-            <Sparkles className="size-3.5" />
+            <Trophy className="size-3.5" />
           </Link>
         </div>
       )}
@@ -219,13 +219,21 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
               <span>Concluído • Ver Resumo</span>
             </Link>
           ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 font-heading text-xs font-semibold text-primary">
-              <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex size-2 rounded-full bg-primary" />
+            <div className="flex items-center gap-2">
+              {pendingMutationsCount > 0 && (
+                <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground animate-in fade-in">
+                  <Loader2 className="size-3 animate-spin text-primary" />
+                  Salvando...
+                </span>
+              )}
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 font-heading text-xs font-semibold text-primary">
+                <span className="relative flex size-2">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex size-2 rounded-full bg-primary" />
+                </span>
+                Em Andamento
               </span>
-              Em Andamento
-            </span>
+            </div>
           )}
         </div>
 
@@ -331,16 +339,11 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
           <Button
             type="button"
             size="lg"
-            disabled={pendingMutationsCount > 0 || isFinishing}
+            disabled={isFinishing}
             onClick={handleOpenFinishModal}
             className="w-full rounded-2xl py-6 font-heading text-base font-bold shadow-md active:scale-[0.99]"
           >
-            {pendingMutationsCount > 0 ? (
-              <span className="flex items-center gap-2">
-                <Loader2 className="size-5 animate-spin" />
-                Salvando alterações...
-              </span>
-            ) : isFinishing ? (
+            {isFinishing ? (
               <span className="flex items-center gap-2">
                 <Loader2 className="size-5 animate-spin" />
                 Finalizando treino...

@@ -7,7 +7,8 @@ import {
   type GamificationThemeKey,
 } from "@/app/_lib/gamification/theme-engine";
 import { updateUserThemeAction } from "@/app/profile/_actions";
-import { Sparkles, Scale, Quote, Check } from "lucide-react";
+import { Palette, Scale, Quote, Check } from "lucide-react";
+import { ThemeSticker } from "./theme-sticker";
 
 interface ThematicCelebrationCardProps {
   totalVolumeKg: number;
@@ -87,7 +88,7 @@ export function ThematicCelebrationCard({
       {/* Seletor Compacto de Tema */}
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-          <Sparkles className="size-3.5 text-primary" />
+          <Palette className="size-3.5 text-primary" />
           <span>Tema do Feedback:</span>
         </div>
 
@@ -140,6 +141,11 @@ export function ThematicCelebrationCard({
             ) : isPending ? (
               <span className="text-[11px] text-muted-foreground">Salvando...</span>
             ) : null}
+          </div>
+
+          {/* Figurinha Temática Especial Colecionável */}
+          <div className="flex items-center justify-center py-1">
+            <ThemeSticker theme={activeTheme} />
           </div>
 
           {/* Elogio Thematic Praise */}

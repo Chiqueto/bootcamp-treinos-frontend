@@ -11,7 +11,6 @@ import {
   Flame,
   Hash,
   Repeat,
-  Sparkles,
   Trophy,
 } from "lucide-react";
 
@@ -153,7 +152,7 @@ export default async function WorkoutSummaryPage({
             </div>
 
             <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 font-heading text-xs font-bold uppercase tracking-wider text-primary">
-              <Sparkles className="size-3.5" />
+              <CheckCircle2 className="size-3.5" />
               Treino Concluído com Sucesso!
             </div>
 
