@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Calendar, Timer, Dumbbell } from "lucide-react";
 import type { GetHomeData200TodayWorkoutDayWeekDay } from "@/app/_lib/api/fetch-generated";
+import { getWorkoutCoverUrl } from "@/app/_lib/workout-covers";
 
 const WEEKDAY_LABELS: Record<string, string> = {
   MONDAY: "SEGUNDA",
@@ -32,18 +33,17 @@ export function WorkoutDayCard({
   rotationLabel,
 }: WorkoutDayCardProps) {
   const durationInMinutes = Math.round(estimatedDurationInSeconds / 60);
+  const effectiveCover = getWorkoutCoverUrl(coverImageUrl, name);
 
   return (
-    <div className="relative flex h-[200px] w-full flex-col items-start justify-between overflow-hidden rounded-xl p-5 shadow-sm transition hover:shadow-md">
-      {coverImageUrl && (
-        <Image
-          src={coverImageUrl}
-          alt={name}
-          fill
-          className="pointer-events-none object-cover"
-        />
-      )}
-      <div className="absolute inset-0 bg-foreground/45" />
+    <div className="group relative flex h-[200px] w-full flex-col items-start justify-between overflow-hidden rounded-2xl p-5 shadow-sm transition hover:shadow-lg">
+      <Image
+        src={effectiveCover}
+        alt={name}
+        fill
+        className="pointer-events-none object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/30" />
       <div className="relative flex items-center gap-2">
         <div className="flex items-center gap-1.5 rounded-full bg-background/20 px-2.5 py-1.5 backdrop-blur-sm">
           <Calendar className="size-3.5 text-background" />

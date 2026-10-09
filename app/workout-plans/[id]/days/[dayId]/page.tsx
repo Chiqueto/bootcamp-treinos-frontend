@@ -11,6 +11,7 @@ import { BackButton } from "./_components/back-button";
 import { ExerciseCard } from "./_components/exercise-card";
 import { StartWorkoutButton } from "./_components/start-workout-button";
 import { CompleteWorkoutButton } from "./_components/complete-workout-button";
+import { getWorkoutCoverUrl } from "@/app/_lib/workout-covers";
 
 const WEEKDAY_LABELS: Record<string, string> = {
   MONDAY: "SEGUNDA",
@@ -92,16 +93,14 @@ export default async function WorkoutDayPage({
       </div>
 
       <div className="px-5">
-        <div className="relative flex h-[200px] w-full flex-col items-start justify-between overflow-hidden rounded-xl p-5">
-          {coverImageUrl && (
-            <Image
-              src={coverImageUrl}
-              alt={name}
-              fill
-              className="pointer-events-none object-cover"
-            />
-          )}
-          <div className="absolute inset-0 bg-foreground/40" />
+        <div className="relative flex h-[200px] w-full flex-col items-start justify-between overflow-hidden rounded-2xl p-5 shadow-sm">
+          <Image
+            src={getWorkoutCoverUrl(coverImageUrl, name)}
+            alt={name}
+            fill
+            className="pointer-events-none object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30" />
 
           <div className="relative">
             <div className="flex items-center gap-1 rounded-full bg-background/16 px-2.5 py-1.5 backdrop-blur-sm">

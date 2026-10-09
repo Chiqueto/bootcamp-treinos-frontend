@@ -15,6 +15,7 @@ import { BottomNav } from "./_components/bottom-nav";
 import { ConsistencyTracker } from "./_components/consistency-tracker";
 import { StartFreeWorkoutButton } from "./_components/start-free-workout-button";
 import { WorkoutDayCard } from "./_components/workout-day-card";
+import { Logo } from "./_components/logo";
 
 export default async function Home() {
   const session = await authClient.getSession({
@@ -94,12 +95,7 @@ export default async function Home() {
           />
         </div>
 
-        <p
-          className="relative text-[22px] uppercase leading-[1.15] text-background"
-          style={{ fontFamily: "var(--font-anton)" }}
-        >
-          Trainvy
-        </p>
+        <Logo size="md" light className="relative" asLink />
 
         <div className="relative flex w-full items-end justify-between">
           <div className="flex flex-col gap-1.5">

@@ -324,24 +324,38 @@ export function WorkoutSetRow({
       }`}
     >
       <div className="flex items-center justify-between gap-2">
-        {/* Set Order & Type Toggle */}
+        {/* Set Order & Type Toggle Switch */}
         <div className="flex items-center gap-2">
           <span className="font-heading text-xs font-bold text-muted-foreground w-6 text-center">
             #{set.order}
           </span>
 
-          <button
-            type="button"
-            onClick={handleToggleType}
-            title="Alternar entre Aquecimento e Trabalho"
-            className={`rounded-full px-2.5 py-1 font-heading text-[11px] font-semibold uppercase transition-colors ${
-              isWarmup
-                ? "bg-amber-500/20 text-amber-500 border border-amber-500/40"
-                : "bg-muted text-muted-foreground border border-border"
-            }`}
-          >
-            {isWarmup ? "Aquec." : "Trab."}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isWarmup}
+              onClick={handleToggleType}
+              title={isWarmup ? "Série de aquecimento (clique para alternar)" : "Série de trabalho (clique para alternar)"}
+              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                isWarmup ? "bg-amber-500" : "bg-muted-foreground/30"
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block size-4 transform rounded-full bg-white shadow-sm ring-0 transition-transform ${
+                  isWarmup ? "translate-x-4" : "translate-x-0"
+                }`}
+              />
+            </button>
+            <span
+              onClick={handleToggleType}
+              className={`cursor-pointer font-heading text-[11px] font-semibold select-none transition-colors ${
+                isWarmup ? "text-amber-500 font-bold" : "text-muted-foreground"
+              }`}
+            >
+              {isWarmup ? "Aquecimento" : "Trabalho"}
+            </span>
+          </div>
         </div>
 
         {/* Delete & Complete Action Buttons */}

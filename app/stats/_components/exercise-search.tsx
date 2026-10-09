@@ -2,31 +2,57 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertCircle, Loader2, Search } from "lucide-react";
+import { AlertCircle, History, Loader2, Search } from "lucide-react";
 
 import type { ListExercises200Item } from "@/app/_lib/api/fetch-generated";
 import { getMuscleGroupLabel } from "@/app/_lib/muscle-labels";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 
-import { searchEvolutionExercises } from "../_actions";
+import { loadInitialEvolutionExercises, searchEvolutionExercises } from "../_actions";
 
 export function ExerciseSearch() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ListExercises200Item[]>([]);
+  const [initialExercises, setInitialExercises] = useState<ListExercises200Item[]>([]);
+  const [onlyHistoryFilter, setOnlyHistoryFilter] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingInitial, setIsLoadingInitial] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const generationRef = useRef(0);
 
+  // Carrega exercícios que o usuário já praticou ao abrir a tela
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      setIsLoadingInitial(true);
+      const res = await loadInitialEvolutionExercises();
+      if (isMounted) {
+        if (res.success && res.data.length > 0) {
+          setInitialExercises(res.data);
+          setOnlyHistoryFilter(true);
+        }
+        setIsLoadingInitial(false);
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   useEffect(() => {
     const trimmedQuery = query.trim();
-    if (!trimmedQuery) return;
+    if (!trimmedQuery) {
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
 
     const generation = ++generationRef.current;
     const timer = window.setTimeout(async () => {
       setIsLoading(true);
       setError(null);
-      const response = await searchEvolutionExercises(trimmedQuery);
+      const response = await searchEvolutionExercises(trimmedQuery, onlyHistoryFilter);
       if (generation !== generationRef.current) return;
 
       if (response.success) {
@@ -39,7 +65,7 @@ export function ExerciseSearch() {
     }, 300);
 
     return () => window.clearTimeout(timer);
-  }, [query]);
+  }, [query, onlyHistoryFilter]);
 
   function handleQueryChange(value: string) {
     generationRef.current += 1;
@@ -50,21 +76,57 @@ export function ExerciseSearch() {
   }
 
   const trimmedQuery = query.trim();
+  const displayedExercises = trimmedQuery
+    ? results
+    : onlyHistoryFilter
+      ? initialExercises
+      : [];
 
   return (
     <section
       aria-labelledby="exercise-search-title"
       className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5"
     >
-      <h2
-        id="exercise-search-title"
-        className="font-heading text-lg font-semibold text-foreground"
-      >
-        Evolução por exercício
-      </h2>
-      <p className="mt-1 text-xs text-muted-foreground">
-        Consulte PRs e suas últimas execuções
-      </p>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2
+            id="exercise-search-title"
+            className="font-heading text-lg font-semibold text-foreground"
+          >
+            Evolução por exercício
+          </h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Consulte PRs e suas últimas execuções
+          </p>
+        </div>
+
+        {initialExercises.length > 0 && (
+          <div className="mt-2 flex items-center gap-1.5 self-start sm:mt-0">
+            <button
+              type="button"
+              onClick={() => setOnlyHistoryFilter(true)}
+              className={`rounded-full px-2.5 py-1 font-heading text-[11px] font-semibold transition-colors ${
+                onlyHistoryFilter
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "bg-muted text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Meus treinos
+            </button>
+            <button
+              type="button"
+              onClick={() => setOnlyHistoryFilter(false)}
+              className={`rounded-full px-2.5 py-1 font-heading text-[11px] font-semibold transition-colors ${
+                !onlyHistoryFilter
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "bg-muted text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Todos
+            </button>
+          </div>
+        )}
+      </div>
 
       <div className="relative mt-4">
         <Search
@@ -74,7 +136,11 @@ export function ExerciseSearch() {
         <Input
           value={query}
           onChange={(event) => handleQueryChange(event.target.value)}
-          placeholder="Buscar exercício..."
+          placeholder={
+            onlyHistoryFilter
+              ? "Buscar nos seus exercícios praticados..."
+              : "Buscar em todo o catálogo..."
+          }
           aria-label="Buscar exercício"
           className="h-11 pl-9"
         />
@@ -86,22 +152,37 @@ export function ExerciseSearch() {
         )}
       </div>
 
-      {!trimmedQuery ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          Busque um exercício para ver sua evolução.
-        </p>
-      ) : error ? (
+      {!trimmedQuery && onlyHistoryFilter && initialExercises.length > 0 && (
+        <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+          <History className="size-3.5 text-primary" />
+          <span>Exercícios que você já realizou</span>
+        </div>
+      )}
+
+      {error ? (
         <p className="mt-4 flex items-center gap-2 text-sm text-destructive">
           <AlertCircle className="size-4" aria-hidden="true" />
           {error}
         </p>
-      ) : !isLoading && results.length === 0 ? (
+      ) : isLoadingInitial ? (
+        <div className="mt-6 flex items-center justify-center py-4">
+          <Loader2 className="size-5 animate-spin text-muted-foreground" />
+        </div>
+      ) : !isLoading && trimmedQuery && results.length === 0 ? (
         <p className="mt-4 text-sm text-muted-foreground">
           Nenhum exercício encontrado.
         </p>
+      ) : !trimmedQuery && !onlyHistoryFilter ? (
+        <p className="mt-4 text-sm text-muted-foreground">
+          Digite o nome de um exercício para consultar a progressão.
+        </p>
+      ) : displayedExercises.length === 0 ? (
+        <p className="mt-4 text-sm text-muted-foreground">
+          Você ainda não realizou treinos com exercícios registrados. Busque qualquer exercício acima para consultar seu histórico.
+        </p>
       ) : (
         <div className="mt-3 space-y-2" aria-live="polite">
-          {results.map((exercise) => {
+          {displayedExercises.map((exercise) => {
             const primaryMuscles = exercise.muscles.filter(
               (muscle) => muscle.role === "PRIMARY",
             );

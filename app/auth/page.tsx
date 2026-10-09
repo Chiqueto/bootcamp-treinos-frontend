@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { authClient } from "@/app/_lib/auth-client";
 import { headers } from "next/headers";
 import { SignInWithGoogle } from "./_components/sign-in-with-google";
+import { Logo } from "@/app/_components/logo";
 
 export const dynamic = "force-dynamic";
 
@@ -35,12 +36,9 @@ export default async function AuthPage() {
       </div>
 
       <div className="relative z-10 flex justify-center pt-12">
-        <span
-          className="text-[36px] font-bold uppercase tracking-wider text-white drop-shadow-md select-none"
-          style={{ fontFamily: "var(--font-anton)" }}
-        >
-          Trainvy
-        </span>
+        <div className="rounded-2xl bg-white/95 px-5 py-3 shadow-2xl backdrop-blur-md">
+          <Logo variant="full" size="md" />
+        </div>
       </div>
 
       <div className="flex-1" />

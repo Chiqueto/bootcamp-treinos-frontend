@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/app/_components/bottom-nav";
 import { WorkoutDayCard } from "@/app/_components/workout-day-card";
 import { RestDayCard } from "./_components/rest-day-card";
+import { Logo } from "@/app/_components/logo";
 
 const WEEKDAY_ORDER = [
   "MONDAY",
@@ -81,12 +82,7 @@ export default async function WorkoutPlanPage({
           />
         </div>
 
-        <p
-          className="relative text-[22px] uppercase leading-[1.15] text-background"
-          style={{ fontFamily: "var(--font-anton)" }}
-        >
-          Trainvy
-        </p>
+        <Logo size="md" light className="relative" asLink />
 
         <div className="relative flex w-full items-end justify-between">
           <div className="flex flex-col gap-3">

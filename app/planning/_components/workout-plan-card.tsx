@@ -81,22 +81,29 @@ export function WorkoutPlanCard({ plan }: WorkoutPlanCardProps) {
   }
 
   return (
-    <div className="relative rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-xs">
+    <div
+      className={`relative rounded-2xl border p-4 transition-all ${
+        isStandaloneActive
+          ? "border-emerald-500/40 bg-gradient-to-r from-emerald-500/10 via-card to-card shadow-sm"
+          : "border-border/80 bg-card hover:border-primary/40 hover:shadow-xs"
+      }`}
+    >
       <div className="flex items-start justify-between gap-3">
         <Link
           href={`/workout-plans/${plan.id}`}
           className="group min-w-0 flex-1 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="font-heading text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+              <h3 className="font-heading text-sm font-bold text-foreground transition-colors group-hover:text-primary">
                 {plan.name}
               </h3>
 
               {isStandaloneActive && (
-                <Badge className="rounded-full px-2 py-0 text-[10px] font-semibold">
-                  Plano atual
-                </Badge>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 font-heading text-[10px] font-bold text-emerald-400 border border-emerald-500/30">
+                  <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  PLANO ATUAL
+                </span>
               )}
 
               {plan.periodization && (
@@ -108,7 +115,7 @@ export function WorkoutPlanCard({ plan }: WorkoutPlanCardProps) {
                         ? "outline"
                         : "secondary"
                   }
-                  className="rounded-full px-2 py-0 text-[10px] font-medium"
+                  className="rounded-full px-2 py-0 text-[10px] font-semibold"
                 >
                   {plan.periodization.status === "ACTIVE"
                     ? "Em andamento"
@@ -120,17 +127,14 @@ export function WorkoutPlanCard({ plan }: WorkoutPlanCardProps) {
             </div>
 
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span>
+              <span className="rounded-md bg-muted/60 px-2 py-0.5 font-heading text-[11px] font-medium text-foreground/80">
                 {plan.workoutDaysCount}{" "}
                 {plan.workoutDaysCount === 1 ? "dia" : "dias"}
               </span>
               {plan.periodization && (
-                <>
-                  <span>•</span>
-                  <span className="font-medium">
-                    {plan.periodization.name} • Etapa {plan.periodization.order}
-                  </span>
-                </>
+                <span className="font-heading text-[11px] text-muted-foreground">
+                  Ciclo: <span className="font-semibold text-foreground/90">{plan.periodization.name}</span> (Etapa {plan.periodization.order})
+                </span>
               )}
             </div>
           </div>

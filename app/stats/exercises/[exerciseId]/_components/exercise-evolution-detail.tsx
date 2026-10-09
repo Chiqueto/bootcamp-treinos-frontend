@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 
 import { loadExerciseEvolutionPage } from "../../../_actions";
 import { appendUniqueEvolutionSessions } from "../../../_lib/evolution-data";
+import { Logo } from "@/app/_components/logo";
 
 export function ExerciseEvolutionDetail({
   initialData,
@@ -79,12 +80,7 @@ export function ExerciseEvolutionDetail({
           <ArrowLeft className="size-4" />
           <span>Voltar para Estatísticas</span>
         </Link>
-        <p
-          className="text-[20px] uppercase leading-none text-foreground"
-          style={{ fontFamily: "var(--font-anton)" }}
-        >
-          Trainvy
-        </p>
+        <Logo size="sm" asLink />
       </div>
 
       <main className="mx-auto w-full max-w-xl px-5 pt-5 pb-8">

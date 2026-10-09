@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 
 import {
   addExerciseToWorkoutSessionAction,
+  cancelWorkoutSessionAction,
   completeWorkoutSessionAction,
   removeExerciseFromWorkoutSessionAction,
 } from "../_actions";
@@ -38,10 +39,12 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
   const [sessionData, setSessionData] = useState(() => session);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [showExerciseSelector, setShowExerciseSelector] = useState(false);
   const [pendingMutationsCount, setPendingMutationsCount] = useState(0);
 
   const [isFinishing, startFinishTransition] = useTransition();
+  const [isCancelling, startCancelTransition] = useTransition();
 
   const handleMutationStart = useCallback(() => {
     setPendingMutationsCount((c) => c + 1);
@@ -147,6 +150,21 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
         }));
         setShowConfirmModal(false);
         router.push(`/workout-sessions/${sessionData.id}/summary`);
+      }
+    });
+  };
+
+  const handleConfirmCancel = () => {
+    if (isReadOnly || isCancelling) return;
+
+    startCancelTransition(async () => {
+      const res = await cancelWorkoutSessionAction(sessionData.id);
+      if (!res.success) {
+        setErrorMessage(res.error);
+        setShowCancelModal(false);
+      } else {
+        setShowCancelModal(false);
+        router.push("/");
       }
     });
   };
@@ -333,13 +351,13 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
         )}
       </div>
 
-      {/* Ação Principal: Botão Finalizar Treino (apenas enquanto ativa) */}
+      {/* Ação Principal: Botão Finalizar Treino & Cancelar Treino (apenas enquanto ativa) */}
       {!isReadOnly && (
-        <div className="mt-2 flex flex-col gap-2">
+        <div className="mt-2 flex flex-col gap-2.5">
           <Button
             type="button"
             size="lg"
-            disabled={isFinishing}
+            disabled={isFinishing || isCancelling}
             onClick={handleOpenFinishModal}
             className="w-full rounded-2xl py-6 font-heading text-base font-bold shadow-md active:scale-[0.99]"
           >
@@ -354,6 +372,17 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
                 Finalizar treino
               </span>
             )}
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={isFinishing || isCancelling}
+            onClick={() => setShowCancelModal(true)}
+            className="w-full text-xs font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive active:scale-[0.99]"
+          >
+            <X className="mr-1.5 size-3.5" />
+            Cancelar treino
           </Button>
         </div>
       )}
@@ -390,7 +419,7 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
                 disabled={isFinishing}
                 className="rounded-xl font-heading text-sm"
               >
-                Cancelar
+                Voltar
               </Button>
               <Button
                 type="button"
@@ -405,6 +434,64 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
                   </span>
                 ) : (
                   "Finalizar treino"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Cancelamento de Treino */}
+      {showCancelModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cancel-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in"
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-destructive/20 bg-card p-6 shadow-xl flex flex-col gap-4 animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col gap-2">
+              <div className="flex size-10 items-center justify-center rounded-full bg-destructive/10 text-destructive mb-1">
+                <AlertCircle className="size-5" />
+              </div>
+              <h3
+                id="cancel-modal-title"
+                className="font-heading text-lg font-bold text-foreground"
+              >
+                Cancelar este treino?
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Esta sessão será descartada e excluída permanentemente. Nenhuma série registrada será salva no histórico.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowCancelModal(false)}
+                disabled={isCancelling}
+                className="rounded-xl font-heading text-sm"
+              >
+                Voltar
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleConfirmCancel}
+                disabled={isCancelling}
+                className="rounded-xl font-heading text-sm font-semibold"
+              >
+                {isCancelling ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="size-4 animate-spin" />
+                    Cancelando...
+                  </span>
+                ) : (
+                  "Sim, cancelar treino"
                 )}
               </Button>
             </div>
