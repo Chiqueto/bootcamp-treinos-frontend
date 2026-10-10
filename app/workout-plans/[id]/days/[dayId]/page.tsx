@@ -1,9 +1,12 @@
 import { redirect } from "next/navigation";
 import { authClient } from "@/app/_lib/auth-client";
 import { headers } from "next/headers";
-import { getWorkoutDay, getUserTrainData } from "@/app/_lib/api/fetch-generated";
+import {
+  getWorkoutDay,
+  getUserTrainData,
+} from "@/app/_lib/api/fetch-generated";
 import dayjs from "dayjs";
-import Image from "next/image";
+import { WorkoutCover } from "@/app/_components/workout-cover";
 import { Calendar, Timer, Dumbbell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BottomNav } from "@/app/_components/bottom-nav";
@@ -11,7 +14,6 @@ import { BackButton } from "./_components/back-button";
 import { ExerciseCard } from "./_components/exercise-card";
 import { StartWorkoutButton } from "./_components/start-workout-button";
 import { CompleteWorkoutButton } from "./_components/complete-workout-button";
-import { getWorkoutCoverUrl } from "@/app/_lib/workout-covers";
 
 const WEEKDAY_LABELS: Record<string, string> = {
   MONDAY: "SEGUNDA",
@@ -71,9 +73,7 @@ export default async function WorkoutDayPage({
   const durationInMinutes = Math.round(estimatedDurationInSeconds / 60);
 
   const todayStr = today.format("YYYY-MM-DD");
-  const inProgressSession = sessions.find(
-    (s) => s.startedAt && !s.completedAt,
-  );
+  const inProgressSession = sessions.find((s) => s.startedAt && !s.completedAt);
   const completedTodaySession = sessions.find(
     (s) => s.completedAt === todayStr,
   );
@@ -94,18 +94,12 @@ export default async function WorkoutDayPage({
 
       <div className="px-5">
         <div className="relative flex h-[200px] w-full flex-col items-start justify-between overflow-hidden rounded-2xl p-5 shadow-sm">
-          <Image
-            src={getWorkoutCoverUrl(coverImageUrl, name)}
-            alt={name}
-            fill
-            className="pointer-events-none object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30" />
+          <WorkoutCover src={coverImageUrl} name={name} />
 
           <div className="relative">
-            <div className="flex items-center gap-1 rounded-full bg-background/16 px-2.5 py-1.5 backdrop-blur-sm">
-              <Calendar className="size-3.5 text-background" />
-              <span className="font-heading text-xs font-semibold uppercase text-background">
+            <div className="flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1.5 backdrop-blur-sm">
+              <Calendar className="size-3.5 text-white" />
+              <span className="font-heading text-xs font-semibold uppercase text-white">
                 {WEEKDAY_LABELS[weekDay]}
               </span>
             </div>
@@ -113,19 +107,19 @@ export default async function WorkoutDayPage({
 
           <div className="relative flex w-full items-end justify-between">
             <div className="flex flex-col gap-2">
-              <h2 className="font-heading text-2xl font-semibold leading-[1.05] text-background">
+              <h2 className="font-heading text-2xl font-semibold leading-[1.05] text-white">
                 {name}
               </h2>
               <div className="flex items-start gap-2">
                 <div className="flex items-center gap-1">
-                  <Timer className="size-3.5 text-background/70" />
-                  <span className="font-heading text-xs text-background/70">
+                  <Timer className="size-3.5 text-white/80" />
+                  <span className="font-heading text-xs text-white/80">
                     {durationInMinutes}min
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Dumbbell className="size-3.5 text-background/70" />
-                  <span className="font-heading text-xs text-background/70">
+                  <Dumbbell className="size-3.5 text-white/80" />
+                  <span className="font-heading text-xs text-white/80">
                     {exercises.length} exercícios
                   </span>
                 </div>
@@ -142,7 +136,7 @@ export default async function WorkoutDayPage({
               <Button
                 variant="ghost"
                 disabled
-                className="rounded-full px-4 py-2 font-heading text-sm font-semibold text-background/70 hover:bg-transparent hover:text-background/70"
+                className="rounded-full px-4 py-2 font-heading text-sm font-semibold text-white/80 hover:bg-transparent hover:text-white/80"
               >
                 Concluído!
               </Button>

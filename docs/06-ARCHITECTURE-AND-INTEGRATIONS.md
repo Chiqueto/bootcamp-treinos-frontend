@@ -18,6 +18,17 @@ Manter os dois repositórios separados.
 
 ## Frontend
 
+### Capas de treinos e planos
+
+`WorkoutCover` é um fundo decorativo compartilhado entre Home (card do treino),
+Planning, detalhe do plano e detalhe do treino. Preserva imagens locais/HTTPS
+suportadas; URLs inválidas, hosts não permitidos e falhas de carregamento usam
+degradês CSS temáticos com halos, textura e ícones Lucide, sem requisições externas.
+O fallback já é renderizado no servidor e fica sob a imagem durante o carregamento.
+Trocar a URL permite nova tentativa, sem ciclo de retries em uma imagem quebrada.
+O allowlist de hosts é compartilhado com `next.config.ts` (UploadThing e Unsplash).
+Textos sobre as capas usam branco explicitamente para manter contraste em ambos os temas.
+
 Responsabilidades:
 
 - UI;

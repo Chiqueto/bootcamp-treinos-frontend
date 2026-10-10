@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight,
   Calendar,
@@ -17,7 +16,7 @@ import type {
   GetPlanningOverview200PeriodizationsItem,
   GetPlanningOverview200PlansItem,
 } from "@/app/_lib/api/fetch-generated";
-import { getWorkoutCoverUrl, WORKOUT_COVER_FALLBACKS } from "@/app/_lib/workout-covers";
+import { WorkoutCover } from "@/app/_components/workout-cover";
 import { Badge } from "@/components/ui/badge";
 import { PlannedDeadlineBadge } from "./planned-deadline-badge";
 import { WorkoutPlanCard } from "./workout-plan-card";
@@ -33,12 +32,17 @@ export function PlanningHub({
   plans,
   periodizations,
 }: PlanningHubProps) {
-  const [activeTab, setActiveTab] = useState<"plans" | "periodizations">("plans");
+  const [activeTab, setActiveTab] = useState<"plans" | "periodizations">(
+    "plans",
+  );
 
   return (
     <div className="flex flex-col gap-6">
       {/* 1. HERO CARD: Rotina em Execução */}
-      <section aria-labelledby="active-routine-heading" className="flex flex-col gap-2.5">
+      <section
+        aria-labelledby="active-routine-heading"
+        className="flex flex-col gap-2.5"
+      >
         <div className="flex items-center justify-between">
           <h2
             id="active-routine-heading"
@@ -57,7 +61,8 @@ export function PlanningHub({
               Nenhum plano ativo no momento
             </h3>
             <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground leading-relaxed">
-              Ative um plano existente ou crie uma nova rotina personalizada para acompanhar seus treinos.
+              Ative um plano existente ou crie uma nova rotina personalizada
+              para acompanhar seus treinos.
             </p>
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
               <Link
@@ -73,14 +78,7 @@ export function PlanningHub({
 
         {activeContext.type === "STANDALONE_PLAN" && (
           <div className="group relative overflow-hidden rounded-3xl border border-border/60 p-6 shadow-md transition hover:border-primary/50">
-            {/* Imagem de Fundo Dark Esportiva */}
-            <Image
-              src={getWorkoutCoverUrl(null, activeContext.plan.name)}
-              alt={activeContext.plan.name}
-              fill
-              className="pointer-events-none object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/40" />
+            <WorkoutCover name={activeContext.plan.name} variant="plan" />
 
             <div className="relative flex flex-col justify-between gap-5 z-10 min-h-[170px]">
               <div className="flex items-center justify-between gap-2">
@@ -124,14 +122,10 @@ export function PlanningHub({
 
         {activeContext.type === "PERIODIZATION" && (
           <div className="group relative overflow-hidden rounded-3xl border border-primary/30 p-6 shadow-md transition hover:border-primary/60">
-            {/* Imagem de Fundo Dark Esportiva */}
-            <Image
-              src={WORKOUT_COVER_FALLBACKS.FULLBODY}
-              alt={activeContext.periodization.name}
-              fill
-              className="pointer-events-none object-cover transition-transform duration-700 group-hover:scale-105"
+            <WorkoutCover
+              name={activeContext.periodization.name}
+              variant="cycle"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-black/50" />
 
             <div className="relative flex flex-col justify-between gap-5 z-10 min-h-[190px]">
               <div className="flex items-center justify-between gap-2">
@@ -155,7 +149,8 @@ export function PlanningHub({
                 <div className="flex items-center gap-2 text-xs font-semibold text-amber-300">
                   <Dumbbell className="size-4 text-amber-400" />
                   <span>
-                    Bloco atual: {activeContext.periodization.currentBlock.workoutPlanName}
+                    Bloco atual:{" "}
+                    {activeContext.periodization.currentBlock.workoutPlanName}
                   </span>
                 </div>
 
@@ -167,7 +162,10 @@ export function PlanningHub({
                       style={{
                         width: `${Math.round(
                           (activeContext.periodization.currentBlock.order /
-                            Math.max(activeContext.periodization.totalBlocks, 1)) *
+                            Math.max(
+                              activeContext.periodization.totalBlocks,
+                              1,
+                            )) *
                             100,
                         )}%`,
                       }}
@@ -178,7 +176,9 @@ export function PlanningHub({
 
               <div className="flex items-center justify-between pt-1">
                 <PlannedDeadlineBadge
-                  plannedEndDate={activeContext.periodization.currentBlock.plannedEndDate}
+                  plannedEndDate={
+                    activeContext.periodization.currentBlock.plannedEndDate
+                  }
                 />
 
                 <Link
@@ -282,7 +282,8 @@ export function PlanningHub({
                   Nenhuma periodização criada
                 </p>
                 <p className="max-w-xs text-xs text-muted-foreground">
-                  Periodizações organizam etapas e blocos de treino progressivos ao longo das semanas.
+                  Periodizações organizam etapas e blocos de treino progressivos
+                  ao longo das semanas.
                 </p>
                 <Link
                   href="/planning/periodizations/new"
@@ -295,7 +296,8 @@ export function PlanningHub({
               <div className="flex flex-col gap-2.5">
                 {periodizations.map((periodization) => {
                   let statusLabel = "RASCUNHO";
-                  let statusVariant: "default" | "secondary" | "outline" = "secondary";
+                  let statusVariant: "default" | "secondary" | "outline" =
+                    "secondary";
                   let progressText = `${periodization.totalBlocks} etapas`;
 
                   if (periodization.status === "ACTIVE") {
@@ -348,7 +350,9 @@ export function PlanningHub({
                           {progressText}
                         </span>
                         <div className="flex items-center gap-1 text-primary group-hover:translate-x-0.5 transition-transform">
-                          <span className="text-[11px] font-bold">Ver ciclo</span>
+                          <span className="text-[11px] font-bold">
+                            Ver ciclo
+                          </span>
                           <ChevronRight className="size-3.5" />
                         </div>
                       </div>

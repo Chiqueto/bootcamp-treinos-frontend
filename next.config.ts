@@ -1,14 +1,10 @@
 import type { NextConfig } from "next";
+import { WORKOUT_IMAGE_REMOTE_PATTERNS } from "./app/_lib/workout-covers";
 
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "*.ufs.sh",
-      },
-    ],
+    remotePatterns: WORKOUT_IMAGE_REMOTE_PATTERNS,
   },
   async rewrites() {
     const backendOrigin = (

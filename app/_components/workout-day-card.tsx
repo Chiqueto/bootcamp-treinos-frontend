@@ -1,7 +1,6 @@
-import Image from "next/image";
 import { Calendar, Timer, Dumbbell } from "lucide-react";
 import type { GetHomeData200TodayWorkoutDayWeekDay } from "@/app/_lib/api/fetch-generated";
-import { getWorkoutCoverUrl } from "@/app/_lib/workout-covers";
+import { WorkoutCover } from "./workout-cover";
 
 const WEEKDAY_LABELS: Record<string, string> = {
   MONDAY: "SEGUNDA",
@@ -33,22 +32,18 @@ export function WorkoutDayCard({
   rotationLabel,
 }: WorkoutDayCardProps) {
   const durationInMinutes = Math.round(estimatedDurationInSeconds / 60);
-  const effectiveCover = getWorkoutCoverUrl(coverImageUrl, name);
 
   return (
     <div className="group relative flex h-[200px] w-full flex-col items-start justify-between overflow-hidden rounded-2xl p-5 shadow-sm transition hover:shadow-lg">
-      <Image
-        src={effectiveCover}
-        alt={name}
-        fill
-        className="pointer-events-none object-cover transition-transform duration-500 group-hover:scale-105"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/30" />
+      <WorkoutCover src={coverImageUrl} name={name} />
       <div className="relative flex items-center gap-2">
-        <div className="flex items-center gap-1.5 rounded-full bg-background/20 px-2.5 py-1.5 backdrop-blur-sm">
-          <Calendar className="size-3.5 text-background" />
-          <span className="font-heading text-xs font-semibold uppercase text-background">
-            {tag || (weekDay && WEEKDAY_LABELS[weekDay] ? WEEKDAY_LABELS[weekDay] : "Treino")}
+        <div className="flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1.5 backdrop-blur-sm">
+          <Calendar className="size-3.5 text-white" />
+          <span className="font-heading text-xs font-semibold uppercase text-white">
+            {tag ||
+              (weekDay && WEEKDAY_LABELS[weekDay]
+                ? WEEKDAY_LABELS[weekDay]
+                : "Treino")}
           </span>
         </div>
         {rotationLabel && (
@@ -58,19 +53,19 @@ export function WorkoutDayCard({
         )}
       </div>
       <div className="relative flex flex-col gap-2">
-        <h3 className="font-heading text-2xl font-semibold leading-[1.05] text-background">
+        <h3 className="font-heading text-2xl font-semibold leading-[1.05] text-white">
           {name}
         </h3>
         <div className="flex items-start gap-2">
           <div className="flex items-center gap-1">
-            <Timer className="size-3.5 text-background/70" />
-            <span className="font-heading text-xs text-background/70">
+            <Timer className="size-3.5 text-white/80" />
+            <span className="font-heading text-xs text-white/80">
               {durationInMinutes}min
             </span>
           </div>
           <div className="flex items-center gap-1">
-            <Dumbbell className="size-3.5 text-background/70" />
-            <span className="font-heading text-xs text-background/70">
+            <Dumbbell className="size-3.5 text-white/80" />
+            <span className="font-heading text-xs text-white/80">
               {exercisesCount} exercícios
             </span>
           </div>

@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
 import { authClient } from "@/app/_lib/auth-client";
 import { headers } from "next/headers";
-import { getWorkoutPlan, getUserTrainData } from "@/app/_lib/api/fetch-generated";
-import Image from "next/image";
+import {
+  getWorkoutPlan,
+  getUserTrainData,
+} from "@/app/_lib/api/fetch-generated";
+import { WorkoutCover } from "@/app/_components/workout-cover";
 import Link from "next/link";
 import { Goal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -57,30 +60,18 @@ export default async function WorkoutPlanPage({
     ) {
       return a.order - b.order;
     }
-    return (
-      WEEKDAY_ORDER.indexOf(a.weekDay) - WEEKDAY_ORDER.indexOf(b.weekDay)
-    );
+    return WEEKDAY_ORDER.indexOf(a.weekDay) - WEEKDAY_ORDER.indexOf(b.weekDay);
   });
 
   return (
     <div className="flex min-h-svh flex-col bg-background pb-24">
       <div className="relative flex h-[296px] shrink-0 flex-col items-start justify-between overflow-hidden rounded-b-[20px] px-5 pb-10 pt-5">
-        <div className="absolute inset-0" aria-hidden="true">
-          <Image
-            src="/workout-plan-banner.png"
-            alt=""
-            fill
-            className="object-cover"
-            priority
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(238deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%)",
-            }}
-          />
-        </div>
+        <WorkoutCover
+          src="/workout-plan-banner.png"
+          name={name}
+          variant="plan"
+          priority
+        />
 
         <Logo size="md" light className="relative" asLink />
 
@@ -90,7 +81,7 @@ export default async function WorkoutPlanPage({
               <Goal className="size-4" />
               {name}
             </Badge>
-            <h1 className="font-heading text-2xl font-semibold leading-[1.05] text-background">
+            <h1 className="font-heading text-2xl font-semibold leading-[1.05] text-white">
               Rotina de Treinos
             </h1>
           </div>
