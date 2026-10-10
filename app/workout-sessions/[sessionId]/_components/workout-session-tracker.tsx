@@ -122,7 +122,7 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
   };
 
   const handleOpenFinishModal = () => {
-    if (isReadOnly || isFinishing) return;
+    if (isReadOnly || isFinishing || isCancelling || pendingMutationsCount > 0) return;
 
     // Dispara blur no elemento atualmente em foco para acionar persistência do draft
     if (
@@ -155,7 +155,7 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
   };
 
   const handleConfirmCancel = () => {
-    if (isReadOnly || isCancelling) return;
+    if (isReadOnly || isCancelling || isFinishing || pendingMutationsCount > 0) return;
 
     startCancelTransition(async () => {
       const res = await cancelWorkoutSessionAction(sessionData.id);
@@ -357,7 +357,7 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
           <Button
             type="button"
             size="lg"
-            disabled={isFinishing || isCancelling}
+            disabled={isFinishing || isCancelling || pendingMutationsCount > 0}
             onClick={handleOpenFinishModal}
             className="w-full rounded-2xl py-6 font-heading text-base font-bold shadow-md active:scale-[0.99]"
           >
@@ -365,6 +365,11 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
               <span className="flex items-center gap-2">
                 <Loader2 className="size-5 animate-spin" />
                 Finalizando treino...
+              </span>
+            ) : pendingMutationsCount > 0 ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="size-5 animate-spin" />
+                Salvando alterações...
               </span>
             ) : (
               <span className="flex items-center gap-2">
@@ -377,7 +382,7 @@ export function WorkoutSessionTracker({ session }: WorkoutSessionTrackerProps) {
           <Button
             type="button"
             variant="ghost"
-            disabled={isFinishing || isCancelling}
+            disabled={isFinishing || isCancelling || pendingMutationsCount > 0}
             onClick={() => setShowCancelModal(true)}
             className="w-full text-xs font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive active:scale-[0.99]"
           >

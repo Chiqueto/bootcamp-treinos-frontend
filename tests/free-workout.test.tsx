@@ -1,4 +1,11 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock next/navigation
@@ -467,13 +474,13 @@ describe("Task 1.8 — Treino Avulso Frontend Tests", () => {
       // Deve abrir o modal de confirmação
       await waitFor(() => {
         expect(screen.getByText("Remover exercício?")).toBeDefined();
-        expect(
-          screen.getByText(/possui 1 série registrada/i),
-        ).toBeDefined();
+        expect(screen.getByText(/possui 1 série registrada/i)).toBeDefined();
       });
 
       // Clicar em Cancelar não remove
-      const cancelBtn = screen.getByRole("button", { name: /cancelar/i });
+      const cancelBtn = within(
+        screen.getByRole("dialog", { name: /remover exercício/i }),
+      ).getByRole("button", { name: /^cancelar$/i });
       fireEvent.click(cancelBtn);
 
       expect(api.removeExerciseFromWorkoutSession).not.toHaveBeenCalled();
@@ -493,7 +500,9 @@ describe("Task 1.8 — Treino Avulso Frontend Tests", () => {
         headers: new Headers(),
       });
 
-      const confirmBtn = within(modal!).getByRole("button", { name: /^remover$/i });
+      const confirmBtn = within(modal!).getByRole("button", {
+        name: /^remover$/i,
+      });
       fireEvent.click(confirmBtn);
 
       await waitFor(() => {
@@ -534,7 +543,7 @@ describe("Task 1.8 — Treino Avulso Frontend Tests", () => {
 
       render(<WorkoutSessionTracker session={completedFreeSession} />);
 
-      expect(screen.getByText("Treino Concluído")).toBeDefined();
+      expect(screen.getByText(/Treino concluído!/i)).toBeDefined();
       expect(screen.getByText(/esta sessão foi finalizada/i)).toBeDefined();
       expect(
         screen.queryByRole("button", { name: /adicionar exercício/i }),

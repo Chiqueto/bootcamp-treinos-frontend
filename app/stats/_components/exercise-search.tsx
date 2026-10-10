@@ -43,8 +43,6 @@ export function ExerciseSearch() {
   useEffect(() => {
     const trimmedQuery = query.trim();
     if (!trimmedQuery) {
-      setResults([]);
-      setIsLoading(false);
       return;
     }
 
@@ -64,7 +62,10 @@ export function ExerciseSearch() {
       setIsLoading(false);
     }, 300);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      generationRef.current += 1;
+      window.clearTimeout(timer);
+    };
   }, [query, onlyHistoryFilter]);
 
   function handleQueryChange(value: string) {

@@ -37,19 +37,17 @@ import {
 } from "@/app/planning/_lib/workout-plan-builder";
 
 describe("WorkoutPlanBuilder — lógica de contrato", () => {
-  it("inicia com os sete dias da semana como descanso", () => {
+  it("inicia com três treinos sequenciais independentes de dias da semana", () => {
     const days = createInitialWorkoutDays();
-    expect(days).toHaveLength(7);
-    expect(days.map((day) => day.weekDay)).toEqual([
-      "MONDAY",
-      "TUESDAY",
-      "WEDNESDAY",
-      "THURSDAY",
-      "FRIDAY",
-      "SATURDAY",
-      "SUNDAY",
+    expect(days).toHaveLength(3);
+    expect(days.map((day) => day.name)).toEqual([
+      "Treino A - Peito e Tríceps",
+      "Treino B - Costas e Bíceps",
+      "Treino C - Pernas e Ombros",
     ]);
-    expect(days.every((day) => day.isRest)).toBe(true);
+    expect(days.every((day) => !day.isRest && day.weekDay === undefined)).toBe(
+      true,
+    );
   });
 
   it("serializa descanso, duração, exercícios e ordem no contrato Orval", () => {
@@ -65,12 +63,14 @@ describe("WorkoutPlanBuilder — lógica de contrato", () => {
       ],
     };
 
+    days[1] = { ...days[1], isRest: true };
     const serialized = serializeWorkoutDays(days);
     expect(serialized[0]).toMatchObject({
       name: "Treino A",
       weekDay: "MONDAY",
       isRest: false,
       estimatedDurationInSeconds: 3000,
+      order: 0,
     });
     expect(serialized[0].exercises.map((exercise) => exercise.order)).toEqual([
       0, 1,
@@ -88,7 +88,12 @@ describe("WorkoutPlanBuilder — lógica de contrato", () => {
     expect(
       validateWorkoutPlanDraft("Plano", days, "2027-03-10", "2027-03-01"),
     ).toContain("data final");
-    days[0] = { ...days[0], isRest: false, estimatedDurationInMinutes: 45 };
+    days[0] = {
+      ...days[0],
+      isRest: false,
+      estimatedDurationInMinutes: 45,
+      exercises: [],
+    };
     expect(validateWorkoutPlanDraft("Plano", days)).toContain(
       "Adicione ao menos um exercício",
     );
@@ -119,11 +124,11 @@ describe("WorkoutPlanBuilder — interface", () => {
     fireEvent.change(screen.getByLabelText("Nome do plano *"), {
       target: { value: "Plano novo" },
     });
-    const mondayCard = screen.getByText("Segunda").closest("article");
-    expect(mondayCard).not.toBeNull();
-    fireEvent.click(within(mondayCard!).getByLabelText("Dia de descanso"));
-    fireEvent.change(within(mondayCard!).getByLabelText("Nome"), {
-      target: { value: "Agachamento" },
+    const exercises = ["Agachamento", "Remada", "Desenvolvimento"];
+    screen.getAllByRole("article").forEach((card, index) => {
+      fireEvent.change(within(card).getByLabelText("Nome"), {
+        target: { value: exercises[index] },
+      });
     });
   }
 
@@ -138,7 +143,7 @@ describe("WorkoutPlanBuilder — interface", () => {
     });
     const payload = mocks.createStandaloneWorkoutPlanAction.mock.calls[0][0];
     expect(payload.activate).toBe(false);
-    expect(payload.workoutDays).toHaveLength(7);
+    expect(payload.workoutDays).toHaveLength(3);
     expect(payload.workoutDays[0].exercises[0]).toMatchObject({
       name: "Agachamento",
       order: 0,
@@ -156,6 +161,30 @@ describe("WorkoutPlanBuilder — interface", () => {
     expect(
       mocks.createStandaloneWorkoutPlanAction.mock.calls[0][0].activate,
     ).toBe(true);
+  });
+
+  it("reordena treinos e serializa ordem sequencial com os exercícios preservados", async () => {
+    render(<WorkoutPlanBuilder mode="standalone" />);
+    configureMonday();
+    const first = screen.getAllByRole("article")[0];
+    fireEvent.click(
+      within(first).getByRole("button", { name: "Mover treino para baixo" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Criar plano" }));
+    await waitFor(() =>
+      expect(mocks.createStandaloneWorkoutPlanAction).toHaveBeenCalledOnce(),
+    );
+    const days =
+      mocks.createStandaloneWorkoutPlanAction.mock.calls[0][0].workoutDays;
+    expect(days.map((day: { order: number }) => day.order)).toEqual([0, 1, 2]);
+    expect(days[0]).toMatchObject({
+      name: "Treino B - Costas e Bíceps",
+      exercises: [expect.objectContaining({ name: "Remada" })],
+    });
+    expect(days[1]).toMatchObject({
+      name: "Treino A - Peito e Tríceps",
+      exercises: [expect.objectContaining({ name: "Agachamento" })],
+    });
   });
 
   it("cria plano dentro da periodização sem campo de ativação", async () => {

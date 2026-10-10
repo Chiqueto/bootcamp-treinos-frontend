@@ -316,7 +316,11 @@ describe("Workout history UI — Task 3.5", () => {
       });
     });
 
-    expect(screen.getAllByRole("link")).toHaveLength(2);
+    expect(
+      screen
+        .getAllByRole("link")
+        .filter((link) => link.getAttribute("href")?.startsWith("/history/")),
+    ).toHaveLength(2);
     expect(screen.getByText("Lower B")).toBeDefined();
     expect(screen.queryByRole("button", { name: "Carregar mais" })).toBeNull();
   });

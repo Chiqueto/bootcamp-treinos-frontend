@@ -566,16 +566,16 @@ export type StartWorkoutSession500 = {
 };
 
 export type UpdateWorkoutSessionBody = {
-  /** @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$ */
+  /** @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$ */
   completedAt: string;
 };
 
 export type UpdateWorkoutSession200 = {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   id: string;
-  /** @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$ */
+  /** @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$ */
   startedAt: string;
-  /** @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$ */
+  /** @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$ */
   completedAt: string;
 };
 
@@ -2042,8 +2042,2059 @@ export type DeleteAiConversationsId500 = {
   code: string;
 };
 
+export type ListPublicPlansParams = {
+  audience: ListPublicPlansAudience;
+};
+
+export type ListPublicPlansAudience =
+  (typeof ListPublicPlansAudience)[keyof typeof ListPublicPlansAudience];
+
+export const ListPublicPlansAudience = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type ListPublicPlans200ItemEntitlementsItemEntitlement =
+  (typeof ListPublicPlans200ItemEntitlementsItemEntitlement)[keyof typeof ListPublicPlans200ItemEntitlementsItemEntitlement];
+
+export const ListPublicPlans200ItemEntitlementsItemEntitlement = {
+  COACH_DASHBOARD: "COACH_DASHBOARD",
+  MANAGE_ATHLETES: "MANAGE_ATHLETES",
+  ASSIGN_WORKOUTS: "ASSIGN_WORKOUTS",
+  VIEW_ATHLETE_HISTORY: "VIEW_ATHLETE_HISTORY",
+  ADVANCED_STATS: "ADVANCED_STATS",
+  AI_CHAT: "AI_CHAT",
+  AI_PLAN_GENERATION: "AI_PLAN_GENERATION",
+  SOURCE_LIBRARY: "SOURCE_LIBRARY",
+} as const;
+
+export type ListPublicPlans200ItemEntitlementsItem = {
+  entitlement: ListPublicPlans200ItemEntitlementsItemEntitlement;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  limitValue: number | null;
+};
+
+export type ListPublicPlans200Item = {
+  code: string;
+  name: string;
+  /** @nullable */
+  description: string | null;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   */
+  monthlyPriceInCents: number;
+  currency: string;
+  entitlements: ListPublicPlans200ItemEntitlementsItem[];
+};
+
+export type ListPublicPlans400 = {
+  error: string;
+  code: string;
+};
+
+export type ListPublicPlans401 = {
+  error: string;
+  code: string;
+};
+
+export type ListPublicPlans404 = {
+  error: string;
+  code: string;
+};
+
+export type ListPublicPlans409 = {
+  error: string;
+  code: string;
+};
+
+export type ListPublicPlans500 = {
+  error: string;
+  code: string;
+};
+
+export type CreateSignupIntentBodyAccountType =
+  (typeof CreateSignupIntentBodyAccountType)[keyof typeof CreateSignupIntentBodyAccountType];
+
+export const CreateSignupIntentBodyAccountType = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type CreateSignupIntentBody = {
+  accountType: CreateSignupIntentBodyAccountType;
+  /**
+   * @minLength 1
+   * @maxLength 80
+   */
+  planCode: string;
+};
+
+export type CreateSignupIntent201 = {
+  token: string;
+  expiresAt: string;
+};
+
+export type CreateSignupIntent400 = {
+  error: string;
+  code: string;
+};
+
+export type CreateSignupIntent401 = {
+  error: string;
+  code: string;
+};
+
+export type CreateSignupIntent404 = {
+  error: string;
+  code: string;
+};
+
+export type CreateSignupIntent409 = {
+  error: string;
+  code: string;
+};
+
+export type CreateSignupIntent500 = {
+  error: string;
+  code: string;
+};
+
+export type CompleteSignupBody = {
+  /** @pattern ^[A-Za-z0-9_-]{43}$ */
+  token: string;
+};
+
+export type CompleteSignup200AccountType =
+  (typeof CompleteSignup200AccountType)[keyof typeof CompleteSignup200AccountType];
+
+export const CompleteSignup200AccountType = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type CompleteSignup200 = {
+  accountType: CompleteSignup200AccountType;
+  accountSetupCompletedAt: string;
+};
+
+export type CompleteSignup400 = {
+  error: string;
+  code: string;
+};
+
+export type CompleteSignup401 = {
+  error: string;
+  code: string;
+};
+
+export type CompleteSignup404 = {
+  error: string;
+  code: string;
+};
+
+export type CompleteSignup409 = {
+  error: string;
+  code: string;
+};
+
+export type CompleteSignup500 = {
+  error: string;
+  code: string;
+};
+
+export type GetCommercialContext200AccountType =
+  (typeof GetCommercialContext200AccountType)[keyof typeof GetCommercialContext200AccountType];
+
+export const GetCommercialContext200AccountType = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type GetCommercialContext200SystemRole =
+  (typeof GetCommercialContext200SystemRole)[keyof typeof GetCommercialContext200SystemRole];
+
+export const GetCommercialContext200SystemRole = {
+  USER: "USER",
+  ADMIN: "ADMIN",
+} as const;
+
+/**
+ * @nullable
+ */
+export type GetCommercialContext200Plan = {
+  code: string;
+  name: string;
+} | null;
+
+/**
+ * @nullable
+ */
+export type GetCommercialContext200Subscription = {
+  status:
+    | "PENDING"
+    | "TRIALING"
+    | "ACTIVE"
+    | "PAST_DUE"
+    | "CANCELED"
+    | "EXPIRED";
+  billingProvider: "NONE" | "MANUAL" | "ASAAS";
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+} | null;
+
+export type GetCommercialContext200EntitlementsItemKey =
+  (typeof GetCommercialContext200EntitlementsItemKey)[keyof typeof GetCommercialContext200EntitlementsItemKey];
+
+export const GetCommercialContext200EntitlementsItemKey = {
+  COACH_DASHBOARD: "COACH_DASHBOARD",
+  MANAGE_ATHLETES: "MANAGE_ATHLETES",
+  ASSIGN_WORKOUTS: "ASSIGN_WORKOUTS",
+  VIEW_ATHLETE_HISTORY: "VIEW_ATHLETE_HISTORY",
+  ADVANCED_STATS: "ADVANCED_STATS",
+  AI_CHAT: "AI_CHAT",
+  AI_PLAN_GENERATION: "AI_PLAN_GENERATION",
+  SOURCE_LIBRARY: "SOURCE_LIBRARY",
+} as const;
+
+export type GetCommercialContext200EntitlementsItem = {
+  key: GetCommercialContext200EntitlementsItemKey;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  limitValue: number | null;
+};
+
+export type GetCommercialContext200 = {
+  accountType: GetCommercialContext200AccountType;
+  systemRole: GetCommercialContext200SystemRole;
+  /** @nullable */
+  accountSetupCompletedAt: string | null;
+  /** @nullable */
+  plan: GetCommercialContext200Plan;
+  /** @nullable */
+  subscription: GetCommercialContext200Subscription;
+  entitlements: GetCommercialContext200EntitlementsItem[];
+};
+
+export type GetCommercialContext400 = {
+  error: string;
+  code: string;
+};
+
+export type GetCommercialContext401 = {
+  error: string;
+  code: string;
+};
+
+export type GetCommercialContext404 = {
+  error: string;
+  code: string;
+};
+
+export type GetCommercialContext409 = {
+  error: string;
+  code: string;
+};
+
+export type GetCommercialContext500 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminOverview200PendingCoachesItemAccountType =
+  (typeof GetAdminOverview200PendingCoachesItemAccountType)[keyof typeof GetAdminOverview200PendingCoachesItemAccountType];
+
+export const GetAdminOverview200PendingCoachesItemAccountType = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type GetAdminOverview200PendingCoachesItemSystemRole =
+  (typeof GetAdminOverview200PendingCoachesItemSystemRole)[keyof typeof GetAdminOverview200PendingCoachesItemSystemRole];
+
+export const GetAdminOverview200PendingCoachesItemSystemRole = {
+  USER: "USER",
+  ADMIN: "ADMIN",
+} as const;
+
+/**
+ * @nullable
+ */
+export type GetAdminOverview200PendingCoachesItemPlan = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  code: string;
+  name: string;
+} | null;
+
+/**
+ * @nullable
+ */
+export type GetAdminOverview200PendingCoachesItemSubscription = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+  status:
+    | "PENDING"
+    | "TRIALING"
+    | "ACTIVE"
+    | "PAST_DUE"
+    | "CANCELED"
+    | "EXPIRED";
+  billingProvider: "NONE" | "MANUAL" | "ASAAS";
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+  /** @nullable */
+  trialStartedAt: string | null;
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodStart: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /** @nullable */
+  canceledAt: string | null;
+  updatedAt: string;
+  accessActive: boolean;
+  trialExpired: boolean;
+} | null;
+
+export type GetAdminOverview200PendingCoachesItem = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  name: string;
+  email: string;
+  /** @nullable */
+  image: string | null;
+  accountType: GetAdminOverview200PendingCoachesItemAccountType;
+  systemRole: GetAdminOverview200PendingCoachesItemSystemRole;
+  /** @nullable */
+  accountSetupCompletedAt: string | null;
+  createdAt: string;
+  /** @nullable */
+  plan: GetAdminOverview200PendingCoachesItemPlan;
+  /** @nullable */
+  subscription: GetAdminOverview200PendingCoachesItemSubscription;
+};
+
+export type GetAdminOverview200 = {
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  totalUsers: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  totalAthletes: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  totalCoaches: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  pendingCoachSubscriptions: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  activeManualSubscriptions: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  activeTrials: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  expiredTrials: number;
+  pendingCoaches: GetAdminOverview200PendingCoachesItem[];
+};
+
+export type GetAdminOverview400 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminOverview401 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminOverview403 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminOverview404 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminOverview409 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminOverview500 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminUsersParams = {
+  /**
+   * @minLength 1
+   * @maxLength 1000
+   */
+  cursor?: string;
+  /**
+   * @minimum 1
+   * @maximum 50
+   */
+  limit?: number;
+  /**
+   * @maxLength 120
+   */
+  q?: string;
+  accountType?: ListAdminUsersAccountType;
+  /**
+   * @maxLength 80
+   */
+  planCode?: string;
+  subscriptionStatus?: ListAdminUsersSubscriptionStatus;
+};
+
+export type ListAdminUsersAccountType =
+  (typeof ListAdminUsersAccountType)[keyof typeof ListAdminUsersAccountType];
+
+export const ListAdminUsersAccountType = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type ListAdminUsersSubscriptionStatus =
+  (typeof ListAdminUsersSubscriptionStatus)[keyof typeof ListAdminUsersSubscriptionStatus];
+
+export const ListAdminUsersSubscriptionStatus = {
+  PENDING: "PENDING",
+  TRIALING: "TRIALING",
+  ACTIVE: "ACTIVE",
+  PAST_DUE: "PAST_DUE",
+  CANCELED: "CANCELED",
+  EXPIRED: "EXPIRED",
+} as const;
+
+export type ListAdminUsers200ItemsItemAccountType =
+  (typeof ListAdminUsers200ItemsItemAccountType)[keyof typeof ListAdminUsers200ItemsItemAccountType];
+
+export const ListAdminUsers200ItemsItemAccountType = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type ListAdminUsers200ItemsItemSystemRole =
+  (typeof ListAdminUsers200ItemsItemSystemRole)[keyof typeof ListAdminUsers200ItemsItemSystemRole];
+
+export const ListAdminUsers200ItemsItemSystemRole = {
+  USER: "USER",
+  ADMIN: "ADMIN",
+} as const;
+
+/**
+ * @nullable
+ */
+export type ListAdminUsers200ItemsItemPlan = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  code: string;
+  name: string;
+} | null;
+
+/**
+ * @nullable
+ */
+export type ListAdminUsers200ItemsItemSubscription = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+  status:
+    | "PENDING"
+    | "TRIALING"
+    | "ACTIVE"
+    | "PAST_DUE"
+    | "CANCELED"
+    | "EXPIRED";
+  billingProvider: "NONE" | "MANUAL" | "ASAAS";
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+  /** @nullable */
+  trialStartedAt: string | null;
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodStart: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /** @nullable */
+  canceledAt: string | null;
+  updatedAt: string;
+  accessActive: boolean;
+  trialExpired: boolean;
+} | null;
+
+export type ListAdminUsers200ItemsItem = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  name: string;
+  email: string;
+  /** @nullable */
+  image: string | null;
+  accountType: ListAdminUsers200ItemsItemAccountType;
+  systemRole: ListAdminUsers200ItemsItemSystemRole;
+  /** @nullable */
+  accountSetupCompletedAt: string | null;
+  createdAt: string;
+  /** @nullable */
+  plan: ListAdminUsers200ItemsItemPlan;
+  /** @nullable */
+  subscription: ListAdminUsers200ItemsItemSubscription;
+};
+
+export type ListAdminUsers200 = {
+  items: ListAdminUsers200ItemsItem[];
+  /** @nullable */
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
+export type ListAdminUsers400 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminUsers401 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminUsers403 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminUsers404 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminUsers409 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminUsers500 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminUser200AccountType =
+  (typeof GetAdminUser200AccountType)[keyof typeof GetAdminUser200AccountType];
+
+export const GetAdminUser200AccountType = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type GetAdminUser200SystemRole =
+  (typeof GetAdminUser200SystemRole)[keyof typeof GetAdminUser200SystemRole];
+
+export const GetAdminUser200SystemRole = {
+  USER: "USER",
+  ADMIN: "ADMIN",
+} as const;
+
+/**
+ * @nullable
+ */
+export type GetAdminUser200Plan = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  code: string;
+  name: string;
+} | null;
+
+/**
+ * @nullable
+ */
+export type GetAdminUser200Subscription = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+  status:
+    | "PENDING"
+    | "TRIALING"
+    | "ACTIVE"
+    | "PAST_DUE"
+    | "CANCELED"
+    | "EXPIRED";
+  billingProvider: "NONE" | "MANUAL" | "ASAAS";
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+  /** @nullable */
+  trialStartedAt: string | null;
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodStart: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /** @nullable */
+  canceledAt: string | null;
+  updatedAt: string;
+  accessActive: boolean;
+  trialExpired: boolean;
+} | null;
+
+export type GetAdminUser200CommercialContextAccountType =
+  (typeof GetAdminUser200CommercialContextAccountType)[keyof typeof GetAdminUser200CommercialContextAccountType];
+
+export const GetAdminUser200CommercialContextAccountType = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type GetAdminUser200CommercialContextSystemRole =
+  (typeof GetAdminUser200CommercialContextSystemRole)[keyof typeof GetAdminUser200CommercialContextSystemRole];
+
+export const GetAdminUser200CommercialContextSystemRole = {
+  USER: "USER",
+  ADMIN: "ADMIN",
+} as const;
+
+/**
+ * @nullable
+ */
+export type GetAdminUser200CommercialContextPlan = {
+  code: string;
+  name: string;
+} | null;
+
+/**
+ * @nullable
+ */
+export type GetAdminUser200CommercialContextSubscription = {
+  status:
+    | "PENDING"
+    | "TRIALING"
+    | "ACTIVE"
+    | "PAST_DUE"
+    | "CANCELED"
+    | "EXPIRED";
+  billingProvider: "NONE" | "MANUAL" | "ASAAS";
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+} | null;
+
+export type GetAdminUser200CommercialContextEntitlementsItemKey =
+  (typeof GetAdminUser200CommercialContextEntitlementsItemKey)[keyof typeof GetAdminUser200CommercialContextEntitlementsItemKey];
+
+export const GetAdminUser200CommercialContextEntitlementsItemKey = {
+  COACH_DASHBOARD: "COACH_DASHBOARD",
+  MANAGE_ATHLETES: "MANAGE_ATHLETES",
+  ASSIGN_WORKOUTS: "ASSIGN_WORKOUTS",
+  VIEW_ATHLETE_HISTORY: "VIEW_ATHLETE_HISTORY",
+  ADVANCED_STATS: "ADVANCED_STATS",
+  AI_CHAT: "AI_CHAT",
+  AI_PLAN_GENERATION: "AI_PLAN_GENERATION",
+  SOURCE_LIBRARY: "SOURCE_LIBRARY",
+} as const;
+
+export type GetAdminUser200CommercialContextEntitlementsItem = {
+  key: GetAdminUser200CommercialContextEntitlementsItemKey;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  limitValue: number | null;
+};
+
+export type GetAdminUser200CommercialContext = {
+  accountType: GetAdminUser200CommercialContextAccountType;
+  systemRole: GetAdminUser200CommercialContextSystemRole;
+  /** @nullable */
+  accountSetupCompletedAt: string | null;
+  /** @nullable */
+  plan: GetAdminUser200CommercialContextPlan;
+  /** @nullable */
+  subscription: GetAdminUser200CommercialContextSubscription;
+  entitlements: GetAdminUser200CommercialContextEntitlementsItem[];
+};
+
+export type GetAdminUser200 = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  name: string;
+  email: string;
+  /** @nullable */
+  image: string | null;
+  accountType: GetAdminUser200AccountType;
+  systemRole: GetAdminUser200SystemRole;
+  /** @nullable */
+  accountSetupCompletedAt: string | null;
+  createdAt: string;
+  /** @nullable */
+  plan: GetAdminUser200Plan;
+  /** @nullable */
+  subscription: GetAdminUser200Subscription;
+  commercialContext: GetAdminUser200CommercialContext;
+};
+
+export type GetAdminUser400 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminUser401 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminUser403 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminUser404 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminUser409 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminUser500 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminPlans200ItemAudience =
+  (typeof ListAdminPlans200ItemAudience)[keyof typeof ListAdminPlans200ItemAudience];
+
+export const ListAdminPlans200ItemAudience = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+  INTERNAL: "INTERNAL",
+} as const;
+
+export type ListAdminPlans200ItemEntitlementsItemEntitlement =
+  (typeof ListAdminPlans200ItemEntitlementsItemEntitlement)[keyof typeof ListAdminPlans200ItemEntitlementsItemEntitlement];
+
+export const ListAdminPlans200ItemEntitlementsItemEntitlement = {
+  COACH_DASHBOARD: "COACH_DASHBOARD",
+  MANAGE_ATHLETES: "MANAGE_ATHLETES",
+  ASSIGN_WORKOUTS: "ASSIGN_WORKOUTS",
+  VIEW_ATHLETE_HISTORY: "VIEW_ATHLETE_HISTORY",
+  ADVANCED_STATS: "ADVANCED_STATS",
+  AI_CHAT: "AI_CHAT",
+  AI_PLAN_GENERATION: "AI_PLAN_GENERATION",
+  SOURCE_LIBRARY: "SOURCE_LIBRARY",
+} as const;
+
+export type ListAdminPlans200ItemEntitlementsItem = {
+  entitlement: ListAdminPlans200ItemEntitlementsItemEntitlement;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  limitValue: number | null;
+};
+
+export type ListAdminPlans200Item = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  code: string;
+  name: string;
+  /** @nullable */
+  description: string | null;
+  audience: ListAdminPlans200ItemAudience;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  monthlyPriceInCents: number;
+  currency: string;
+  isPublic: boolean;
+  isActive: boolean;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  sortOrder: number;
+  entitlements: ListAdminPlans200ItemEntitlementsItem[];
+};
+
+export type ListAdminPlans400 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminPlans401 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminPlans403 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminPlans404 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminPlans409 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminPlans500 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminPlan200Audience =
+  (typeof GetAdminPlan200Audience)[keyof typeof GetAdminPlan200Audience];
+
+export const GetAdminPlan200Audience = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+  INTERNAL: "INTERNAL",
+} as const;
+
+export type GetAdminPlan200EntitlementsItemEntitlement =
+  (typeof GetAdminPlan200EntitlementsItemEntitlement)[keyof typeof GetAdminPlan200EntitlementsItemEntitlement];
+
+export const GetAdminPlan200EntitlementsItemEntitlement = {
+  COACH_DASHBOARD: "COACH_DASHBOARD",
+  MANAGE_ATHLETES: "MANAGE_ATHLETES",
+  ASSIGN_WORKOUTS: "ASSIGN_WORKOUTS",
+  VIEW_ATHLETE_HISTORY: "VIEW_ATHLETE_HISTORY",
+  ADVANCED_STATS: "ADVANCED_STATS",
+  AI_CHAT: "AI_CHAT",
+  AI_PLAN_GENERATION: "AI_PLAN_GENERATION",
+  SOURCE_LIBRARY: "SOURCE_LIBRARY",
+} as const;
+
+export type GetAdminPlan200EntitlementsItem = {
+  entitlement: GetAdminPlan200EntitlementsItemEntitlement;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  limitValue: number | null;
+};
+
+export type GetAdminPlan200 = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  code: string;
+  name: string;
+  /** @nullable */
+  description: string | null;
+  audience: GetAdminPlan200Audience;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  monthlyPriceInCents: number;
+  currency: string;
+  isPublic: boolean;
+  isActive: boolean;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  sortOrder: number;
+  entitlements: GetAdminPlan200EntitlementsItem[];
+};
+
+export type GetAdminPlan400 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminPlan401 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminPlan403 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminPlan404 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminPlan409 = {
+  error: string;
+  code: string;
+};
+
+export type GetAdminPlan500 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlanBody = {
+  /**
+   * @minLength 1
+   * @maxLength 120
+   */
+  name?: string;
+  /**
+   * @maxLength 1000
+   * @nullable
+   */
+  description?: string | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  monthlyPriceInCents?: number;
+  isPublic?: boolean;
+  isActive?: boolean;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  sortOrder?: number;
+};
+
+export type UpdateAdminPlan200Audience =
+  (typeof UpdateAdminPlan200Audience)[keyof typeof UpdateAdminPlan200Audience];
+
+export const UpdateAdminPlan200Audience = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+  INTERNAL: "INTERNAL",
+} as const;
+
+export type UpdateAdminPlan200EntitlementsItemEntitlement =
+  (typeof UpdateAdminPlan200EntitlementsItemEntitlement)[keyof typeof UpdateAdminPlan200EntitlementsItemEntitlement];
+
+export const UpdateAdminPlan200EntitlementsItemEntitlement = {
+  COACH_DASHBOARD: "COACH_DASHBOARD",
+  MANAGE_ATHLETES: "MANAGE_ATHLETES",
+  ASSIGN_WORKOUTS: "ASSIGN_WORKOUTS",
+  VIEW_ATHLETE_HISTORY: "VIEW_ATHLETE_HISTORY",
+  ADVANCED_STATS: "ADVANCED_STATS",
+  AI_CHAT: "AI_CHAT",
+  AI_PLAN_GENERATION: "AI_PLAN_GENERATION",
+  SOURCE_LIBRARY: "SOURCE_LIBRARY",
+} as const;
+
+export type UpdateAdminPlan200EntitlementsItem = {
+  entitlement: UpdateAdminPlan200EntitlementsItemEntitlement;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  limitValue: number | null;
+};
+
+export type UpdateAdminPlan200 = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  code: string;
+  name: string;
+  /** @nullable */
+  description: string | null;
+  audience: UpdateAdminPlan200Audience;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  monthlyPriceInCents: number;
+  currency: string;
+  isPublic: boolean;
+  isActive: boolean;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  sortOrder: number;
+  entitlements: UpdateAdminPlan200EntitlementsItem[];
+};
+
+export type UpdateAdminPlan400 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlan401 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlan403 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlan404 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlan409 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlan500 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlanEntitlementsBodyEntitlementsItemEntitlement =
+  (typeof UpdateAdminPlanEntitlementsBodyEntitlementsItemEntitlement)[keyof typeof UpdateAdminPlanEntitlementsBodyEntitlementsItemEntitlement];
+
+export const UpdateAdminPlanEntitlementsBodyEntitlementsItemEntitlement = {
+  COACH_DASHBOARD: "COACH_DASHBOARD",
+  MANAGE_ATHLETES: "MANAGE_ATHLETES",
+  ASSIGN_WORKOUTS: "ASSIGN_WORKOUTS",
+  VIEW_ATHLETE_HISTORY: "VIEW_ATHLETE_HISTORY",
+  ADVANCED_STATS: "ADVANCED_STATS",
+  AI_CHAT: "AI_CHAT",
+  AI_PLAN_GENERATION: "AI_PLAN_GENERATION",
+  SOURCE_LIBRARY: "SOURCE_LIBRARY",
+} as const;
+
+export type UpdateAdminPlanEntitlementsBodyEntitlementsItem = {
+  entitlement: UpdateAdminPlanEntitlementsBodyEntitlementsItemEntitlement;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  limitValue: number | null;
+};
+
+export type UpdateAdminPlanEntitlementsBody = {
+  /** @maxItems 8 */
+  entitlements: UpdateAdminPlanEntitlementsBodyEntitlementsItem[];
+};
+
+export type UpdateAdminPlanEntitlements200Audience =
+  (typeof UpdateAdminPlanEntitlements200Audience)[keyof typeof UpdateAdminPlanEntitlements200Audience];
+
+export const UpdateAdminPlanEntitlements200Audience = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+  INTERNAL: "INTERNAL",
+} as const;
+
+export type UpdateAdminPlanEntitlements200EntitlementsItemEntitlement =
+  (typeof UpdateAdminPlanEntitlements200EntitlementsItemEntitlement)[keyof typeof UpdateAdminPlanEntitlements200EntitlementsItemEntitlement];
+
+export const UpdateAdminPlanEntitlements200EntitlementsItemEntitlement = {
+  COACH_DASHBOARD: "COACH_DASHBOARD",
+  MANAGE_ATHLETES: "MANAGE_ATHLETES",
+  ASSIGN_WORKOUTS: "ASSIGN_WORKOUTS",
+  VIEW_ATHLETE_HISTORY: "VIEW_ATHLETE_HISTORY",
+  ADVANCED_STATS: "ADVANCED_STATS",
+  AI_CHAT: "AI_CHAT",
+  AI_PLAN_GENERATION: "AI_PLAN_GENERATION",
+  SOURCE_LIBRARY: "SOURCE_LIBRARY",
+} as const;
+
+export type UpdateAdminPlanEntitlements200EntitlementsItem = {
+  entitlement: UpdateAdminPlanEntitlements200EntitlementsItemEntitlement;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  limitValue: number | null;
+};
+
+export type UpdateAdminPlanEntitlements200 = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  code: string;
+  name: string;
+  /** @nullable */
+  description: string | null;
+  audience: UpdateAdminPlanEntitlements200Audience;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  monthlyPriceInCents: number;
+  currency: string;
+  isPublic: boolean;
+  isActive: boolean;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  sortOrder: number;
+  entitlements: UpdateAdminPlanEntitlements200EntitlementsItem[];
+};
+
+export type UpdateAdminPlanEntitlements400 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlanEntitlements401 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlanEntitlements403 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlanEntitlements404 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlanEntitlements409 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateAdminPlanEntitlements500 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminSubscriptionsParams = {
+  /**
+   * @minLength 1
+   * @maxLength 1000
+   */
+  cursor?: string;
+  /**
+   * @minimum 1
+   * @maximum 50
+   */
+  limit?: number;
+  /**
+   * @maxLength 120
+   */
+  q?: string;
+  accountType?: ListAdminSubscriptionsAccountType;
+  /**
+   * @maxLength 80
+   */
+  planCode?: string;
+  status?: ListAdminSubscriptionsStatus;
+  billingProvider?: ListAdminSubscriptionsBillingProvider;
+};
+
+export type ListAdminSubscriptionsAccountType =
+  (typeof ListAdminSubscriptionsAccountType)[keyof typeof ListAdminSubscriptionsAccountType];
+
+export const ListAdminSubscriptionsAccountType = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type ListAdminSubscriptionsStatus =
+  (typeof ListAdminSubscriptionsStatus)[keyof typeof ListAdminSubscriptionsStatus];
+
+export const ListAdminSubscriptionsStatus = {
+  PENDING: "PENDING",
+  TRIALING: "TRIALING",
+  ACTIVE: "ACTIVE",
+  PAST_DUE: "PAST_DUE",
+  CANCELED: "CANCELED",
+  EXPIRED: "EXPIRED",
+} as const;
+
+export type ListAdminSubscriptionsBillingProvider =
+  (typeof ListAdminSubscriptionsBillingProvider)[keyof typeof ListAdminSubscriptionsBillingProvider];
+
+export const ListAdminSubscriptionsBillingProvider = {
+  NONE: "NONE",
+  MANUAL: "MANUAL",
+  ASAAS: "ASAAS",
+} as const;
+
+export type ListAdminSubscriptions200ItemsItemStatus =
+  (typeof ListAdminSubscriptions200ItemsItemStatus)[keyof typeof ListAdminSubscriptions200ItemsItemStatus];
+
+export const ListAdminSubscriptions200ItemsItemStatus = {
+  PENDING: "PENDING",
+  TRIALING: "TRIALING",
+  ACTIVE: "ACTIVE",
+  PAST_DUE: "PAST_DUE",
+  CANCELED: "CANCELED",
+  EXPIRED: "EXPIRED",
+} as const;
+
+export type ListAdminSubscriptions200ItemsItemBillingProvider =
+  (typeof ListAdminSubscriptions200ItemsItemBillingProvider)[keyof typeof ListAdminSubscriptions200ItemsItemBillingProvider];
+
+export const ListAdminSubscriptions200ItemsItemBillingProvider = {
+  NONE: "NONE",
+  MANUAL: "MANUAL",
+  ASAAS: "ASAAS",
+} as const;
+
+export type ListAdminSubscriptions200ItemsItemUserAccountType =
+  (typeof ListAdminSubscriptions200ItemsItemUserAccountType)[keyof typeof ListAdminSubscriptions200ItemsItemUserAccountType];
+
+export const ListAdminSubscriptions200ItemsItemUserAccountType = {
+  ATHLETE: "ATHLETE",
+  COACH: "COACH",
+} as const;
+
+export type ListAdminSubscriptions200ItemsItemUserSystemRole =
+  (typeof ListAdminSubscriptions200ItemsItemUserSystemRole)[keyof typeof ListAdminSubscriptions200ItemsItemUserSystemRole];
+
+export const ListAdminSubscriptions200ItemsItemUserSystemRole = {
+  USER: "USER",
+  ADMIN: "ADMIN",
+} as const;
+
+export type ListAdminSubscriptions200ItemsItemUser = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  name: string;
+  email: string;
+  /** @nullable */
+  image: string | null;
+  accountType: ListAdminSubscriptions200ItemsItemUserAccountType;
+  systemRole: ListAdminSubscriptions200ItemsItemUserSystemRole;
+  /** @nullable */
+  accountSetupCompletedAt: string | null;
+  createdAt: string;
+};
+
+export type ListAdminSubscriptions200ItemsItemPlan = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  code: string;
+  name: string;
+};
+
+export type ListAdminSubscriptions200ItemsItem = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+  status: ListAdminSubscriptions200ItemsItemStatus;
+  billingProvider: ListAdminSubscriptions200ItemsItemBillingProvider;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+  /** @nullable */
+  trialStartedAt: string | null;
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodStart: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /** @nullable */
+  canceledAt: string | null;
+  updatedAt: string;
+  accessActive: boolean;
+  trialExpired: boolean;
+  user: ListAdminSubscriptions200ItemsItemUser;
+  plan: ListAdminSubscriptions200ItemsItemPlan;
+};
+
+export type ListAdminSubscriptions200 = {
+  items: ListAdminSubscriptions200ItemsItem[];
+  /** @nullable */
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
+export type ListAdminSubscriptions400 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminSubscriptions401 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminSubscriptions403 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminSubscriptions404 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminSubscriptions409 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminSubscriptions500 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminAuditParams = {
+  /**
+   * @minLength 1
+   * @maxLength 1000
+   */
+  cursor?: string;
+  /**
+   * @minimum 1
+   * @maximum 50
+   */
+  limit?: number;
+  action?: ListAdminAuditAction;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  adminUserId?: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  targetUserId?: string;
+  entityType?: ListAdminAuditEntityType;
+};
+
+export type ListAdminAuditAction =
+  (typeof ListAdminAuditAction)[keyof typeof ListAdminAuditAction];
+
+export const ListAdminAuditAction = {
+  PLAN_UPDATED: "PLAN_UPDATED",
+  PLAN_ENTITLEMENTS_UPDATED: "PLAN_ENTITLEMENTS_UPDATED",
+  SUBSCRIPTION_TRIAL_GRANTED: "SUBSCRIPTION_TRIAL_GRANTED",
+  SUBSCRIPTION_TRIAL_EXTENDED: "SUBSCRIPTION_TRIAL_EXTENDED",
+  SUBSCRIPTION_ACTIVATED: "SUBSCRIPTION_ACTIVATED",
+  SUBSCRIPTION_PLAN_CHANGED: "SUBSCRIPTION_PLAN_CHANGED",
+  SUBSCRIPTION_CANCELED: "SUBSCRIPTION_CANCELED",
+} as const;
+
+export type ListAdminAuditEntityType =
+  (typeof ListAdminAuditEntityType)[keyof typeof ListAdminAuditEntityType];
+
+export const ListAdminAuditEntityType = {
+  PLAN: "PLAN",
+  SUBSCRIPTION: "SUBSCRIPTION",
+} as const;
+
+export type ListAdminAudit200ItemsItemAction =
+  (typeof ListAdminAudit200ItemsItemAction)[keyof typeof ListAdminAudit200ItemsItemAction];
+
+export const ListAdminAudit200ItemsItemAction = {
+  PLAN_UPDATED: "PLAN_UPDATED",
+  PLAN_ENTITLEMENTS_UPDATED: "PLAN_ENTITLEMENTS_UPDATED",
+  SUBSCRIPTION_TRIAL_GRANTED: "SUBSCRIPTION_TRIAL_GRANTED",
+  SUBSCRIPTION_TRIAL_EXTENDED: "SUBSCRIPTION_TRIAL_EXTENDED",
+  SUBSCRIPTION_ACTIVATED: "SUBSCRIPTION_ACTIVATED",
+  SUBSCRIPTION_PLAN_CHANGED: "SUBSCRIPTION_PLAN_CHANGED",
+  SUBSCRIPTION_CANCELED: "SUBSCRIPTION_CANCELED",
+} as const;
+
+/**
+ * @nullable
+ */
+export type ListAdminAudit200ItemsItemBefore = {
+  [key: string]: unknown;
+} | null;
+
+/**
+ * @nullable
+ */
+export type ListAdminAudit200ItemsItemAfter = { [key: string]: unknown } | null;
+
+/**
+ * @nullable
+ */
+export type ListAdminAudit200ItemsItemMetadata = {
+  [key: string]: unknown;
+} | null;
+
+export type ListAdminAudit200ItemsItemAdmin = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  name: string;
+};
+
+/**
+ * @nullable
+ */
+export type ListAdminAudit200ItemsItemTargetUser = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  name: string;
+} | null;
+
+export type ListAdminAudit200ItemsItem = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  adminUserId: string;
+  action: ListAdminAudit200ItemsItemAction;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   * @nullable
+   */
+  targetUserId: string | null;
+  entityType: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   * @nullable
+   */
+  entityId: string | null;
+  /** @nullable */
+  before: ListAdminAudit200ItemsItemBefore;
+  /** @nullable */
+  after: ListAdminAudit200ItemsItemAfter;
+  /** @nullable */
+  metadata: ListAdminAudit200ItemsItemMetadata;
+  createdAt: string;
+  admin: ListAdminAudit200ItemsItemAdmin;
+  /** @nullable */
+  targetUser: ListAdminAudit200ItemsItemTargetUser;
+};
+
+export type ListAdminAudit200 = {
+  items: ListAdminAudit200ItemsItem[];
+  /** @nullable */
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
+export type ListAdminAudit400 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminAudit401 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminAudit403 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminAudit404 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminAudit409 = {
+  error: string;
+  code: string;
+};
+
+export type ListAdminAudit500 = {
+  error: string;
+  code: string;
+};
+
+export type GrantManualTrialBody = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+  trialEndsAt: string;
+};
+
+export type GrantManualTrial200Status =
+  (typeof GrantManualTrial200Status)[keyof typeof GrantManualTrial200Status];
+
+export const GrantManualTrial200Status = {
+  PENDING: "PENDING",
+  TRIALING: "TRIALING",
+  ACTIVE: "ACTIVE",
+  PAST_DUE: "PAST_DUE",
+  CANCELED: "CANCELED",
+  EXPIRED: "EXPIRED",
+} as const;
+
+export type GrantManualTrial200BillingProvider =
+  (typeof GrantManualTrial200BillingProvider)[keyof typeof GrantManualTrial200BillingProvider];
+
+export const GrantManualTrial200BillingProvider = {
+  NONE: "NONE",
+  MANUAL: "MANUAL",
+  ASAAS: "ASAAS",
+} as const;
+
+export type GrantManualTrial200 = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+  status: GrantManualTrial200Status;
+  billingProvider: GrantManualTrial200BillingProvider;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+  /** @nullable */
+  trialStartedAt: string | null;
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodStart: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /** @nullable */
+  canceledAt: string | null;
+  updatedAt: string;
+  accessActive: boolean;
+  trialExpired: boolean;
+};
+
+export type GrantManualTrial400 = {
+  error: string;
+  code: string;
+};
+
+export type GrantManualTrial401 = {
+  error: string;
+  code: string;
+};
+
+export type GrantManualTrial403 = {
+  error: string;
+  code: string;
+};
+
+export type GrantManualTrial404 = {
+  error: string;
+  code: string;
+};
+
+export type GrantManualTrial409 = {
+  error: string;
+  code: string;
+};
+
+export type GrantManualTrial500 = {
+  error: string;
+  code: string;
+};
+
+export type ExtendManualTrialBody = {
+  trialEndsAt: string;
+};
+
+export type ExtendManualTrial200Status =
+  (typeof ExtendManualTrial200Status)[keyof typeof ExtendManualTrial200Status];
+
+export const ExtendManualTrial200Status = {
+  PENDING: "PENDING",
+  TRIALING: "TRIALING",
+  ACTIVE: "ACTIVE",
+  PAST_DUE: "PAST_DUE",
+  CANCELED: "CANCELED",
+  EXPIRED: "EXPIRED",
+} as const;
+
+export type ExtendManualTrial200BillingProvider =
+  (typeof ExtendManualTrial200BillingProvider)[keyof typeof ExtendManualTrial200BillingProvider];
+
+export const ExtendManualTrial200BillingProvider = {
+  NONE: "NONE",
+  MANUAL: "MANUAL",
+  ASAAS: "ASAAS",
+} as const;
+
+export type ExtendManualTrial200 = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+  status: ExtendManualTrial200Status;
+  billingProvider: ExtendManualTrial200BillingProvider;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+  /** @nullable */
+  trialStartedAt: string | null;
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodStart: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /** @nullable */
+  canceledAt: string | null;
+  updatedAt: string;
+  accessActive: boolean;
+  trialExpired: boolean;
+};
+
+export type ExtendManualTrial400 = {
+  error: string;
+  code: string;
+};
+
+export type ExtendManualTrial401 = {
+  error: string;
+  code: string;
+};
+
+export type ExtendManualTrial403 = {
+  error: string;
+  code: string;
+};
+
+export type ExtendManualTrial404 = {
+  error: string;
+  code: string;
+};
+
+export type ExtendManualTrial409 = {
+  error: string;
+  code: string;
+};
+
+export type ExtendManualTrial500 = {
+  error: string;
+  code: string;
+};
+
+export type ActivateManualSubscriptionBody = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+};
+
+export type ActivateManualSubscription200Status =
+  (typeof ActivateManualSubscription200Status)[keyof typeof ActivateManualSubscription200Status];
+
+export const ActivateManualSubscription200Status = {
+  PENDING: "PENDING",
+  TRIALING: "TRIALING",
+  ACTIVE: "ACTIVE",
+  PAST_DUE: "PAST_DUE",
+  CANCELED: "CANCELED",
+  EXPIRED: "EXPIRED",
+} as const;
+
+export type ActivateManualSubscription200BillingProvider =
+  (typeof ActivateManualSubscription200BillingProvider)[keyof typeof ActivateManualSubscription200BillingProvider];
+
+export const ActivateManualSubscription200BillingProvider = {
+  NONE: "NONE",
+  MANUAL: "MANUAL",
+  ASAAS: "ASAAS",
+} as const;
+
+export type ActivateManualSubscription200 = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+  status: ActivateManualSubscription200Status;
+  billingProvider: ActivateManualSubscription200BillingProvider;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+  /** @nullable */
+  trialStartedAt: string | null;
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodStart: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /** @nullable */
+  canceledAt: string | null;
+  updatedAt: string;
+  accessActive: boolean;
+  trialExpired: boolean;
+};
+
+export type ActivateManualSubscription400 = {
+  error: string;
+  code: string;
+};
+
+export type ActivateManualSubscription401 = {
+  error: string;
+  code: string;
+};
+
+export type ActivateManualSubscription403 = {
+  error: string;
+  code: string;
+};
+
+export type ActivateManualSubscription404 = {
+  error: string;
+  code: string;
+};
+
+export type ActivateManualSubscription409 = {
+  error: string;
+  code: string;
+};
+
+export type ActivateManualSubscription500 = {
+  error: string;
+  code: string;
+};
+
+export type ChangeManualSubscriptionPlanBody = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+};
+
+export type ChangeManualSubscriptionPlan200Status =
+  (typeof ChangeManualSubscriptionPlan200Status)[keyof typeof ChangeManualSubscriptionPlan200Status];
+
+export const ChangeManualSubscriptionPlan200Status = {
+  PENDING: "PENDING",
+  TRIALING: "TRIALING",
+  ACTIVE: "ACTIVE",
+  PAST_DUE: "PAST_DUE",
+  CANCELED: "CANCELED",
+  EXPIRED: "EXPIRED",
+} as const;
+
+export type ChangeManualSubscriptionPlan200BillingProvider =
+  (typeof ChangeManualSubscriptionPlan200BillingProvider)[keyof typeof ChangeManualSubscriptionPlan200BillingProvider];
+
+export const ChangeManualSubscriptionPlan200BillingProvider = {
+  NONE: "NONE",
+  MANUAL: "MANUAL",
+  ASAAS: "ASAAS",
+} as const;
+
+export type ChangeManualSubscriptionPlan200 = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+  status: ChangeManualSubscriptionPlan200Status;
+  billingProvider: ChangeManualSubscriptionPlan200BillingProvider;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+  /** @nullable */
+  trialStartedAt: string | null;
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodStart: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /** @nullable */
+  canceledAt: string | null;
+  updatedAt: string;
+  accessActive: boolean;
+  trialExpired: boolean;
+};
+
+export type ChangeManualSubscriptionPlan400 = {
+  error: string;
+  code: string;
+};
+
+export type ChangeManualSubscriptionPlan401 = {
+  error: string;
+  code: string;
+};
+
+export type ChangeManualSubscriptionPlan403 = {
+  error: string;
+  code: string;
+};
+
+export type ChangeManualSubscriptionPlan404 = {
+  error: string;
+  code: string;
+};
+
+export type ChangeManualSubscriptionPlan409 = {
+  error: string;
+  code: string;
+};
+
+export type ChangeManualSubscriptionPlan500 = {
+  error: string;
+  code: string;
+};
+
+export type CancelManualSubscriptionBody = { [key: string]: unknown };
+
+export type CancelManualSubscription200Status =
+  (typeof CancelManualSubscription200Status)[keyof typeof CancelManualSubscription200Status];
+
+export const CancelManualSubscription200Status = {
+  PENDING: "PENDING",
+  TRIALING: "TRIALING",
+  ACTIVE: "ACTIVE",
+  PAST_DUE: "PAST_DUE",
+  CANCELED: "CANCELED",
+  EXPIRED: "EXPIRED",
+} as const;
+
+export type CancelManualSubscription200BillingProvider =
+  (typeof CancelManualSubscription200BillingProvider)[keyof typeof CancelManualSubscription200BillingProvider];
+
+export const CancelManualSubscription200BillingProvider = {
+  NONE: "NONE",
+  MANUAL: "MANUAL",
+  ASAAS: "ASAAS",
+} as const;
+
+export type CancelManualSubscription200 = {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  planId: string;
+  status: CancelManualSubscription200Status;
+  billingProvider: CancelManualSubscription200BillingProvider;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  priceInCentsSnapshot: number;
+  currencySnapshot: string;
+  /** @nullable */
+  trialStartedAt: string | null;
+  /** @nullable */
+  trialEndsAt: string | null;
+  /** @nullable */
+  currentPeriodStart: string | null;
+  /** @nullable */
+  currentPeriodEnd: string | null;
+  /** @nullable */
+  canceledAt: string | null;
+  updatedAt: string;
+  accessActive: boolean;
+  trialExpired: boolean;
+};
+
+export type CancelManualSubscription400 = {
+  error: string;
+  code: string;
+};
+
+export type CancelManualSubscription401 = {
+  error: string;
+  code: string;
+};
+
+export type CancelManualSubscription403 = {
+  error: string;
+  code: string;
+};
+
+export type CancelManualSubscription404 = {
+  error: string;
+  code: string;
+};
+
+export type CancelManualSubscription409 = {
+  error: string;
+  code: string;
+};
+
+export type CancelManualSubscription500 = {
+  error: string;
+  code: string;
+};
+
 export type ListExercisesParams = {
   q?: string;
+  onlyWithHistory?: string;
 };
 
 export type ListExercises200ItemMusclesItemMuscleGroup =
@@ -2310,6 +4361,781 @@ export type UpdateExerciseMuscles404 = {
 };
 
 export type UpdateExerciseMuscles500 = {
+  error: string;
+  code: string;
+};
+
+export type GetActiveWorkoutSession200Origin =
+  (typeof GetActiveWorkoutSession200Origin)[keyof typeof GetActiveWorkoutSession200Origin];
+
+export const GetActiveWorkoutSession200Origin = {
+  PLANNED: "PLANNED",
+  FREE: "FREE",
+} as const;
+
+export type GetActiveWorkoutSession200SessionExercisesItemSetsItemType =
+  (typeof GetActiveWorkoutSession200SessionExercisesItemSetsItemType)[keyof typeof GetActiveWorkoutSession200SessionExercisesItemSetsItemType];
+
+export const GetActiveWorkoutSession200SessionExercisesItemSetsItemType = {
+  WARMUP: "WARMUP",
+  WORKING: "WORKING",
+} as const;
+
+export type GetActiveWorkoutSession200SessionExercisesItemSetsItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  type: GetActiveWorkoutSession200SessionExercisesItemSetsItemType;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  weightInGrams: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  rir: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  durationInSeconds: number | null;
+  /** @nullable */
+  notes: string | null;
+  /** @nullable */
+  completedAt: string | null;
+};
+
+export type GetActiveWorkoutSession200SessionExercisesItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  exerciseNameSnapshot: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedSets: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedWarmupSets?: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedReps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedRestTimeInSeconds: number | null;
+  /** @nullable */
+  notes: string | null;
+  sets: GetActiveWorkoutSession200SessionExercisesItemSetsItem[];
+};
+
+export type GetActiveWorkoutSession200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  origin?: GetActiveWorkoutSession200Origin;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  workoutDayId: string | null;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  workoutPlanId?: string | null;
+  /** @nullable */
+  workoutPlanNameSnapshot?: string | null;
+  /** @nullable */
+  workoutDayNameSnapshot?: string | null;
+  startedAt: string;
+  /** @nullable */
+  completedAt: string | null;
+  sessionExercises: GetActiveWorkoutSession200SessionExercisesItem[];
+};
+
+export type GetActiveWorkoutSession401 = {
+  error: string;
+  code: string;
+};
+
+export type GetActiveWorkoutSession404 = {
+  error: string;
+  code: string;
+};
+
+export type GetActiveWorkoutSession500 = {
+  error: string;
+  code: string;
+};
+
+export type GetWorkoutSession200Origin =
+  (typeof GetWorkoutSession200Origin)[keyof typeof GetWorkoutSession200Origin];
+
+export const GetWorkoutSession200Origin = {
+  PLANNED: "PLANNED",
+  FREE: "FREE",
+} as const;
+
+export type GetWorkoutSession200SessionExercisesItemSetsItemType =
+  (typeof GetWorkoutSession200SessionExercisesItemSetsItemType)[keyof typeof GetWorkoutSession200SessionExercisesItemSetsItemType];
+
+export const GetWorkoutSession200SessionExercisesItemSetsItemType = {
+  WARMUP: "WARMUP",
+  WORKING: "WORKING",
+} as const;
+
+export type GetWorkoutSession200SessionExercisesItemSetsItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  type: GetWorkoutSession200SessionExercisesItemSetsItemType;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  weightInGrams: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  rir: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  durationInSeconds: number | null;
+  /** @nullable */
+  notes: string | null;
+  /** @nullable */
+  completedAt: string | null;
+};
+
+export type GetWorkoutSession200SessionExercisesItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  exerciseNameSnapshot: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedSets: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedWarmupSets?: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedReps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedRestTimeInSeconds: number | null;
+  /** @nullable */
+  notes: string | null;
+  sets: GetWorkoutSession200SessionExercisesItemSetsItem[];
+};
+
+export type GetWorkoutSession200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  origin?: GetWorkoutSession200Origin;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  workoutDayId: string | null;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  workoutPlanId?: string | null;
+  /** @nullable */
+  workoutPlanNameSnapshot?: string | null;
+  /** @nullable */
+  workoutDayNameSnapshot?: string | null;
+  startedAt: string;
+  /** @nullable */
+  completedAt: string | null;
+  sessionExercises: GetWorkoutSession200SessionExercisesItem[];
+};
+
+export type GetWorkoutSession401 = {
+  error: string;
+  code: string;
+};
+
+export type GetWorkoutSession404 = {
+  error: string;
+  code: string;
+};
+
+export type GetWorkoutSession500 = {
+  error: string;
+  code: string;
+};
+
+export type CancelWorkoutSession200 = {
+  success: boolean;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  sessionId: string;
+};
+
+export type CancelWorkoutSession400 = {
+  error: string;
+  code: string;
+};
+
+export type CancelWorkoutSession401 = {
+  error: string;
+  code: string;
+};
+
+export type CancelWorkoutSession404 = {
+  error: string;
+  code: string;
+};
+
+export type CancelWorkoutSession409 = {
+  error: string;
+  code: string;
+};
+
+export type CancelWorkoutSession500 = {
+  error: string;
+  code: string;
+};
+
+export type CompleteWorkoutSession200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  workoutDayId: string | null;
+  startedAt: string;
+  completedAt: string;
+};
+
+export type CompleteWorkoutSession400 = {
+  error: string;
+  code: string;
+};
+
+export type CompleteWorkoutSession401 = {
+  error: string;
+  code: string;
+};
+
+export type CompleteWorkoutSession404 = {
+  error: string;
+  code: string;
+};
+
+export type CompleteWorkoutSession500 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutSetBodyType =
+  (typeof CreateWorkoutSetBodyType)[keyof typeof CreateWorkoutSetBodyType];
+
+export const CreateWorkoutSetBodyType = {
+  WARMUP: "WARMUP",
+  WORKING: "WORKING",
+} as const;
+
+export type CreateWorkoutSetBody = {
+  type?: CreateWorkoutSetBodyType;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  weightInGrams?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 10
+   * @nullable
+   */
+  rir?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  durationInSeconds?: number | null;
+  /**
+   * @maxLength 1000
+   * @nullable
+   */
+  notes?: string | null;
+  completed?: boolean;
+};
+
+export type CreateWorkoutSet201Type =
+  (typeof CreateWorkoutSet201Type)[keyof typeof CreateWorkoutSet201Type];
+
+export const CreateWorkoutSet201Type = {
+  WARMUP: "WARMUP",
+  WORKING: "WORKING",
+} as const;
+
+export type CreateWorkoutSet201 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  sessionExerciseId: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  type: CreateWorkoutSet201Type;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  weightInGrams: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  rir: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  durationInSeconds: number | null;
+  /** @nullable */
+  notes: string | null;
+  /** @nullable */
+  completedAt: string | null;
+};
+
+export type CreateWorkoutSet400 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutSet401 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutSet404 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutSet409 = {
+  error: string;
+  code: string;
+};
+
+export type CreateWorkoutSet500 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateWorkoutSetBodyType =
+  (typeof UpdateWorkoutSetBodyType)[keyof typeof UpdateWorkoutSetBodyType];
+
+export const UpdateWorkoutSetBodyType = {
+  WARMUP: "WARMUP",
+  WORKING: "WORKING",
+} as const;
+
+export type UpdateWorkoutSetBody = {
+  type?: UpdateWorkoutSetBodyType;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  weightInGrams?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 10
+   * @nullable
+   */
+  rir?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  durationInSeconds?: number | null;
+  /**
+   * @maxLength 1000
+   * @nullable
+   */
+  notes?: string | null;
+  completed?: boolean;
+};
+
+export type UpdateWorkoutSet200Type =
+  (typeof UpdateWorkoutSet200Type)[keyof typeof UpdateWorkoutSet200Type];
+
+export const UpdateWorkoutSet200Type = {
+  WARMUP: "WARMUP",
+  WORKING: "WORKING",
+} as const;
+
+export type UpdateWorkoutSet200 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  sessionExerciseId: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  type: UpdateWorkoutSet200Type;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  weightInGrams: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  rir: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  durationInSeconds: number | null;
+  /** @nullable */
+  notes: string | null;
+  /** @nullable */
+  completedAt: string | null;
+};
+
+export type UpdateWorkoutSet400 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateWorkoutSet401 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateWorkoutSet404 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateWorkoutSet409 = {
+  error: string;
+  code: string;
+};
+
+export type UpdateWorkoutSet500 = {
+  error: string;
+  code: string;
+};
+
+export type DeleteWorkoutSet200 = {
+  success: boolean;
+};
+
+export type DeleteWorkoutSet401 = {
+  error: string;
+  code: string;
+};
+
+export type DeleteWorkoutSet404 = {
+  error: string;
+  code: string;
+};
+
+export type DeleteWorkoutSet409 = {
+  error: string;
+  code: string;
+};
+
+export type DeleteWorkoutSet500 = {
+  error: string;
+  code: string;
+};
+
+export type StartFreeWorkoutSession201Origin =
+  (typeof StartFreeWorkoutSession201Origin)[keyof typeof StartFreeWorkoutSession201Origin];
+
+export const StartFreeWorkoutSession201Origin = {
+  PLANNED: "PLANNED",
+  FREE: "FREE",
+} as const;
+
+export type StartFreeWorkoutSession201 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  userWorkoutSessionId: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  workoutSessionId: string;
+  origin?: StartFreeWorkoutSession201Origin;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  workoutDayId: string | null;
+  /**
+   * @nullable
+   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+   */
+  workoutPlanId?: string | null;
+  /** @nullable */
+  workoutPlanNameSnapshot?: string | null;
+  /** @nullable */
+  workoutDayNameSnapshot?: string | null;
+  startedAt: string;
+  /** @nullable */
+  completedAt: string | null;
+};
+
+export type StartFreeWorkoutSession401 = {
+  error: string;
+  code: string;
+};
+
+export type StartFreeWorkoutSession409 = {
+  error: string;
+  code: string;
+};
+
+export type StartFreeWorkoutSession500 = {
+  error: string;
+  code: string;
+};
+
+export type AddExerciseToWorkoutSessionBody = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  exerciseId: string;
+};
+
+export type AddExerciseToWorkoutSession201SetsItemType =
+  (typeof AddExerciseToWorkoutSession201SetsItemType)[keyof typeof AddExerciseToWorkoutSession201SetsItemType];
+
+export const AddExerciseToWorkoutSession201SetsItemType = {
+  WARMUP: "WARMUP",
+  WORKING: "WORKING",
+} as const;
+
+export type AddExerciseToWorkoutSession201SetsItem = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  type: AddExerciseToWorkoutSession201SetsItemType;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  weightInGrams: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  reps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  rir: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  durationInSeconds: number | null;
+  /** @nullable */
+  notes: string | null;
+  /** @nullable */
+  completedAt: string | null;
+};
+
+export type AddExerciseToWorkoutSession201 = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  exerciseNameSnapshot: string;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   */
+  order: number;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedSets: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedWarmupSets?: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedReps: number | null;
+  /**
+   * @minimum -9007199254740991
+   * @maximum 9007199254740991
+   * @nullable
+   */
+  plannedRestTimeInSeconds: number | null;
+  /** @nullable */
+  notes: string | null;
+  sets: AddExerciseToWorkoutSession201SetsItem[];
+};
+
+export type AddExerciseToWorkoutSession400 = {
+  error: string;
+  code: string;
+};
+
+export type AddExerciseToWorkoutSession401 = {
+  error: string;
+  code: string;
+};
+
+export type AddExerciseToWorkoutSession404 = {
+  error: string;
+  code: string;
+};
+
+export type AddExerciseToWorkoutSession409 = {
+  error: string;
+  code: string;
+};
+
+export type AddExerciseToWorkoutSession500 = {
+  error: string;
+  code: string;
+};
+
+export type RemoveExerciseFromWorkoutSession200 = {
+  success: boolean;
+};
+
+export type RemoveExerciseFromWorkoutSession400 = {
+  error: string;
+  code: string;
+};
+
+export type RemoveExerciseFromWorkoutSession401 = {
+  error: string;
+  code: string;
+};
+
+export type RemoveExerciseFromWorkoutSession404 = {
+  error: string;
+  code: string;
+};
+
+export type RemoveExerciseFromWorkoutSession409 = {
+  error: string;
+  code: string;
+};
+
+export type RemoveExerciseFromWorkoutSession500 = {
   error: string;
   code: string;
 };
@@ -2958,750 +5784,6 @@ export type GetExerciseEvolution404 = {
 };
 
 export type GetExerciseEvolution500 = {
-  error: string;
-  code: string;
-};
-
-export type GetActiveWorkoutSession200Origin =
-  (typeof GetActiveWorkoutSession200Origin)[keyof typeof GetActiveWorkoutSession200Origin];
-
-export const GetActiveWorkoutSession200Origin = {
-  PLANNED: "PLANNED",
-  FREE: "FREE",
-} as const;
-
-export type GetActiveWorkoutSession200SessionExercisesItemSetsItemType =
-  (typeof GetActiveWorkoutSession200SessionExercisesItemSetsItemType)[keyof typeof GetActiveWorkoutSession200SessionExercisesItemSetsItemType];
-
-export const GetActiveWorkoutSession200SessionExercisesItemSetsItemType = {
-  WARMUP: "WARMUP",
-  WORKING: "WORKING",
-} as const;
-
-export type GetActiveWorkoutSession200SessionExercisesItemSetsItem = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  type: GetActiveWorkoutSession200SessionExercisesItemSetsItemType;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  weightInGrams: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  rir: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  durationInSeconds: number | null;
-  /** @nullable */
-  notes: string | null;
-  /** @nullable */
-  completedAt: string | null;
-};
-
-export type GetActiveWorkoutSession200SessionExercisesItem = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  exerciseNameSnapshot: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedSets: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedWarmupSets?: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedReps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedRestTimeInSeconds: number | null;
-  /** @nullable */
-  notes: string | null;
-  sets: GetActiveWorkoutSession200SessionExercisesItemSetsItem[];
-};
-
-export type GetActiveWorkoutSession200 = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  origin?: GetActiveWorkoutSession200Origin;
-  /**
-   * @nullable
-   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-   */
-  workoutDayId: string | null;
-  /**
-   * @nullable
-   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-   */
-  workoutPlanId?: string | null;
-  /** @nullable */
-  workoutPlanNameSnapshot?: string | null;
-  /** @nullable */
-  workoutDayNameSnapshot?: string | null;
-  startedAt: string;
-  /** @nullable */
-  completedAt: string | null;
-  sessionExercises: GetActiveWorkoutSession200SessionExercisesItem[];
-};
-
-export type GetActiveWorkoutSession401 = {
-  error: string;
-  code: string;
-};
-
-export type GetActiveWorkoutSession404 = {
-  error: string;
-  code: string;
-};
-
-export type GetActiveWorkoutSession500 = {
-  error: string;
-  code: string;
-};
-
-export type GetWorkoutSession200Origin =
-  (typeof GetWorkoutSession200Origin)[keyof typeof GetWorkoutSession200Origin];
-
-export const GetWorkoutSession200Origin = {
-  PLANNED: "PLANNED",
-  FREE: "FREE",
-} as const;
-
-export type GetWorkoutSession200SessionExercisesItemSetsItemType =
-  (typeof GetWorkoutSession200SessionExercisesItemSetsItemType)[keyof typeof GetWorkoutSession200SessionExercisesItemSetsItemType];
-
-export const GetWorkoutSession200SessionExercisesItemSetsItemType = {
-  WARMUP: "WARMUP",
-  WORKING: "WORKING",
-} as const;
-
-export type GetWorkoutSession200SessionExercisesItemSetsItem = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  type: GetWorkoutSession200SessionExercisesItemSetsItemType;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  weightInGrams: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  rir: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  durationInSeconds: number | null;
-  /** @nullable */
-  notes: string | null;
-  /** @nullable */
-  completedAt: string | null;
-};
-
-export type GetWorkoutSession200SessionExercisesItem = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  exerciseNameSnapshot: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedSets: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedWarmupSets?: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedReps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedRestTimeInSeconds: number | null;
-  /** @nullable */
-  notes: string | null;
-  sets: GetWorkoutSession200SessionExercisesItemSetsItem[];
-};
-
-export type GetWorkoutSession200 = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  origin?: GetWorkoutSession200Origin;
-  /**
-   * @nullable
-   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-   */
-  workoutDayId: string | null;
-  /**
-   * @nullable
-   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-   */
-  workoutPlanId?: string | null;
-  /** @nullable */
-  workoutPlanNameSnapshot?: string | null;
-  /** @nullable */
-  workoutDayNameSnapshot?: string | null;
-  startedAt: string;
-  /** @nullable */
-  completedAt: string | null;
-  sessionExercises: GetWorkoutSession200SessionExercisesItem[];
-};
-
-export type GetWorkoutSession401 = {
-  error: string;
-  code: string;
-};
-
-export type GetWorkoutSession404 = {
-  error: string;
-  code: string;
-};
-
-export type GetWorkoutSession500 = {
-  error: string;
-  code: string;
-};
-
-export type CompleteWorkoutSession200 = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  /**
-   * @nullable
-   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-   */
-  workoutDayId: string | null;
-  startedAt: string;
-  completedAt: string;
-};
-
-export type CompleteWorkoutSession400 = {
-  error: string;
-  code: string;
-};
-
-export type CompleteWorkoutSession401 = {
-  error: string;
-  code: string;
-};
-
-export type CompleteWorkoutSession404 = {
-  error: string;
-  code: string;
-};
-
-export type CompleteWorkoutSession500 = {
-  error: string;
-  code: string;
-};
-
-export type CreateWorkoutSetBodyType =
-  (typeof CreateWorkoutSetBodyType)[keyof typeof CreateWorkoutSetBodyType];
-
-export const CreateWorkoutSetBodyType = {
-  WARMUP: "WARMUP",
-  WORKING: "WORKING",
-} as const;
-
-export type CreateWorkoutSetBody = {
-  type?: CreateWorkoutSetBodyType;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  weightInGrams?: number | null;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps?: number | null;
-  /**
-   * @minimum 0
-   * @maximum 10
-   * @nullable
-   */
-  rir?: number | null;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  durationInSeconds?: number | null;
-  /**
-   * @maxLength 1000
-   * @nullable
-   */
-  notes?: string | null;
-  completed?: boolean;
-};
-
-export type CreateWorkoutSet201Type =
-  (typeof CreateWorkoutSet201Type)[keyof typeof CreateWorkoutSet201Type];
-
-export const CreateWorkoutSet201Type = {
-  WARMUP: "WARMUP",
-  WORKING: "WORKING",
-} as const;
-
-export type CreateWorkoutSet201 = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  sessionExerciseId: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  type: CreateWorkoutSet201Type;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  weightInGrams: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  rir: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  durationInSeconds: number | null;
-  /** @nullable */
-  notes: string | null;
-  /** @nullable */
-  completedAt: string | null;
-};
-
-export type CreateWorkoutSet400 = {
-  error: string;
-  code: string;
-};
-
-export type CreateWorkoutSet401 = {
-  error: string;
-  code: string;
-};
-
-export type CreateWorkoutSet404 = {
-  error: string;
-  code: string;
-};
-
-export type CreateWorkoutSet409 = {
-  error: string;
-  code: string;
-};
-
-export type CreateWorkoutSet500 = {
-  error: string;
-  code: string;
-};
-
-export type UpdateWorkoutSetBodyType =
-  (typeof UpdateWorkoutSetBodyType)[keyof typeof UpdateWorkoutSetBodyType];
-
-export const UpdateWorkoutSetBodyType = {
-  WARMUP: "WARMUP",
-  WORKING: "WORKING",
-} as const;
-
-export type UpdateWorkoutSetBody = {
-  type?: UpdateWorkoutSetBodyType;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  weightInGrams?: number | null;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps?: number | null;
-  /**
-   * @minimum 0
-   * @maximum 10
-   * @nullable
-   */
-  rir?: number | null;
-  /**
-   * @minimum 0
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  durationInSeconds?: number | null;
-  /**
-   * @maxLength 1000
-   * @nullable
-   */
-  notes?: string | null;
-  completed?: boolean;
-};
-
-export type UpdateWorkoutSet200Type =
-  (typeof UpdateWorkoutSet200Type)[keyof typeof UpdateWorkoutSet200Type];
-
-export const UpdateWorkoutSet200Type = {
-  WARMUP: "WARMUP",
-  WORKING: "WORKING",
-} as const;
-
-export type UpdateWorkoutSet200 = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  sessionExerciseId: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  type: UpdateWorkoutSet200Type;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  weightInGrams: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  rir: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  durationInSeconds: number | null;
-  /** @nullable */
-  notes: string | null;
-  /** @nullable */
-  completedAt: string | null;
-};
-
-export type UpdateWorkoutSet400 = {
-  error: string;
-  code: string;
-};
-
-export type UpdateWorkoutSet401 = {
-  error: string;
-  code: string;
-};
-
-export type UpdateWorkoutSet404 = {
-  error: string;
-  code: string;
-};
-
-export type UpdateWorkoutSet409 = {
-  error: string;
-  code: string;
-};
-
-export type UpdateWorkoutSet500 = {
-  error: string;
-  code: string;
-};
-
-export type DeleteWorkoutSet200 = {
-  success: boolean;
-};
-
-export type DeleteWorkoutSet401 = {
-  error: string;
-  code: string;
-};
-
-export type DeleteWorkoutSet404 = {
-  error: string;
-  code: string;
-};
-
-export type DeleteWorkoutSet409 = {
-  error: string;
-  code: string;
-};
-
-export type DeleteWorkoutSet500 = {
-  error: string;
-  code: string;
-};
-
-export type StartFreeWorkoutSession201Origin =
-  (typeof StartFreeWorkoutSession201Origin)[keyof typeof StartFreeWorkoutSession201Origin];
-
-export const StartFreeWorkoutSession201Origin = {
-  PLANNED: "PLANNED",
-  FREE: "FREE",
-} as const;
-
-export type StartFreeWorkoutSession201 = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  userWorkoutSessionId: string;
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  workoutSessionId: string;
-  origin?: StartFreeWorkoutSession201Origin;
-  /**
-   * @nullable
-   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-   */
-  workoutDayId: string | null;
-  /**
-   * @nullable
-   * @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-   */
-  workoutPlanId?: string | null;
-  /** @nullable */
-  workoutPlanNameSnapshot?: string | null;
-  /** @nullable */
-  workoutDayNameSnapshot?: string | null;
-  startedAt: string;
-  /** @nullable */
-  completedAt: string | null;
-};
-
-export type StartFreeWorkoutSession401 = {
-  error: string;
-  code: string;
-};
-
-export type StartFreeWorkoutSession409 = {
-  error: string;
-  code: string;
-};
-
-export type StartFreeWorkoutSession500 = {
-  error: string;
-  code: string;
-};
-
-export type AddExerciseToWorkoutSessionBody = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  exerciseId: string;
-};
-
-export type AddExerciseToWorkoutSession201SetsItemType =
-  (typeof AddExerciseToWorkoutSession201SetsItemType)[keyof typeof AddExerciseToWorkoutSession201SetsItemType];
-
-export const AddExerciseToWorkoutSession201SetsItemType = {
-  WARMUP: "WARMUP",
-  WORKING: "WORKING",
-} as const;
-
-export type AddExerciseToWorkoutSession201SetsItem = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  type: AddExerciseToWorkoutSession201SetsItemType;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  weightInGrams: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  reps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  rir: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  durationInSeconds: number | null;
-  /** @nullable */
-  notes: string | null;
-  /** @nullable */
-  completedAt: string | null;
-};
-
-export type AddExerciseToWorkoutSession201 = {
-  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
-  id: string;
-  exerciseNameSnapshot: string;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   */
-  order: number;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedSets: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedWarmupSets?: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedReps: number | null;
-  /**
-   * @minimum -9007199254740991
-   * @maximum 9007199254740991
-   * @nullable
-   */
-  plannedRestTimeInSeconds: number | null;
-  /** @nullable */
-  notes: string | null;
-  sets: AddExerciseToWorkoutSession201SetsItem[];
-};
-
-export type AddExerciseToWorkoutSession400 = {
-  error: string;
-  code: string;
-};
-
-export type AddExerciseToWorkoutSession401 = {
-  error: string;
-  code: string;
-};
-
-export type AddExerciseToWorkoutSession404 = {
-  error: string;
-  code: string;
-};
-
-export type AddExerciseToWorkoutSession409 = {
-  error: string;
-  code: string;
-};
-
-export type AddExerciseToWorkoutSession500 = {
-  error: string;
-  code: string;
-};
-
-export type RemoveExerciseFromWorkoutSession200 = {
-  success: boolean;
-};
-
-export type RemoveExerciseFromWorkoutSession400 = {
-  error: string;
-  code: string;
-};
-
-export type RemoveExerciseFromWorkoutSession401 = {
-  error: string;
-  code: string;
-};
-
-export type RemoveExerciseFromWorkoutSession404 = {
-  error: string;
-  code: string;
-};
-
-export type RemoveExerciseFromWorkoutSession409 = {
-  error: string;
-  code: string;
-};
-
-export type RemoveExerciseFromWorkoutSession500 = {
   error: string;
   code: string;
 };
@@ -5730,6 +7812,1288 @@ export const deleteAiConversationsId = async (
   );
 };
 
+export type listPublicPlansResponse200 = {
+  data: ListPublicPlans200Item[];
+  status: 200;
+};
+
+export type listPublicPlansResponse400 = {
+  data: ListPublicPlans400;
+  status: 400;
+};
+
+export type listPublicPlansResponse401 = {
+  data: ListPublicPlans401;
+  status: 401;
+};
+
+export type listPublicPlansResponse404 = {
+  data: ListPublicPlans404;
+  status: 404;
+};
+
+export type listPublicPlansResponse409 = {
+  data: ListPublicPlans409;
+  status: 409;
+};
+
+export type listPublicPlansResponse500 = {
+  data: ListPublicPlans500;
+  status: 500;
+};
+
+export type listPublicPlansResponseSuccess = listPublicPlansResponse200 & {
+  headers: Headers;
+};
+export type listPublicPlansResponseError = (
+  | listPublicPlansResponse400
+  | listPublicPlansResponse401
+  | listPublicPlansResponse404
+  | listPublicPlansResponse409
+  | listPublicPlansResponse500
+) & {
+  headers: Headers;
+};
+
+export type listPublicPlansResponse =
+  | listPublicPlansResponseSuccess
+  | listPublicPlansResponseError;
+
+export const getListPublicPlansUrl = (params: ListPublicPlansParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/commercial/plans?${stringifiedParams}`
+    : `/commercial/plans`;
+};
+
+export const listPublicPlans = async (
+  params: ListPublicPlansParams,
+  options?: RequestInit,
+): Promise<listPublicPlansResponse> => {
+  return customFetch<listPublicPlansResponse>(getListPublicPlansUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export type createSignupIntentResponse201 = {
+  data: CreateSignupIntent201;
+  status: 201;
+};
+
+export type createSignupIntentResponse400 = {
+  data: CreateSignupIntent400;
+  status: 400;
+};
+
+export type createSignupIntentResponse401 = {
+  data: CreateSignupIntent401;
+  status: 401;
+};
+
+export type createSignupIntentResponse404 = {
+  data: CreateSignupIntent404;
+  status: 404;
+};
+
+export type createSignupIntentResponse409 = {
+  data: CreateSignupIntent409;
+  status: 409;
+};
+
+export type createSignupIntentResponse500 = {
+  data: CreateSignupIntent500;
+  status: 500;
+};
+
+export type createSignupIntentResponseSuccess =
+  createSignupIntentResponse201 & {
+    headers: Headers;
+  };
+export type createSignupIntentResponseError = (
+  | createSignupIntentResponse400
+  | createSignupIntentResponse401
+  | createSignupIntentResponse404
+  | createSignupIntentResponse409
+  | createSignupIntentResponse500
+) & {
+  headers: Headers;
+};
+
+export type createSignupIntentResponse =
+  | createSignupIntentResponseSuccess
+  | createSignupIntentResponseError;
+
+export const getCreateSignupIntentUrl = () => {
+  return `/commercial/signup-intents`;
+};
+
+export const createSignupIntent = async (
+  createSignupIntentBody: CreateSignupIntentBody,
+  options?: RequestInit,
+): Promise<createSignupIntentResponse> => {
+  return customFetch<createSignupIntentResponse>(getCreateSignupIntentUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createSignupIntentBody),
+  });
+};
+
+export type completeSignupResponse200 = {
+  data: CompleteSignup200;
+  status: 200;
+};
+
+export type completeSignupResponse400 = {
+  data: CompleteSignup400;
+  status: 400;
+};
+
+export type completeSignupResponse401 = {
+  data: CompleteSignup401;
+  status: 401;
+};
+
+export type completeSignupResponse404 = {
+  data: CompleteSignup404;
+  status: 404;
+};
+
+export type completeSignupResponse409 = {
+  data: CompleteSignup409;
+  status: 409;
+};
+
+export type completeSignupResponse500 = {
+  data: CompleteSignup500;
+  status: 500;
+};
+
+export type completeSignupResponseSuccess = completeSignupResponse200 & {
+  headers: Headers;
+};
+export type completeSignupResponseError = (
+  | completeSignupResponse400
+  | completeSignupResponse401
+  | completeSignupResponse404
+  | completeSignupResponse409
+  | completeSignupResponse500
+) & {
+  headers: Headers;
+};
+
+export type completeSignupResponse =
+  | completeSignupResponseSuccess
+  | completeSignupResponseError;
+
+export const getCompleteSignupUrl = () => {
+  return `/account/complete-signup`;
+};
+
+export const completeSignup = async (
+  completeSignupBody: CompleteSignupBody,
+  options?: RequestInit,
+): Promise<completeSignupResponse> => {
+  return customFetch<completeSignupResponse>(getCompleteSignupUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(completeSignupBody),
+  });
+};
+
+export type getCommercialContextResponse200 = {
+  data: GetCommercialContext200;
+  status: 200;
+};
+
+export type getCommercialContextResponse400 = {
+  data: GetCommercialContext400;
+  status: 400;
+};
+
+export type getCommercialContextResponse401 = {
+  data: GetCommercialContext401;
+  status: 401;
+};
+
+export type getCommercialContextResponse404 = {
+  data: GetCommercialContext404;
+  status: 404;
+};
+
+export type getCommercialContextResponse409 = {
+  data: GetCommercialContext409;
+  status: 409;
+};
+
+export type getCommercialContextResponse500 = {
+  data: GetCommercialContext500;
+  status: 500;
+};
+
+export type getCommercialContextResponseSuccess =
+  getCommercialContextResponse200 & {
+    headers: Headers;
+  };
+export type getCommercialContextResponseError = (
+  | getCommercialContextResponse400
+  | getCommercialContextResponse401
+  | getCommercialContextResponse404
+  | getCommercialContextResponse409
+  | getCommercialContextResponse500
+) & {
+  headers: Headers;
+};
+
+export type getCommercialContextResponse =
+  | getCommercialContextResponseSuccess
+  | getCommercialContextResponseError;
+
+export const getGetCommercialContextUrl = () => {
+  return `/account/commercial-context`;
+};
+
+export const getCommercialContext = async (
+  options?: RequestInit,
+): Promise<getCommercialContextResponse> => {
+  return customFetch<getCommercialContextResponse>(
+    getGetCommercialContextUrl(),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export type getAdminOverviewResponse200 = {
+  data: GetAdminOverview200;
+  status: 200;
+};
+
+export type getAdminOverviewResponse400 = {
+  data: GetAdminOverview400;
+  status: 400;
+};
+
+export type getAdminOverviewResponse401 = {
+  data: GetAdminOverview401;
+  status: 401;
+};
+
+export type getAdminOverviewResponse403 = {
+  data: GetAdminOverview403;
+  status: 403;
+};
+
+export type getAdminOverviewResponse404 = {
+  data: GetAdminOverview404;
+  status: 404;
+};
+
+export type getAdminOverviewResponse409 = {
+  data: GetAdminOverview409;
+  status: 409;
+};
+
+export type getAdminOverviewResponse500 = {
+  data: GetAdminOverview500;
+  status: 500;
+};
+
+export type getAdminOverviewResponseSuccess = getAdminOverviewResponse200 & {
+  headers: Headers;
+};
+export type getAdminOverviewResponseError = (
+  | getAdminOverviewResponse400
+  | getAdminOverviewResponse401
+  | getAdminOverviewResponse403
+  | getAdminOverviewResponse404
+  | getAdminOverviewResponse409
+  | getAdminOverviewResponse500
+) & {
+  headers: Headers;
+};
+
+export type getAdminOverviewResponse =
+  | getAdminOverviewResponseSuccess
+  | getAdminOverviewResponseError;
+
+export const getGetAdminOverviewUrl = () => {
+  return `/admin/overview`;
+};
+
+export const getAdminOverview = async (
+  options?: RequestInit,
+): Promise<getAdminOverviewResponse> => {
+  return customFetch<getAdminOverviewResponse>(getGetAdminOverviewUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export type listAdminUsersResponse200 = {
+  data: ListAdminUsers200;
+  status: 200;
+};
+
+export type listAdminUsersResponse400 = {
+  data: ListAdminUsers400;
+  status: 400;
+};
+
+export type listAdminUsersResponse401 = {
+  data: ListAdminUsers401;
+  status: 401;
+};
+
+export type listAdminUsersResponse403 = {
+  data: ListAdminUsers403;
+  status: 403;
+};
+
+export type listAdminUsersResponse404 = {
+  data: ListAdminUsers404;
+  status: 404;
+};
+
+export type listAdminUsersResponse409 = {
+  data: ListAdminUsers409;
+  status: 409;
+};
+
+export type listAdminUsersResponse500 = {
+  data: ListAdminUsers500;
+  status: 500;
+};
+
+export type listAdminUsersResponseSuccess = listAdminUsersResponse200 & {
+  headers: Headers;
+};
+export type listAdminUsersResponseError = (
+  | listAdminUsersResponse400
+  | listAdminUsersResponse401
+  | listAdminUsersResponse403
+  | listAdminUsersResponse404
+  | listAdminUsersResponse409
+  | listAdminUsersResponse500
+) & {
+  headers: Headers;
+};
+
+export type listAdminUsersResponse =
+  | listAdminUsersResponseSuccess
+  | listAdminUsersResponseError;
+
+export const getListAdminUsersUrl = (params?: ListAdminUsersParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/admin/users?${stringifiedParams}`
+    : `/admin/users`;
+};
+
+export const listAdminUsers = async (
+  params?: ListAdminUsersParams,
+  options?: RequestInit,
+): Promise<listAdminUsersResponse> => {
+  return customFetch<listAdminUsersResponse>(getListAdminUsersUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export type getAdminUserResponse200 = {
+  data: GetAdminUser200;
+  status: 200;
+};
+
+export type getAdminUserResponse400 = {
+  data: GetAdminUser400;
+  status: 400;
+};
+
+export type getAdminUserResponse401 = {
+  data: GetAdminUser401;
+  status: 401;
+};
+
+export type getAdminUserResponse403 = {
+  data: GetAdminUser403;
+  status: 403;
+};
+
+export type getAdminUserResponse404 = {
+  data: GetAdminUser404;
+  status: 404;
+};
+
+export type getAdminUserResponse409 = {
+  data: GetAdminUser409;
+  status: 409;
+};
+
+export type getAdminUserResponse500 = {
+  data: GetAdminUser500;
+  status: 500;
+};
+
+export type getAdminUserResponseSuccess = getAdminUserResponse200 & {
+  headers: Headers;
+};
+export type getAdminUserResponseError = (
+  | getAdminUserResponse400
+  | getAdminUserResponse401
+  | getAdminUserResponse403
+  | getAdminUserResponse404
+  | getAdminUserResponse409
+  | getAdminUserResponse500
+) & {
+  headers: Headers;
+};
+
+export type getAdminUserResponse =
+  | getAdminUserResponseSuccess
+  | getAdminUserResponseError;
+
+export const getGetAdminUserUrl = (userId: string) => {
+  return `/admin/users/${userId}`;
+};
+
+export const getAdminUser = async (
+  userId: string,
+  options?: RequestInit,
+): Promise<getAdminUserResponse> => {
+  return customFetch<getAdminUserResponse>(getGetAdminUserUrl(userId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export type listAdminPlansResponse200 = {
+  data: ListAdminPlans200Item[];
+  status: 200;
+};
+
+export type listAdminPlansResponse400 = {
+  data: ListAdminPlans400;
+  status: 400;
+};
+
+export type listAdminPlansResponse401 = {
+  data: ListAdminPlans401;
+  status: 401;
+};
+
+export type listAdminPlansResponse403 = {
+  data: ListAdminPlans403;
+  status: 403;
+};
+
+export type listAdminPlansResponse404 = {
+  data: ListAdminPlans404;
+  status: 404;
+};
+
+export type listAdminPlansResponse409 = {
+  data: ListAdminPlans409;
+  status: 409;
+};
+
+export type listAdminPlansResponse500 = {
+  data: ListAdminPlans500;
+  status: 500;
+};
+
+export type listAdminPlansResponseSuccess = listAdminPlansResponse200 & {
+  headers: Headers;
+};
+export type listAdminPlansResponseError = (
+  | listAdminPlansResponse400
+  | listAdminPlansResponse401
+  | listAdminPlansResponse403
+  | listAdminPlansResponse404
+  | listAdminPlansResponse409
+  | listAdminPlansResponse500
+) & {
+  headers: Headers;
+};
+
+export type listAdminPlansResponse =
+  | listAdminPlansResponseSuccess
+  | listAdminPlansResponseError;
+
+export const getListAdminPlansUrl = () => {
+  return `/admin/plans`;
+};
+
+export const listAdminPlans = async (
+  options?: RequestInit,
+): Promise<listAdminPlansResponse> => {
+  return customFetch<listAdminPlansResponse>(getListAdminPlansUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export type getAdminPlanResponse200 = {
+  data: GetAdminPlan200;
+  status: 200;
+};
+
+export type getAdminPlanResponse400 = {
+  data: GetAdminPlan400;
+  status: 400;
+};
+
+export type getAdminPlanResponse401 = {
+  data: GetAdminPlan401;
+  status: 401;
+};
+
+export type getAdminPlanResponse403 = {
+  data: GetAdminPlan403;
+  status: 403;
+};
+
+export type getAdminPlanResponse404 = {
+  data: GetAdminPlan404;
+  status: 404;
+};
+
+export type getAdminPlanResponse409 = {
+  data: GetAdminPlan409;
+  status: 409;
+};
+
+export type getAdminPlanResponse500 = {
+  data: GetAdminPlan500;
+  status: 500;
+};
+
+export type getAdminPlanResponseSuccess = getAdminPlanResponse200 & {
+  headers: Headers;
+};
+export type getAdminPlanResponseError = (
+  | getAdminPlanResponse400
+  | getAdminPlanResponse401
+  | getAdminPlanResponse403
+  | getAdminPlanResponse404
+  | getAdminPlanResponse409
+  | getAdminPlanResponse500
+) & {
+  headers: Headers;
+};
+
+export type getAdminPlanResponse =
+  | getAdminPlanResponseSuccess
+  | getAdminPlanResponseError;
+
+export const getGetAdminPlanUrl = (planId: string) => {
+  return `/admin/plans/${planId}`;
+};
+
+export const getAdminPlan = async (
+  planId: string,
+  options?: RequestInit,
+): Promise<getAdminPlanResponse> => {
+  return customFetch<getAdminPlanResponse>(getGetAdminPlanUrl(planId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export type updateAdminPlanResponse200 = {
+  data: UpdateAdminPlan200;
+  status: 200;
+};
+
+export type updateAdminPlanResponse400 = {
+  data: UpdateAdminPlan400;
+  status: 400;
+};
+
+export type updateAdminPlanResponse401 = {
+  data: UpdateAdminPlan401;
+  status: 401;
+};
+
+export type updateAdminPlanResponse403 = {
+  data: UpdateAdminPlan403;
+  status: 403;
+};
+
+export type updateAdminPlanResponse404 = {
+  data: UpdateAdminPlan404;
+  status: 404;
+};
+
+export type updateAdminPlanResponse409 = {
+  data: UpdateAdminPlan409;
+  status: 409;
+};
+
+export type updateAdminPlanResponse500 = {
+  data: UpdateAdminPlan500;
+  status: 500;
+};
+
+export type updateAdminPlanResponseSuccess = updateAdminPlanResponse200 & {
+  headers: Headers;
+};
+export type updateAdminPlanResponseError = (
+  | updateAdminPlanResponse400
+  | updateAdminPlanResponse401
+  | updateAdminPlanResponse403
+  | updateAdminPlanResponse404
+  | updateAdminPlanResponse409
+  | updateAdminPlanResponse500
+) & {
+  headers: Headers;
+};
+
+export type updateAdminPlanResponse =
+  | updateAdminPlanResponseSuccess
+  | updateAdminPlanResponseError;
+
+export const getUpdateAdminPlanUrl = (planId: string) => {
+  return `/admin/plans/${planId}`;
+};
+
+export const updateAdminPlan = async (
+  planId: string,
+  updateAdminPlanBody: UpdateAdminPlanBody,
+  options?: RequestInit,
+): Promise<updateAdminPlanResponse> => {
+  return customFetch<updateAdminPlanResponse>(getUpdateAdminPlanUrl(planId), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateAdminPlanBody),
+  });
+};
+
+export type updateAdminPlanEntitlementsResponse200 = {
+  data: UpdateAdminPlanEntitlements200;
+  status: 200;
+};
+
+export type updateAdminPlanEntitlementsResponse400 = {
+  data: UpdateAdminPlanEntitlements400;
+  status: 400;
+};
+
+export type updateAdminPlanEntitlementsResponse401 = {
+  data: UpdateAdminPlanEntitlements401;
+  status: 401;
+};
+
+export type updateAdminPlanEntitlementsResponse403 = {
+  data: UpdateAdminPlanEntitlements403;
+  status: 403;
+};
+
+export type updateAdminPlanEntitlementsResponse404 = {
+  data: UpdateAdminPlanEntitlements404;
+  status: 404;
+};
+
+export type updateAdminPlanEntitlementsResponse409 = {
+  data: UpdateAdminPlanEntitlements409;
+  status: 409;
+};
+
+export type updateAdminPlanEntitlementsResponse500 = {
+  data: UpdateAdminPlanEntitlements500;
+  status: 500;
+};
+
+export type updateAdminPlanEntitlementsResponseSuccess =
+  updateAdminPlanEntitlementsResponse200 & {
+    headers: Headers;
+  };
+export type updateAdminPlanEntitlementsResponseError = (
+  | updateAdminPlanEntitlementsResponse400
+  | updateAdminPlanEntitlementsResponse401
+  | updateAdminPlanEntitlementsResponse403
+  | updateAdminPlanEntitlementsResponse404
+  | updateAdminPlanEntitlementsResponse409
+  | updateAdminPlanEntitlementsResponse500
+) & {
+  headers: Headers;
+};
+
+export type updateAdminPlanEntitlementsResponse =
+  | updateAdminPlanEntitlementsResponseSuccess
+  | updateAdminPlanEntitlementsResponseError;
+
+export const getUpdateAdminPlanEntitlementsUrl = (planId: string) => {
+  return `/admin/plans/${planId}/entitlements`;
+};
+
+export const updateAdminPlanEntitlements = async (
+  planId: string,
+  updateAdminPlanEntitlementsBody: UpdateAdminPlanEntitlementsBody,
+  options?: RequestInit,
+): Promise<updateAdminPlanEntitlementsResponse> => {
+  return customFetch<updateAdminPlanEntitlementsResponse>(
+    getUpdateAdminPlanEntitlementsUrl(planId),
+    {
+      ...options,
+      method: "PUT",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(updateAdminPlanEntitlementsBody),
+    },
+  );
+};
+
+export type listAdminSubscriptionsResponse200 = {
+  data: ListAdminSubscriptions200;
+  status: 200;
+};
+
+export type listAdminSubscriptionsResponse400 = {
+  data: ListAdminSubscriptions400;
+  status: 400;
+};
+
+export type listAdminSubscriptionsResponse401 = {
+  data: ListAdminSubscriptions401;
+  status: 401;
+};
+
+export type listAdminSubscriptionsResponse403 = {
+  data: ListAdminSubscriptions403;
+  status: 403;
+};
+
+export type listAdminSubscriptionsResponse404 = {
+  data: ListAdminSubscriptions404;
+  status: 404;
+};
+
+export type listAdminSubscriptionsResponse409 = {
+  data: ListAdminSubscriptions409;
+  status: 409;
+};
+
+export type listAdminSubscriptionsResponse500 = {
+  data: ListAdminSubscriptions500;
+  status: 500;
+};
+
+export type listAdminSubscriptionsResponseSuccess =
+  listAdminSubscriptionsResponse200 & {
+    headers: Headers;
+  };
+export type listAdminSubscriptionsResponseError = (
+  | listAdminSubscriptionsResponse400
+  | listAdminSubscriptionsResponse401
+  | listAdminSubscriptionsResponse403
+  | listAdminSubscriptionsResponse404
+  | listAdminSubscriptionsResponse409
+  | listAdminSubscriptionsResponse500
+) & {
+  headers: Headers;
+};
+
+export type listAdminSubscriptionsResponse =
+  | listAdminSubscriptionsResponseSuccess
+  | listAdminSubscriptionsResponseError;
+
+export const getListAdminSubscriptionsUrl = (
+  params?: ListAdminSubscriptionsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/admin/subscriptions?${stringifiedParams}`
+    : `/admin/subscriptions`;
+};
+
+export const listAdminSubscriptions = async (
+  params?: ListAdminSubscriptionsParams,
+  options?: RequestInit,
+): Promise<listAdminSubscriptionsResponse> => {
+  return customFetch<listAdminSubscriptionsResponse>(
+    getListAdminSubscriptionsUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export type listAdminAuditResponse200 = {
+  data: ListAdminAudit200;
+  status: 200;
+};
+
+export type listAdminAuditResponse400 = {
+  data: ListAdminAudit400;
+  status: 400;
+};
+
+export type listAdminAuditResponse401 = {
+  data: ListAdminAudit401;
+  status: 401;
+};
+
+export type listAdminAuditResponse403 = {
+  data: ListAdminAudit403;
+  status: 403;
+};
+
+export type listAdminAuditResponse404 = {
+  data: ListAdminAudit404;
+  status: 404;
+};
+
+export type listAdminAuditResponse409 = {
+  data: ListAdminAudit409;
+  status: 409;
+};
+
+export type listAdminAuditResponse500 = {
+  data: ListAdminAudit500;
+  status: 500;
+};
+
+export type listAdminAuditResponseSuccess = listAdminAuditResponse200 & {
+  headers: Headers;
+};
+export type listAdminAuditResponseError = (
+  | listAdminAuditResponse400
+  | listAdminAuditResponse401
+  | listAdminAuditResponse403
+  | listAdminAuditResponse404
+  | listAdminAuditResponse409
+  | listAdminAuditResponse500
+) & {
+  headers: Headers;
+};
+
+export type listAdminAuditResponse =
+  | listAdminAuditResponseSuccess
+  | listAdminAuditResponseError;
+
+export const getListAdminAuditUrl = (params?: ListAdminAuditParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/admin/audit?${stringifiedParams}`
+    : `/admin/audit`;
+};
+
+export const listAdminAudit = async (
+  params?: ListAdminAuditParams,
+  options?: RequestInit,
+): Promise<listAdminAuditResponse> => {
+  return customFetch<listAdminAuditResponse>(getListAdminAuditUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export type grantManualTrialResponse200 = {
+  data: GrantManualTrial200;
+  status: 200;
+};
+
+export type grantManualTrialResponse400 = {
+  data: GrantManualTrial400;
+  status: 400;
+};
+
+export type grantManualTrialResponse401 = {
+  data: GrantManualTrial401;
+  status: 401;
+};
+
+export type grantManualTrialResponse403 = {
+  data: GrantManualTrial403;
+  status: 403;
+};
+
+export type grantManualTrialResponse404 = {
+  data: GrantManualTrial404;
+  status: 404;
+};
+
+export type grantManualTrialResponse409 = {
+  data: GrantManualTrial409;
+  status: 409;
+};
+
+export type grantManualTrialResponse500 = {
+  data: GrantManualTrial500;
+  status: 500;
+};
+
+export type grantManualTrialResponseSuccess = grantManualTrialResponse200 & {
+  headers: Headers;
+};
+export type grantManualTrialResponseError = (
+  | grantManualTrialResponse400
+  | grantManualTrialResponse401
+  | grantManualTrialResponse403
+  | grantManualTrialResponse404
+  | grantManualTrialResponse409
+  | grantManualTrialResponse500
+) & {
+  headers: Headers;
+};
+
+export type grantManualTrialResponse =
+  | grantManualTrialResponseSuccess
+  | grantManualTrialResponseError;
+
+export const getGrantManualTrialUrl = (userId: string) => {
+  return `/admin/users/${userId}/subscription/trial`;
+};
+
+export const grantManualTrial = async (
+  userId: string,
+  grantManualTrialBody: GrantManualTrialBody,
+  options?: RequestInit,
+): Promise<grantManualTrialResponse> => {
+  return customFetch<grantManualTrialResponse>(getGrantManualTrialUrl(userId), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(grantManualTrialBody),
+  });
+};
+
+export type extendManualTrialResponse200 = {
+  data: ExtendManualTrial200;
+  status: 200;
+};
+
+export type extendManualTrialResponse400 = {
+  data: ExtendManualTrial400;
+  status: 400;
+};
+
+export type extendManualTrialResponse401 = {
+  data: ExtendManualTrial401;
+  status: 401;
+};
+
+export type extendManualTrialResponse403 = {
+  data: ExtendManualTrial403;
+  status: 403;
+};
+
+export type extendManualTrialResponse404 = {
+  data: ExtendManualTrial404;
+  status: 404;
+};
+
+export type extendManualTrialResponse409 = {
+  data: ExtendManualTrial409;
+  status: 409;
+};
+
+export type extendManualTrialResponse500 = {
+  data: ExtendManualTrial500;
+  status: 500;
+};
+
+export type extendManualTrialResponseSuccess = extendManualTrialResponse200 & {
+  headers: Headers;
+};
+export type extendManualTrialResponseError = (
+  | extendManualTrialResponse400
+  | extendManualTrialResponse401
+  | extendManualTrialResponse403
+  | extendManualTrialResponse404
+  | extendManualTrialResponse409
+  | extendManualTrialResponse500
+) & {
+  headers: Headers;
+};
+
+export type extendManualTrialResponse =
+  | extendManualTrialResponseSuccess
+  | extendManualTrialResponseError;
+
+export const getExtendManualTrialUrl = (userId: string) => {
+  return `/admin/users/${userId}/subscription/extend-trial`;
+};
+
+export const extendManualTrial = async (
+  userId: string,
+  extendManualTrialBody: ExtendManualTrialBody,
+  options?: RequestInit,
+): Promise<extendManualTrialResponse> => {
+  return customFetch<extendManualTrialResponse>(
+    getExtendManualTrialUrl(userId),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(extendManualTrialBody),
+    },
+  );
+};
+
+export type activateManualSubscriptionResponse200 = {
+  data: ActivateManualSubscription200;
+  status: 200;
+};
+
+export type activateManualSubscriptionResponse400 = {
+  data: ActivateManualSubscription400;
+  status: 400;
+};
+
+export type activateManualSubscriptionResponse401 = {
+  data: ActivateManualSubscription401;
+  status: 401;
+};
+
+export type activateManualSubscriptionResponse403 = {
+  data: ActivateManualSubscription403;
+  status: 403;
+};
+
+export type activateManualSubscriptionResponse404 = {
+  data: ActivateManualSubscription404;
+  status: 404;
+};
+
+export type activateManualSubscriptionResponse409 = {
+  data: ActivateManualSubscription409;
+  status: 409;
+};
+
+export type activateManualSubscriptionResponse500 = {
+  data: ActivateManualSubscription500;
+  status: 500;
+};
+
+export type activateManualSubscriptionResponseSuccess =
+  activateManualSubscriptionResponse200 & {
+    headers: Headers;
+  };
+export type activateManualSubscriptionResponseError = (
+  | activateManualSubscriptionResponse400
+  | activateManualSubscriptionResponse401
+  | activateManualSubscriptionResponse403
+  | activateManualSubscriptionResponse404
+  | activateManualSubscriptionResponse409
+  | activateManualSubscriptionResponse500
+) & {
+  headers: Headers;
+};
+
+export type activateManualSubscriptionResponse =
+  | activateManualSubscriptionResponseSuccess
+  | activateManualSubscriptionResponseError;
+
+export const getActivateManualSubscriptionUrl = (userId: string) => {
+  return `/admin/users/${userId}/subscription/activate`;
+};
+
+export const activateManualSubscription = async (
+  userId: string,
+  activateManualSubscriptionBody: ActivateManualSubscriptionBody,
+  options?: RequestInit,
+): Promise<activateManualSubscriptionResponse> => {
+  return customFetch<activateManualSubscriptionResponse>(
+    getActivateManualSubscriptionUrl(userId),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(activateManualSubscriptionBody),
+    },
+  );
+};
+
+export type changeManualSubscriptionPlanResponse200 = {
+  data: ChangeManualSubscriptionPlan200;
+  status: 200;
+};
+
+export type changeManualSubscriptionPlanResponse400 = {
+  data: ChangeManualSubscriptionPlan400;
+  status: 400;
+};
+
+export type changeManualSubscriptionPlanResponse401 = {
+  data: ChangeManualSubscriptionPlan401;
+  status: 401;
+};
+
+export type changeManualSubscriptionPlanResponse403 = {
+  data: ChangeManualSubscriptionPlan403;
+  status: 403;
+};
+
+export type changeManualSubscriptionPlanResponse404 = {
+  data: ChangeManualSubscriptionPlan404;
+  status: 404;
+};
+
+export type changeManualSubscriptionPlanResponse409 = {
+  data: ChangeManualSubscriptionPlan409;
+  status: 409;
+};
+
+export type changeManualSubscriptionPlanResponse500 = {
+  data: ChangeManualSubscriptionPlan500;
+  status: 500;
+};
+
+export type changeManualSubscriptionPlanResponseSuccess =
+  changeManualSubscriptionPlanResponse200 & {
+    headers: Headers;
+  };
+export type changeManualSubscriptionPlanResponseError = (
+  | changeManualSubscriptionPlanResponse400
+  | changeManualSubscriptionPlanResponse401
+  | changeManualSubscriptionPlanResponse403
+  | changeManualSubscriptionPlanResponse404
+  | changeManualSubscriptionPlanResponse409
+  | changeManualSubscriptionPlanResponse500
+) & {
+  headers: Headers;
+};
+
+export type changeManualSubscriptionPlanResponse =
+  | changeManualSubscriptionPlanResponseSuccess
+  | changeManualSubscriptionPlanResponseError;
+
+export const getChangeManualSubscriptionPlanUrl = (userId: string) => {
+  return `/admin/users/${userId}/subscription/change-plan`;
+};
+
+export const changeManualSubscriptionPlan = async (
+  userId: string,
+  changeManualSubscriptionPlanBody: ChangeManualSubscriptionPlanBody,
+  options?: RequestInit,
+): Promise<changeManualSubscriptionPlanResponse> => {
+  return customFetch<changeManualSubscriptionPlanResponse>(
+    getChangeManualSubscriptionPlanUrl(userId),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(changeManualSubscriptionPlanBody),
+    },
+  );
+};
+
+export type cancelManualSubscriptionResponse200 = {
+  data: CancelManualSubscription200;
+  status: 200;
+};
+
+export type cancelManualSubscriptionResponse400 = {
+  data: CancelManualSubscription400;
+  status: 400;
+};
+
+export type cancelManualSubscriptionResponse401 = {
+  data: CancelManualSubscription401;
+  status: 401;
+};
+
+export type cancelManualSubscriptionResponse403 = {
+  data: CancelManualSubscription403;
+  status: 403;
+};
+
+export type cancelManualSubscriptionResponse404 = {
+  data: CancelManualSubscription404;
+  status: 404;
+};
+
+export type cancelManualSubscriptionResponse409 = {
+  data: CancelManualSubscription409;
+  status: 409;
+};
+
+export type cancelManualSubscriptionResponse500 = {
+  data: CancelManualSubscription500;
+  status: 500;
+};
+
+export type cancelManualSubscriptionResponseSuccess =
+  cancelManualSubscriptionResponse200 & {
+    headers: Headers;
+  };
+export type cancelManualSubscriptionResponseError = (
+  | cancelManualSubscriptionResponse400
+  | cancelManualSubscriptionResponse401
+  | cancelManualSubscriptionResponse403
+  | cancelManualSubscriptionResponse404
+  | cancelManualSubscriptionResponse409
+  | cancelManualSubscriptionResponse500
+) & {
+  headers: Headers;
+};
+
+export type cancelManualSubscriptionResponse =
+  | cancelManualSubscriptionResponseSuccess
+  | cancelManualSubscriptionResponseError;
+
+export const getCancelManualSubscriptionUrl = (userId: string) => {
+  return `/admin/users/${userId}/subscription/cancel`;
+};
+
+export const cancelManualSubscription = async (
+  userId: string,
+  cancelManualSubscriptionBody: CancelManualSubscriptionBody,
+  options?: RequestInit,
+): Promise<cancelManualSubscriptionResponse> => {
+  return customFetch<cancelManualSubscriptionResponse>(
+    getCancelManualSubscriptionUrl(userId),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(cancelManualSubscriptionBody),
+    },
+  );
+};
+
 /**
  * @summary List global exercises and user custom exercises with optional search query
  */
@@ -5914,348 +9278,6 @@ export const updateExerciseMuscles = async (
 };
 
 /**
- * @summary Get weekly volume and duration training analytics
- */
-export type getWeeklyTrainingAnalyticsResponse200 = {
-  data: GetWeeklyTrainingAnalytics200;
-  status: 200;
-};
-
-export type getWeeklyTrainingAnalyticsResponse400 = {
-  data: GetWeeklyTrainingAnalytics400;
-  status: 400;
-};
-
-export type getWeeklyTrainingAnalyticsResponse401 = {
-  data: GetWeeklyTrainingAnalytics401;
-  status: 401;
-};
-
-export type getWeeklyTrainingAnalyticsResponse500 = {
-  data: GetWeeklyTrainingAnalytics500;
-  status: 500;
-};
-
-export type getWeeklyTrainingAnalyticsResponseSuccess =
-  getWeeklyTrainingAnalyticsResponse200 & {
-    headers: Headers;
-  };
-export type getWeeklyTrainingAnalyticsResponseError = (
-  | getWeeklyTrainingAnalyticsResponse400
-  | getWeeklyTrainingAnalyticsResponse401
-  | getWeeklyTrainingAnalyticsResponse500
-) & {
-  headers: Headers;
-};
-
-export type getWeeklyTrainingAnalyticsResponse =
-  | getWeeklyTrainingAnalyticsResponseSuccess
-  | getWeeklyTrainingAnalyticsResponseError;
-
-export const getGetWeeklyTrainingAnalyticsUrl = (
-  params: GetWeeklyTrainingAnalyticsParams,
-) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0
-    ? `/history/analytics/weekly?${stringifiedParams}`
-    : `/history/analytics/weekly`;
-};
-
-export const getWeeklyTrainingAnalytics = async (
-  params: GetWeeklyTrainingAnalyticsParams,
-  options?: RequestInit,
-): Promise<getWeeklyTrainingAnalyticsResponse> => {
-  return customFetch<getWeeklyTrainingAnalyticsResponse>(
-    getGetWeeklyTrainingAnalyticsUrl(params),
-    {
-      ...options,
-      method: "GET",
-    },
-  );
-};
-
-/**
- * @summary Get muscle direct and indirect working sets analytics
- */
-export type getMuscleTrainingAnalyticsResponse200 = {
-  data: GetMuscleTrainingAnalytics200;
-  status: 200;
-};
-
-export type getMuscleTrainingAnalyticsResponse400 = {
-  data: GetMuscleTrainingAnalytics400;
-  status: 400;
-};
-
-export type getMuscleTrainingAnalyticsResponse401 = {
-  data: GetMuscleTrainingAnalytics401;
-  status: 401;
-};
-
-export type getMuscleTrainingAnalyticsResponse500 = {
-  data: GetMuscleTrainingAnalytics500;
-  status: 500;
-};
-
-export type getMuscleTrainingAnalyticsResponseSuccess =
-  getMuscleTrainingAnalyticsResponse200 & {
-    headers: Headers;
-  };
-export type getMuscleTrainingAnalyticsResponseError = (
-  | getMuscleTrainingAnalyticsResponse400
-  | getMuscleTrainingAnalyticsResponse401
-  | getMuscleTrainingAnalyticsResponse500
-) & {
-  headers: Headers;
-};
-
-export type getMuscleTrainingAnalyticsResponse =
-  | getMuscleTrainingAnalyticsResponseSuccess
-  | getMuscleTrainingAnalyticsResponseError;
-
-export const getGetMuscleTrainingAnalyticsUrl = (
-  params: GetMuscleTrainingAnalyticsParams,
-) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0
-    ? `/history/analytics/muscles?${stringifiedParams}`
-    : `/history/analytics/muscles`;
-};
-
-export const getMuscleTrainingAnalytics = async (
-  params: GetMuscleTrainingAnalyticsParams,
-  options?: RequestInit,
-): Promise<getMuscleTrainingAnalyticsResponse> => {
-  return customFetch<getMuscleTrainingAnalyticsResponse>(
-    getGetMuscleTrainingAnalyticsUrl(params),
-    {
-      ...options,
-      method: "GET",
-    },
-  );
-};
-
-/**
- * @summary List completed workout sessions history with cursor pagination
- */
-export type listWorkoutHistoryResponse200 = {
-  data: ListWorkoutHistory200;
-  status: 200;
-};
-
-export type listWorkoutHistoryResponse400 = {
-  data: ListWorkoutHistory400;
-  status: 400;
-};
-
-export type listWorkoutHistoryResponse401 = {
-  data: ListWorkoutHistory401;
-  status: 401;
-};
-
-export type listWorkoutHistoryResponse500 = {
-  data: ListWorkoutHistory500;
-  status: 500;
-};
-
-export type listWorkoutHistoryResponseSuccess =
-  listWorkoutHistoryResponse200 & {
-    headers: Headers;
-  };
-export type listWorkoutHistoryResponseError = (
-  | listWorkoutHistoryResponse400
-  | listWorkoutHistoryResponse401
-  | listWorkoutHistoryResponse500
-) & {
-  headers: Headers;
-};
-
-export type listWorkoutHistoryResponse =
-  | listWorkoutHistoryResponseSuccess
-  | listWorkoutHistoryResponseError;
-
-export const getListWorkoutHistoryUrl = (params?: ListWorkoutHistoryParams) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0
-    ? `/history/sessions?${stringifiedParams}`
-    : `/history/sessions`;
-};
-
-export const listWorkoutHistory = async (
-  params?: ListWorkoutHistoryParams,
-  options?: RequestInit,
-): Promise<listWorkoutHistoryResponse> => {
-  return customFetch<listWorkoutHistoryResponse>(
-    getListWorkoutHistoryUrl(params),
-    {
-      ...options,
-      method: "GET",
-    },
-  );
-};
-
-/**
- * @summary Get details of a completed workout session in history
- */
-export type getWorkoutHistorySessionResponse200 = {
-  data: GetWorkoutHistorySession200;
-  status: 200;
-};
-
-export type getWorkoutHistorySessionResponse401 = {
-  data: GetWorkoutHistorySession401;
-  status: 401;
-};
-
-export type getWorkoutHistorySessionResponse404 = {
-  data: GetWorkoutHistorySession404;
-  status: 404;
-};
-
-export type getWorkoutHistorySessionResponse500 = {
-  data: GetWorkoutHistorySession500;
-  status: 500;
-};
-
-export type getWorkoutHistorySessionResponseSuccess =
-  getWorkoutHistorySessionResponse200 & {
-    headers: Headers;
-  };
-export type getWorkoutHistorySessionResponseError = (
-  | getWorkoutHistorySessionResponse401
-  | getWorkoutHistorySessionResponse404
-  | getWorkoutHistorySessionResponse500
-) & {
-  headers: Headers;
-};
-
-export type getWorkoutHistorySessionResponse =
-  | getWorkoutHistorySessionResponseSuccess
-  | getWorkoutHistorySessionResponseError;
-
-export const getGetWorkoutHistorySessionUrl = (sessionId: string) => {
-  return `/history/sessions/${sessionId}`;
-};
-
-export const getWorkoutHistorySession = async (
-  sessionId: string,
-  options?: RequestInit,
-): Promise<getWorkoutHistorySessionResponse> => {
-  return customFetch<getWorkoutHistorySessionResponse>(
-    getGetWorkoutHistorySessionUrl(sessionId),
-    {
-      ...options,
-      method: "GET",
-    },
-  );
-};
-
-/**
- * @summary Get longitudinal evolution and load PR for a specific canonical exercise
- */
-export type getExerciseEvolutionResponse200 = {
-  data: GetExerciseEvolution200;
-  status: 200;
-};
-
-export type getExerciseEvolutionResponse400 = {
-  data: GetExerciseEvolution400;
-  status: 400;
-};
-
-export type getExerciseEvolutionResponse401 = {
-  data: GetExerciseEvolution401;
-  status: 401;
-};
-
-export type getExerciseEvolutionResponse404 = {
-  data: GetExerciseEvolution404;
-  status: 404;
-};
-
-export type getExerciseEvolutionResponse500 = {
-  data: GetExerciseEvolution500;
-  status: 500;
-};
-
-export type getExerciseEvolutionResponseSuccess =
-  getExerciseEvolutionResponse200 & {
-    headers: Headers;
-  };
-export type getExerciseEvolutionResponseError = (
-  | getExerciseEvolutionResponse400
-  | getExerciseEvolutionResponse401
-  | getExerciseEvolutionResponse404
-  | getExerciseEvolutionResponse500
-) & {
-  headers: Headers;
-};
-
-export type getExerciseEvolutionResponse =
-  | getExerciseEvolutionResponseSuccess
-  | getExerciseEvolutionResponseError;
-
-export const getGetExerciseEvolutionUrl = (
-  exerciseId: string,
-  params?: GetExerciseEvolutionParams,
-) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0
-    ? `/history/exercises/${exerciseId}?${stringifiedParams}`
-    : `/history/exercises/${exerciseId}`;
-};
-
-export const getExerciseEvolution = async (
-  exerciseId: string,
-  params?: GetExerciseEvolutionParams,
-  options?: RequestInit,
-): Promise<getExerciseEvolutionResponse> => {
-  return customFetch<getExerciseEvolutionResponse>(
-    getGetExerciseEvolutionUrl(exerciseId, params),
-    {
-      ...options,
-      method: "GET",
-    },
-  );
-};
-
-/**
  * @summary Get current active workout session with all exercises and sets
  */
 export type getActiveWorkoutSessionResponse200 = {
@@ -6361,6 +9383,74 @@ export const getWorkoutSession = async (
     {
       ...options,
       method: "GET",
+    },
+  );
+};
+
+/**
+ * @summary Cancel and discard an active workout session
+ */
+export type cancelWorkoutSessionResponse200 = {
+  data: CancelWorkoutSession200;
+  status: 200;
+};
+
+export type cancelWorkoutSessionResponse400 = {
+  data: CancelWorkoutSession400;
+  status: 400;
+};
+
+export type cancelWorkoutSessionResponse401 = {
+  data: CancelWorkoutSession401;
+  status: 401;
+};
+
+export type cancelWorkoutSessionResponse404 = {
+  data: CancelWorkoutSession404;
+  status: 404;
+};
+
+export type cancelWorkoutSessionResponse409 = {
+  data: CancelWorkoutSession409;
+  status: 409;
+};
+
+export type cancelWorkoutSessionResponse500 = {
+  data: CancelWorkoutSession500;
+  status: 500;
+};
+
+export type cancelWorkoutSessionResponseSuccess =
+  cancelWorkoutSessionResponse200 & {
+    headers: Headers;
+  };
+export type cancelWorkoutSessionResponseError = (
+  | cancelWorkoutSessionResponse400
+  | cancelWorkoutSessionResponse401
+  | cancelWorkoutSessionResponse404
+  | cancelWorkoutSessionResponse409
+  | cancelWorkoutSessionResponse500
+) & {
+  headers: Headers;
+};
+
+export type cancelWorkoutSessionResponse =
+  | cancelWorkoutSessionResponseSuccess
+  | cancelWorkoutSessionResponseError;
+
+export const getCancelWorkoutSessionUrl = (sessionId: string) => {
+  return `/workout-sessions/${sessionId}`;
+};
+
+export const cancelWorkoutSession = async (
+  sessionId: string,
+  options?: RequestInit,
+): Promise<cancelWorkoutSessionResponse> => {
+  return customFetch<cancelWorkoutSessionResponse>(
+    getCancelWorkoutSessionUrl(sessionId),
+    {
+      ...options,
+      method: "DELETE",
     },
   );
 };
@@ -6814,6 +9904,348 @@ export const removeExerciseFromWorkoutSession = async (
     {
       ...options,
       method: "DELETE",
+    },
+  );
+};
+
+/**
+ * @summary Get weekly volume and duration training analytics
+ */
+export type getWeeklyTrainingAnalyticsResponse200 = {
+  data: GetWeeklyTrainingAnalytics200;
+  status: 200;
+};
+
+export type getWeeklyTrainingAnalyticsResponse400 = {
+  data: GetWeeklyTrainingAnalytics400;
+  status: 400;
+};
+
+export type getWeeklyTrainingAnalyticsResponse401 = {
+  data: GetWeeklyTrainingAnalytics401;
+  status: 401;
+};
+
+export type getWeeklyTrainingAnalyticsResponse500 = {
+  data: GetWeeklyTrainingAnalytics500;
+  status: 500;
+};
+
+export type getWeeklyTrainingAnalyticsResponseSuccess =
+  getWeeklyTrainingAnalyticsResponse200 & {
+    headers: Headers;
+  };
+export type getWeeklyTrainingAnalyticsResponseError = (
+  | getWeeklyTrainingAnalyticsResponse400
+  | getWeeklyTrainingAnalyticsResponse401
+  | getWeeklyTrainingAnalyticsResponse500
+) & {
+  headers: Headers;
+};
+
+export type getWeeklyTrainingAnalyticsResponse =
+  | getWeeklyTrainingAnalyticsResponseSuccess
+  | getWeeklyTrainingAnalyticsResponseError;
+
+export const getGetWeeklyTrainingAnalyticsUrl = (
+  params: GetWeeklyTrainingAnalyticsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/history/analytics/weekly?${stringifiedParams}`
+    : `/history/analytics/weekly`;
+};
+
+export const getWeeklyTrainingAnalytics = async (
+  params: GetWeeklyTrainingAnalyticsParams,
+  options?: RequestInit,
+): Promise<getWeeklyTrainingAnalyticsResponse> => {
+  return customFetch<getWeeklyTrainingAnalyticsResponse>(
+    getGetWeeklyTrainingAnalyticsUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+/**
+ * @summary Get muscle direct and indirect working sets analytics
+ */
+export type getMuscleTrainingAnalyticsResponse200 = {
+  data: GetMuscleTrainingAnalytics200;
+  status: 200;
+};
+
+export type getMuscleTrainingAnalyticsResponse400 = {
+  data: GetMuscleTrainingAnalytics400;
+  status: 400;
+};
+
+export type getMuscleTrainingAnalyticsResponse401 = {
+  data: GetMuscleTrainingAnalytics401;
+  status: 401;
+};
+
+export type getMuscleTrainingAnalyticsResponse500 = {
+  data: GetMuscleTrainingAnalytics500;
+  status: 500;
+};
+
+export type getMuscleTrainingAnalyticsResponseSuccess =
+  getMuscleTrainingAnalyticsResponse200 & {
+    headers: Headers;
+  };
+export type getMuscleTrainingAnalyticsResponseError = (
+  | getMuscleTrainingAnalyticsResponse400
+  | getMuscleTrainingAnalyticsResponse401
+  | getMuscleTrainingAnalyticsResponse500
+) & {
+  headers: Headers;
+};
+
+export type getMuscleTrainingAnalyticsResponse =
+  | getMuscleTrainingAnalyticsResponseSuccess
+  | getMuscleTrainingAnalyticsResponseError;
+
+export const getGetMuscleTrainingAnalyticsUrl = (
+  params: GetMuscleTrainingAnalyticsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/history/analytics/muscles?${stringifiedParams}`
+    : `/history/analytics/muscles`;
+};
+
+export const getMuscleTrainingAnalytics = async (
+  params: GetMuscleTrainingAnalyticsParams,
+  options?: RequestInit,
+): Promise<getMuscleTrainingAnalyticsResponse> => {
+  return customFetch<getMuscleTrainingAnalyticsResponse>(
+    getGetMuscleTrainingAnalyticsUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+/**
+ * @summary List completed workout sessions history with cursor pagination
+ */
+export type listWorkoutHistoryResponse200 = {
+  data: ListWorkoutHistory200;
+  status: 200;
+};
+
+export type listWorkoutHistoryResponse400 = {
+  data: ListWorkoutHistory400;
+  status: 400;
+};
+
+export type listWorkoutHistoryResponse401 = {
+  data: ListWorkoutHistory401;
+  status: 401;
+};
+
+export type listWorkoutHistoryResponse500 = {
+  data: ListWorkoutHistory500;
+  status: 500;
+};
+
+export type listWorkoutHistoryResponseSuccess =
+  listWorkoutHistoryResponse200 & {
+    headers: Headers;
+  };
+export type listWorkoutHistoryResponseError = (
+  | listWorkoutHistoryResponse400
+  | listWorkoutHistoryResponse401
+  | listWorkoutHistoryResponse500
+) & {
+  headers: Headers;
+};
+
+export type listWorkoutHistoryResponse =
+  | listWorkoutHistoryResponseSuccess
+  | listWorkoutHistoryResponseError;
+
+export const getListWorkoutHistoryUrl = (params?: ListWorkoutHistoryParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/history/sessions?${stringifiedParams}`
+    : `/history/sessions`;
+};
+
+export const listWorkoutHistory = async (
+  params?: ListWorkoutHistoryParams,
+  options?: RequestInit,
+): Promise<listWorkoutHistoryResponse> => {
+  return customFetch<listWorkoutHistoryResponse>(
+    getListWorkoutHistoryUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+/**
+ * @summary Get details of a completed workout session in history
+ */
+export type getWorkoutHistorySessionResponse200 = {
+  data: GetWorkoutHistorySession200;
+  status: 200;
+};
+
+export type getWorkoutHistorySessionResponse401 = {
+  data: GetWorkoutHistorySession401;
+  status: 401;
+};
+
+export type getWorkoutHistorySessionResponse404 = {
+  data: GetWorkoutHistorySession404;
+  status: 404;
+};
+
+export type getWorkoutHistorySessionResponse500 = {
+  data: GetWorkoutHistorySession500;
+  status: 500;
+};
+
+export type getWorkoutHistorySessionResponseSuccess =
+  getWorkoutHistorySessionResponse200 & {
+    headers: Headers;
+  };
+export type getWorkoutHistorySessionResponseError = (
+  | getWorkoutHistorySessionResponse401
+  | getWorkoutHistorySessionResponse404
+  | getWorkoutHistorySessionResponse500
+) & {
+  headers: Headers;
+};
+
+export type getWorkoutHistorySessionResponse =
+  | getWorkoutHistorySessionResponseSuccess
+  | getWorkoutHistorySessionResponseError;
+
+export const getGetWorkoutHistorySessionUrl = (sessionId: string) => {
+  return `/history/sessions/${sessionId}`;
+};
+
+export const getWorkoutHistorySession = async (
+  sessionId: string,
+  options?: RequestInit,
+): Promise<getWorkoutHistorySessionResponse> => {
+  return customFetch<getWorkoutHistorySessionResponse>(
+    getGetWorkoutHistorySessionUrl(sessionId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+/**
+ * @summary Get longitudinal evolution and load PR for a specific canonical exercise
+ */
+export type getExerciseEvolutionResponse200 = {
+  data: GetExerciseEvolution200;
+  status: 200;
+};
+
+export type getExerciseEvolutionResponse400 = {
+  data: GetExerciseEvolution400;
+  status: 400;
+};
+
+export type getExerciseEvolutionResponse401 = {
+  data: GetExerciseEvolution401;
+  status: 401;
+};
+
+export type getExerciseEvolutionResponse404 = {
+  data: GetExerciseEvolution404;
+  status: 404;
+};
+
+export type getExerciseEvolutionResponse500 = {
+  data: GetExerciseEvolution500;
+  status: 500;
+};
+
+export type getExerciseEvolutionResponseSuccess =
+  getExerciseEvolutionResponse200 & {
+    headers: Headers;
+  };
+export type getExerciseEvolutionResponseError = (
+  | getExerciseEvolutionResponse400
+  | getExerciseEvolutionResponse401
+  | getExerciseEvolutionResponse404
+  | getExerciseEvolutionResponse500
+) & {
+  headers: Headers;
+};
+
+export type getExerciseEvolutionResponse =
+  | getExerciseEvolutionResponseSuccess
+  | getExerciseEvolutionResponseError;
+
+export const getGetExerciseEvolutionUrl = (
+  exerciseId: string,
+  params?: GetExerciseEvolutionParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/history/exercises/${exerciseId}?${stringifiedParams}`
+    : `/history/exercises/${exerciseId}`;
+};
+
+export const getExerciseEvolution = async (
+  exerciseId: string,
+  params?: GetExerciseEvolutionParams,
+  options?: RequestInit,
+): Promise<getExerciseEvolutionResponse> => {
+  return customFetch<getExerciseEvolutionResponse>(
+    getGetExerciseEvolutionUrl(exerciseId, params),
+    {
+      ...options,
+      method: "GET",
     },
   );
 };

@@ -10,8 +10,6 @@ import {
   ChevronRight,
   Dumbbell,
   Layers,
-  Sparkles,
-  Zap,
 } from "lucide-react";
 
 import type {

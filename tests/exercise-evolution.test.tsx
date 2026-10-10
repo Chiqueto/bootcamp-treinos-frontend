@@ -117,7 +117,8 @@ describe("Exercise evolution detail", () => {
     ).toBeDefined();
     expect(screen.getByText(/Peito · principal/i)).toBeDefined();
     expect(screen.getByText(/Tríceps · secundário/i)).toBeDefined();
-    expect(screen.getByText("100 kg × 5")).toBeDefined();
+    expect(screen.getByText("100 kg")).toBeDefined();
+    expect(screen.getByText("× 5 reps")).toBeDefined();
     expect(screen.getByText("RIR 1")).toBeDefined();
     expect(screen.getByText("85 kg · 8 reps · RIR 2")).toBeDefined();
     expect(screen.getByText(/3 séries · 24 reps ·/i)).toBeDefined();
@@ -125,7 +126,9 @@ describe("Exercise evolution detail", () => {
     expect(screen.getByText("1min 15s")).toBeDefined();
     expect(screen.getByText("Execução controlada")).toBeDefined();
     expect(
-      screen.getByRole("link", { name: "Ver treino" }).getAttribute("href"),
+      screen
+        .getByRole("link", { name: "Ver treino completo" })
+        .getAttribute("href"),
     ).toBe("/history/session-1");
   });
 
@@ -134,8 +137,39 @@ describe("Exercise evolution detail", () => {
       <ExerciseEvolutionDetail initialData={evolutionData({ loadPR: null })} />,
     );
 
-    expect(screen.getByText("Nenhum PR de carga registrado")).toBeDefined();
-    expect(screen.getByText("Últimas sessões")).toBeDefined();
+    expect(
+      screen.getByText("Nenhum PR de carga registrado ainda."),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("heading", { name: /Histórico de Execuções/i }),
+    ).toBeDefined();
+  });
+
+  it("gráfico mantém carga fracionária sem arredondar e abre os detalhes", () => {
+    render(
+      <ExerciseEvolutionDetail
+        initialData={evolutionData({
+          items: [
+            evolutionItem("fractional", {
+              topSet: {
+                workoutSetId: "fractional-set",
+                weightInGrams: 82500,
+                weightKg: 82.5,
+                reps: 8,
+                rir: 2,
+              },
+            }),
+          ],
+        })}
+      />,
+    );
+    const bar = screen.getByRole("button", { name: /82,5 kg, 8 reps/i });
+    expect(bar.textContent).toContain("82,5 kg");
+    expect(bar.textContent).not.toContain("83kg");
+    fireEvent.click(bar);
+    expect(
+      screen.getAllByText("82,5 kg · 8 reps · RIR 2").length,
+    ).toBeGreaterThan(1);
   });
 
   it("diferencia exercício válido sem histórico de um 404", () => {
@@ -145,11 +179,7 @@ describe("Exercise evolution detail", () => {
       />,
     );
 
-    expect(
-      screen.getByText(
-        /Você ainda não possui sessões concluídas registradas para este exercício/i,
-      ),
-    ).toBeDefined();
+    expect(screen.getByText(/Nenhuma sessão registrada/i)).toBeDefined();
     expect(screen.queryByText("Exercício não encontrado")).toBeNull();
   });
 
@@ -172,15 +202,21 @@ describe("Exercise evolution detail", () => {
     );
 
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Carregar mais" }));
+      fireEvent.click(
+        screen.getByRole("button", { name: "Carregar mais sessões" }),
+      );
     });
 
     expect(loadExerciseEvolutionPage).toHaveBeenCalledWith({
       exerciseId: "exercise-1",
       cursor: "opaque-cursor",
     });
-    expect(screen.getAllByRole("link", { name: "Ver treino" })).toHaveLength(2);
-    expect(screen.queryByRole("button", { name: "Carregar mais" })).toBeNull();
+    expect(
+      screen.getAllByRole("link", { name: "Ver treino completo" }),
+    ).toHaveLength(2);
+    expect(
+      screen.queryByRole("button", { name: "Carregar mais sessões" }),
+    ).toBeNull();
   });
 
   it("preserva sessões e permite retry quando load more falha", async () => {
@@ -208,16 +244,22 @@ describe("Exercise evolution detail", () => {
     );
 
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Carregar mais" }));
+      fireEvent.click(
+        screen.getByRole("button", { name: "Carregar mais sessões" }),
+      );
     });
     expect(
       screen.getByText("Não foi possível carregar mais sessões."),
     ).toBeDefined();
-    expect(screen.getAllByRole("link", { name: "Ver treino" })).toHaveLength(1);
+    expect(
+      screen.getAllByRole("link", { name: "Ver treino completo" }),
+    ).toHaveLength(1);
 
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "Tentar novamente" }));
     });
-    expect(screen.getAllByRole("link", { name: "Ver treino" })).toHaveLength(2);
+    expect(
+      screen.getAllByRole("link", { name: "Ver treino completo" }),
+    ).toHaveLength(2);
   });
 });

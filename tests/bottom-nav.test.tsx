@@ -10,7 +10,10 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("nuqs", () => ({
-  useQueryStates: () => [{ chat_open: false, chat_initial_message: null }, vi.fn()],
+  useQueryStates: () => [
+    { chat_open: false, chat_initial_message: null },
+    vi.fn(),
+  ],
   parseAsBoolean: { withDefault: () => ({}) },
   parseAsString: {},
 }));
@@ -30,7 +33,7 @@ describe("BottomNav — Task 2.8.2 Mobile Polish & Route-derived State", () => {
 
     // Labels visíveis
     expect(screen.getByText("Início")).toBeDefined();
-    expect(screen.getByText("Planejar")).toBeDefined();
+    expect(screen.getByText("Treinos")).toBeDefined();
     expect(screen.getByText("Coach")).toBeDefined();
     expect(screen.getByText("Evolução")).toBeDefined();
     expect(screen.getByText("Perfil")).toBeDefined();
@@ -39,7 +42,7 @@ describe("BottomNav — Task 2.8.2 Mobile Polish & Route-derived State", () => {
     const inicioLink = screen.getByRole("link", { name: /Início/i });
     expect(inicioLink.getAttribute("href")).toBe("/");
 
-    const planejarLink = screen.getByRole("link", { name: /Planejar/i });
+    const planejarLink = screen.getByRole("link", { name: /Treinos/i });
     expect(planejarLink.getAttribute("href")).toBe("/planning");
 
     const evolucaoLink = screen.getByRole("link", { name: /Evolução/i });
@@ -61,15 +64,15 @@ describe("BottomNav — Task 2.8.2 Mobile Polish & Route-derived State", () => {
     expect(inicioLink.className).toContain("text-primary");
     expect(inicioLink.className).toContain("bg-primary/10");
 
-    const planejarLink = screen.getByRole("link", { name: /Planejar/i });
+    const planejarLink = screen.getByRole("link", { name: /Treinos/i });
     expect(planejarLink.className).toContain("text-muted-foreground");
   });
 
-  it("marca 'Planejar' como ativo em rotas /planning/** e /workout-plans/**", () => {
+  it("marca 'Treinos' como ativo em rotas /planning/** e /workout-plans/**", () => {
     // 1. /planning
     mockPathname = "/planning";
     const { unmount } = render(<BottomNav />);
-    let planejarLink = screen.getByRole("link", { name: /Planejar/i });
+    let planejarLink = screen.getByRole("link", { name: /Treinos/i });
     expect(planejarLink.className).toContain("text-primary");
     expect(planejarLink.className).toContain("bg-primary/10");
     unmount();
@@ -77,14 +80,14 @@ describe("BottomNav — Task 2.8.2 Mobile Polish & Route-derived State", () => {
     // 2. /planning/periodizations/123
     mockPathname = "/planning/periodizations/per-123";
     const { unmount: unmount2 } = render(<BottomNav />);
-    planejarLink = screen.getByRole("link", { name: /Planejar/i });
+    planejarLink = screen.getByRole("link", { name: /Treinos/i });
     expect(planejarLink.className).toContain("text-primary");
     unmount2();
 
     // 3. /workout-plans/plan-abc/days/day-xyz
     mockPathname = "/workout-plans/plan-abc/days/day-xyz";
     render(<BottomNav />);
-    planejarLink = screen.getByRole("link", { name: /Planejar/i });
+    planejarLink = screen.getByRole("link", { name: /Treinos/i });
     expect(planejarLink.className).toContain("text-primary");
     expect(planejarLink.className).toContain("bg-primary/10");
   });

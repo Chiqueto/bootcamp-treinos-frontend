@@ -18,23 +18,24 @@ export const SignInWithGoogle = () => {
       const callbackOrigin =
         typeof window !== "undefined" && window.location.origin
           ? window.location.origin
-          : (process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace(
-              /\/+$/,
-              ""
-            );
+          : (
+              process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+            ).replace(/\/+$/, "");
 
-      const callbackURL = `${callbackOrigin}/`;
+      const callbackURL = `${callbackOrigin}/auth/complete`;
 
       const result = await authClient.signIn.social({
         provider: "google",
         callbackURL,
+        requestSignUp: false,
+        errorCallbackURL: `${callbackOrigin}/auth`,
       });
 
       if (result?.error) {
         console.error("Erro ao autenticar com Google:", result.error);
         setErrorMessage(
           result.error.message ||
-            `Erro (${result.error.status || "desconhecido"}) ao conectar com Google`
+            `Erro (${result.error.status || "desconhecido"}) ao conectar com Google`,
         );
         setIsLoading(false);
       }
