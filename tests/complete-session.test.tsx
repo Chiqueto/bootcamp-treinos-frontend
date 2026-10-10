@@ -1,5 +1,15 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+const router = vi.hoisted(() => ({ push: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: () => router }));
 
 // Mock next/cache
 vi.mock("next/cache", () => ({
@@ -9,6 +19,7 @@ vi.mock("next/cache", () => ({
 // Mock Orval generated API
 vi.mock("@/app/_lib/api/fetch-generated", () => ({
   completeWorkoutSession: vi.fn(),
+  cancelWorkoutSession: vi.fn(),
   createWorkoutSet: vi.fn(),
   updateWorkoutSet: vi.fn(),
   deleteWorkoutSet: vi.fn(),
@@ -17,9 +28,7 @@ vi.mock("@/app/_lib/api/fetch-generated", () => ({
 }));
 
 import * as api from "@/app/_lib/api/fetch-generated";
-import {
-  completeWorkoutSessionAction,
-} from "@/app/workout-sessions/[sessionId]/_actions";
+import { completeWorkoutSessionAction } from "@/app/workout-sessions/[sessionId]/_actions";
 import { WorkoutSessionTracker } from "@/app/workout-sessions/[sessionId]/_components/workout-session-tracker";
 
 describe("Task 1.7 — Finalização Segura da WorkoutSession", () => {
@@ -101,6 +110,58 @@ describe("Task 1.7 — Finalização Segura da WorkoutSession", () => {
     });
   });
 
+  describe("Cancelamento e tela de conclusão — integração da main", () => {
+    it("exige confirmação explícita e Voltar não exclui a sessão", () => {
+      render(<WorkoutSessionTracker session={baseSession} />);
+      fireEvent.click(screen.getByRole("button", { name: "Cancelar treino" }));
+      const modal = screen.getByRole("dialog", {
+        name: "Cancelar este treino?",
+      });
+      expect(api.cancelWorkoutSession).not.toHaveBeenCalled();
+      fireEvent.click(within(modal).getByRole("button", { name: "Voltar" }));
+      expect(screen.queryByRole("dialog")).toBeNull();
+      expect(api.cancelWorkoutSession).not.toHaveBeenCalled();
+      expect(screen.getByText("Supino Reto")).toBeDefined();
+    });
+
+    it("usa Orval e navega ao início só depois de confirmar o cancelamento", async () => {
+      vi.mocked(api.cancelWorkoutSession).mockResolvedValueOnce({
+        status: 200,
+        data: { success: true, sessionId: baseSession.id },
+        headers: new Headers(),
+      });
+      render(<WorkoutSessionTracker session={baseSession} />);
+      fireEvent.click(screen.getByRole("button", { name: "Cancelar treino" }));
+      const modal = screen.getByRole("dialog", {
+        name: "Cancelar este treino?",
+      });
+      fireEvent.click(
+        within(modal).getByRole("button", { name: "Sim, cancelar treino" }),
+      );
+      await waitFor(() => expect(router.push).toHaveBeenCalledWith("/"));
+      expect(api.cancelWorkoutSession).toHaveBeenCalledExactlyOnceWith(
+        baseSession.id,
+      );
+    });
+
+    it("falha de cancelamento preserva a sessão e não navega", async () => {
+      vi.mocked(api.cancelWorkoutSession).mockRejectedValueOnce(
+        new Error("Servidor indisponível"),
+      );
+      render(<WorkoutSessionTracker session={baseSession} />);
+      fireEvent.click(screen.getByRole("button", { name: "Cancelar treino" }));
+      fireEvent.click(
+        within(screen.getByRole("dialog")).getByRole("button", {
+          name: "Sim, cancelar treino",
+        }),
+      );
+      expect(await screen.findByText("Servidor indisponível")).toBeDefined();
+      expect(router.push).not.toHaveBeenCalled();
+      expect(screen.getByText("Supino Reto")).toBeDefined();
+      expect(screen.getByDisplayValue("40")).toBeDefined();
+    });
+  });
+
   describe("2. UI e Fluxo de Finalização no WorkoutSessionTracker", () => {
     it("botão 'Finalizar treino' aparece em sessão ativa (completedAt === null)", () => {
       render(<WorkoutSessionTracker session={baseSession} />);
@@ -123,16 +184,20 @@ describe("Task 1.7 — Finalização Segura da WorkoutSession", () => {
       expect(
         screen.queryByRole("button", { name: /finalizar treino/i }),
       ).toBeNull();
-      expect(screen.getByText("Treino Concluído")).toBeDefined();
+      expect(screen.getByText(/Treino concluído!/i)).toBeDefined();
       expect(
-        screen.getByText(/esta sessão foi finalizada e os registros estão em modo somente leitura/i),
+        screen.getByText(
+          /esta sessão foi finalizada e os registros estão em modo somente leitura/i,
+        ),
       ).toBeDefined();
     });
 
     it("confirmação funciona: abre modal com mensagem não-alarmista e botão cancelar fecha", () => {
       render(<WorkoutSessionTracker session={baseSession} />);
 
-      const finishBtn = screen.getByRole("button", { name: /finalizar treino/i });
+      const finishBtn = screen.getByRole("button", {
+        name: /finalizar treino/i,
+      });
       fireEvent.click(finishBtn);
 
       // Modal de confirmação deve aparecer
@@ -141,11 +206,15 @@ describe("Task 1.7 — Finalização Segura da WorkoutSession", () => {
         screen.getByRole("heading", { name: /finalizar treino\?/i }),
       ).toBeDefined();
       expect(
-        screen.getByText(/depois disso, esta sessão ficará somente para leitura/i),
+        screen.getByText(
+          /depois disso, esta sessão ficará somente para leitura/i,
+        ),
       ).toBeDefined();
 
       // Clicar em Cancelar deve fechar o modal
-      const cancelBtn = screen.getByRole("button", { name: /cancelar/i });
+      const cancelBtn = within(
+        screen.getByRole("dialog", { name: /finalizar treino/i }),
+      ).getByRole("button", { name: "Voltar" });
       fireEvent.click(cancelBtn);
 
       expect(screen.queryByRole("dialog")).toBeNull();
@@ -166,7 +235,9 @@ describe("Task 1.7 — Finalização Segura da WorkoutSession", () => {
       render(<WorkoutSessionTracker session={baseSession} />);
 
       // Abre modal
-      fireEvent.click(screen.getByRole("button", { name: /finalizar treino/i }));
+      fireEvent.click(
+        screen.getByRole("button", { name: /finalizar treino/i }),
+      );
 
       // Clica no botão de confirmar dentro do modal
       const modal = screen.getByRole("dialog");
@@ -177,13 +248,16 @@ describe("Task 1.7 — Finalização Segura da WorkoutSession", () => {
 
       await waitFor(() => {
         expect(screen.queryByRole("dialog")).toBeNull();
-        expect(screen.getByText("Treino Concluído")).toBeDefined();
+        expect(screen.getByText(/Treino concluído!/i)).toBeDefined();
       });
 
       // Botão finalizar deve ter desaparecido
       expect(
         screen.queryByRole("button", { name: /finalizar treino/i }),
       ).toBeNull();
+      expect(router.push).toHaveBeenCalledWith(
+        "/workout-sessions/session-123/summary",
+      );
     });
 
     it("erro de séries pendentes é exibido no banner e não conclui a sessão", async () => {
@@ -200,7 +274,9 @@ describe("Task 1.7 — Finalização Segura da WorkoutSession", () => {
       render(<WorkoutSessionTracker session={baseSession} />);
 
       // Abre modal e confirma
-      fireEvent.click(screen.getByRole("button", { name: /finalizar treino/i }));
+      fireEvent.click(
+        screen.getByRole("button", { name: /finalizar treino/i }),
+      );
       const modal = screen.getByRole("dialog");
       const confirmBtn = within(modal).getByRole("button", {
         name: /^finalizar treino$/i,
@@ -230,7 +306,9 @@ describe("Task 1.7 — Finalização Segura da WorkoutSession", () => {
 
       render(<WorkoutSessionTracker session={baseSession} />);
 
-      fireEvent.click(screen.getByRole("button", { name: /finalizar treino/i }));
+      fireEvent.click(
+        screen.getByRole("button", { name: /finalizar treino/i }),
+      );
       const modal = screen.getByRole("dialog");
       const confirmBtn = within(modal).getByRole("button", {
         name: /^finalizar treino$/i,
@@ -254,7 +332,9 @@ describe("Task 1.7 — Finalização Segura da WorkoutSession", () => {
       expect(document.activeElement).toBe(repsInput);
 
       // Clica em finalizar treino
-      const finishBtn = screen.getByRole("button", { name: /finalizar treino/i });
+      const finishBtn = screen.getByRole("button", {
+        name: /finalizar treino/i,
+      });
       fireEvent.click(finishBtn);
 
       // O elemento ativo não deve mais ser o input (blur foi acionado)
@@ -263,7 +343,9 @@ describe("Task 1.7 — Finalização Segura da WorkoutSession", () => {
 
     it("botão fica bloqueado com 'Salvando alterações...' durante mutation de série", async () => {
       // Cria uma promise pendente para simular request em andamento
-      let resolveUpdate: (value: api.updateWorkoutSetResponse) => void = () => {};
+      let resolveUpdate: (
+        value: api.updateWorkoutSetResponse,
+      ) => void = () => {};
       const pendingPromise = new Promise<api.updateWorkoutSetResponse>(
         (resolve) => {
           resolveUpdate = resolve;

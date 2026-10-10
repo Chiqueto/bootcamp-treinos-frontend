@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
-import { cleanup, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import React from "react";
 
@@ -29,7 +35,15 @@ vi.mock("next/headers", () => ({
 
 // Mock next/image
 vi.mock("next/image", () => ({
-  default: (props: any) => <img {...props} />,
+  default: ({
+    fill,
+    priority,
+    ...props
+  }: React.ComponentProps<"img"> & { fill?: boolean; priority?: boolean }) => {
+    void fill;
+    void priority;
+    return <img {...props} />;
+  },
 }));
 
 // Mock nuqs and ChatOpenButton so BottomNav renders without adapter error
@@ -77,6 +91,15 @@ vi.mock("@/app/_lib/api/fetch-generated", () => ({
   getUserTrainData: vi.fn(),
   getWorkoutPlan: vi.fn(),
   getActiveWorkoutSession: vi.fn(),
+  getCommercialContext: vi.fn().mockResolvedValue({
+    status: 200,
+    data: {
+      accountSetupCompletedAt: "2026-01-01T00:00:00Z",
+      accountType: "ATHLETE",
+      systemRole: "USER",
+      entitlements: [],
+    },
+  }),
 }));
 
 import { authClient } from "@/app/_lib/auth-client";
@@ -138,17 +161,19 @@ describe("Trainvy — Fase 2 / Task 2.5A: Hub de Planejamento, Navegação e Est
 
       // Header do Hub
       expect(
-        screen.getByRole("heading", { name: "Planejamento" }),
+        screen.getByRole("heading", { name: "Rotinas de Treino" }),
       ).toBeDefined();
       expect(
-        screen.getByText("Organize seus planos e ciclos de treino"),
+        screen.getByText("Gerencie seus planos, divisões e ciclos de treino"),
       ).toBeDefined();
 
       // Seção Ativo Agora
-      expect(screen.getByText("Ativo agora")).toBeDefined();
-      expect(screen.getByText("Nenhum plano ativo")).toBeDefined();
+      expect(screen.getByText("Rotina em Execução")).toBeDefined();
+      expect(screen.getByText("Nenhum plano ativo no momento")).toBeDefined();
       expect(
-        screen.getByText("Organize um plano ou periodização quando quiser."),
+        screen.getByText(
+          "Ative um plano existente ou crie uma nova rotina personalizada para acompanhar seus treinos.",
+        ),
       ).toBeDefined();
     });
 
@@ -184,9 +209,11 @@ describe("Trainvy — Fase 2 / Task 2.5A: Hub de Planejamento, Navegação e Est
 
       expect(screen.getByText("PLANO ATUAL")).toBeDefined();
       expect(screen.getAllByText("Upper / Lower").length).toBeGreaterThan(0);
-      expect(screen.getByText("7 dias configurados")).toBeDefined();
+      expect(screen.getAllByText("7 dias")).toHaveLength(2);
 
-      const viewPlanLink = screen.getByRole("link", { name: /ver plano/i });
+      const viewPlanLink = screen.getByRole("link", {
+        name: /Abrir rotina ativa/i,
+      });
       expect(viewPlanLink.getAttribute("href")).toBe(
         "/workout-plans/plan-standalone-1",
       );
@@ -226,12 +253,12 @@ describe("Trainvy — Fase 2 / Task 2.5A: Hub de Planejamento, Navegação e Est
 
       expect(screen.getByText("PERIODIZAÇÃO ATIVA")).toBeDefined();
       expect(screen.getByText("Pré-Temporada")).toBeDefined();
-      expect(screen.getByText("Força")).toBeDefined();
+      expect(screen.getByText("Bloco atual: Força")).toBeDefined();
       expect(screen.getByText("Etapa 2 de 4")).toBeDefined();
       expect(screen.getByText("Previsto até 28/10")).toBeDefined();
 
       const viewPeriodizationLink = screen.getByRole("link", {
-        name: /ver periodização/i,
+        name: /Ver ciclo completo/i,
       });
       expect(viewPeriodizationLink.getAttribute("href")).toBe(
         "/planning/periodizations/per-123",
@@ -310,7 +337,11 @@ describe("Trainvy — Fase 2 / Task 2.5A: Hub de Planejamento, Navegação e Est
       expect(screen.getByText("3 dias")).toBeDefined();
 
       expect(screen.getByText("Força Máxima")).toBeDefined();
-      expect(screen.getByText("Pré-Temporada Vôlei • Etapa 2")).toBeDefined();
+      const activeBlock = screen.getByRole("link", { name: /Força Máxima/i });
+      expect(
+        within(activeBlock).getByText("Pré-Temporada Vôlei"),
+      ).toBeDefined();
+      expect(activeBlock.textContent).toContain("(Etapa 2)");
       expect(screen.getByText("Em andamento")).toBeDefined();
 
       expect(screen.getByText("Base Aeróbica")).toBeDefined();
@@ -406,6 +437,8 @@ describe("Trainvy — Fase 2 / Task 2.5A: Hub de Planejamento, Navegação e Est
       const pageJsx = await PlanningPage();
       render(pageJsx);
 
+      fireEvent.click(screen.getByRole("button", { name: /Periodizações/i }));
+
       // ACTIVE
       expect(screen.getByText("Ciclo Hipertrofia")).toBeDefined();
       expect(screen.getByText("ATIVA")).toBeDefined();
@@ -445,14 +478,13 @@ describe("Trainvy — Fase 2 / Task 2.5A: Hub de Planejamento, Navegação e Est
       render(pageJsx);
 
       expect(
-        screen.getByText("Você ainda não tem nenhum plano de treino criado."),
+        screen.getByText("Nenhum plano de treino cadastrado"),
       ).toBeDefined();
-      expect(
-        screen.getByText("Você ainda não criou nenhuma periodização."),
-      ).toBeDefined();
+      fireEvent.click(screen.getByRole("button", { name: /Periodizações/i }));
+      expect(screen.getByText("Nenhuma periodização criada")).toBeDefined();
       expect(
         screen.getByText(
-          "Agrupe seus planos em etapas quando quiser organizar um ciclo.",
+          "Periodizações organizam etapas e blocos de treino progressivos ao longo das semanas.",
         ),
       ).toBeDefined();
     });
@@ -591,7 +623,7 @@ describe("Trainvy — Fase 2 / Task 2.5A: Hub de Planejamento, Navegação e Est
     it("aponta a segunda posição sempre para /planning com o rótulo 'Planejamento'", () => {
       render(<BottomNav activePage="planning" />);
 
-      const planningLink = screen.getByRole("link", { name: /planejamento/i });
+      const planningLink = screen.getByRole("link", { name: /treinos/i });
       expect(planningLink.getAttribute("href")).toBe("/planning");
       // Verifica ícone ativo
       const planningIcon = planningLink.querySelector("svg");
@@ -606,7 +638,7 @@ describe("Trainvy — Fase 2 / Task 2.5A: Hub de Planejamento, Navegação e Est
       const homeIcon = homeLink.querySelector("svg");
       expect(homeIcon?.getAttribute("class")).toContain("text-foreground");
 
-      const planningLink = screen.getByRole("link", { name: /planejamento/i });
+      const planningLink = screen.getByRole("link", { name: /treinos/i });
       expect(planningLink.getAttribute("href")).toBe("/planning");
       const planningIcon = planningLink.querySelector("svg");
       expect(planningIcon?.getAttribute("class")).toContain(

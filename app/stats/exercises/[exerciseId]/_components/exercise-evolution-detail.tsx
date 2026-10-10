@@ -300,7 +300,7 @@ function ExerciseLoadChart({
                       : "text-muted-foreground/80 group-hover:text-foreground"
                   }`}
                 >
-                  {weight !== null && weight !== undefined ? `${Math.round(weight)}kg` : "—"}
+                  {weight !== null && weight !== undefined ? formatWeightKg(weight) : "—"}
                 </span>
 
                 {/* Barra do Gráfico */}

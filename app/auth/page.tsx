@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { authClient } from "@/app/_lib/auth-client";
 import { headers } from "next/headers";
@@ -7,7 +8,12 @@ import { Logo } from "@/app/_components/logo";
 
 export const dynamic = "force-dynamic";
 
-export default async function AuthPage() {
+export default async function AuthPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error: oauthError } = await searchParams;
   let session = null;
   try {
     session = await authClient.getSession({
@@ -21,7 +27,7 @@ export default async function AuthPage() {
     }
   }
 
-  if (session?.data?.user) redirect("/");
+  if (session?.data?.user) redirect("/auth/complete");
 
   return (
     <div className="relative flex min-h-svh flex-col bg-black">
@@ -45,11 +51,27 @@ export default async function AuthPage() {
 
       <div className="relative z-10 flex flex-col items-center gap-15 rounded-t-[20px] bg-primary px-5 pb-10 pt-12">
         <div className="flex w-full flex-col items-center gap-6">
+          <p className="font-semibold text-primary-foreground">Entrar</p>
           <h1 className="w-full text-center font-heading text-[32px] font-semibold leading-[1.05] text-primary-foreground">
             O app que vai transformar a forma como você treina.
           </h1>
 
           <SignInWithGoogle />
+          {oauthError && (
+            <p
+              role="alert"
+              className="text-center text-sm text-primary-foreground"
+            >
+              Não foi possível entrar. Se ainda não tem uma conta, escolha Criar
+              conta para se cadastrar.
+            </p>
+          )}
+          <p className="text-sm text-primary-foreground">
+            Ainda não tem conta?{" "}
+            <Link href="/auth/signup" className="font-semibold underline">
+              Criar conta
+            </Link>
+          </p>
         </div>
 
         <p className="font-heading text-xs leading-[1.4] text-primary-foreground/70">

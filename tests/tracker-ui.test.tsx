@@ -1,5 +1,15 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
 
 // Mock next/cache
 vi.mock("next/cache", () => ({
@@ -288,7 +298,9 @@ describe("Tracker Real UI & Actions (Task 1.6)", () => {
         />,
       );
 
-      const typeBtn = screen.getByRole("button", { name: /trab\./i });
+      const typeBtn = screen.getByRole("switch", {
+        name: /Série de trabalho/i,
+      });
       fireEvent.click(typeBtn);
 
       await waitFor(() => {
@@ -535,7 +547,9 @@ describe("Tracker Real UI & Actions (Task 1.6)", () => {
       fireEvent.blur(inputs[0]);
 
       await waitFor(() => {
-        expect(onError).toHaveBeenCalledWith("O peso deve ser um número inteiro");
+        expect(onError).toHaveBeenCalledWith(
+          "O peso deve ser um número inteiro",
+        );
         // Valor digitado ("32.5") permanece no input sem ser perdido
         expect(inputs[0]).toHaveProperty("value", "32.5");
       });
@@ -578,13 +592,17 @@ describe("Tracker Real UI & Actions (Task 1.6)", () => {
       render(<WorkoutSessionTracker session={mockSession} />);
 
       // Verifica badge de treino concluído e aviso read-only
-      expect(screen.getByText("Treino Concluído")).toBeDefined();
+      expect(screen.getByText(/Treino concluído!/i)).toBeDefined();
       expect(
-        screen.getByText(/esta sessão foi finalizada e os registros estão em modo somente leitura/i),
+        screen.getByText(
+          /esta sessão foi finalizada e os registros estão em modo somente leitura/i,
+        ),
       ).toBeDefined();
 
       // Não exibe botão + Adicionar série
-      expect(screen.queryByRole("button", { name: /adicionar série/i })).toBeNull();
+      expect(
+        screen.queryByRole("button", { name: /adicionar série/i }),
+      ).toBeNull();
 
       // Não exibe inputs editáveis de texto
       expect(screen.queryByRole("textbox")).toBeNull();

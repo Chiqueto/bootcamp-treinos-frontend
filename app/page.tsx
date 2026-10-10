@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { requireAccountSetup } from "./_lib/require-account-setup";
 import { authClient } from "@/app/_lib/auth-client";
 import { headers } from "next/headers";
 import {
@@ -25,6 +26,7 @@ export default async function Home() {
   });
 
   if (!session.data?.user) redirect("/auth");
+  await requireAccountSetup();
 
   const today = dayjs();
   const [homeData, trainData, activeSessionResponse] = await Promise.all([

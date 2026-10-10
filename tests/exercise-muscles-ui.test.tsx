@@ -15,7 +15,8 @@ import {
 import { ExerciseSelectorModal } from "@/app/workout-sessions/[sessionId]/_components/exercise-selector-modal";
 
 vi.mock("@/app/_lib/api/fetch-generated", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/app/_lib/api/fetch-generated")>();
+  const actual =
+    await importOriginal<typeof import("@/app/_lib/api/fetch-generated")>();
   return {
     ...actual,
     listExercises: vi.fn(),
@@ -113,7 +114,7 @@ describe("Task 3.1C - Grupos Musculares no Frontend", () => {
   });
 
   describe("3. ExerciseSelectorModal UI (Items 15 & 19)", () => {
-    it("renderiza badges de músculos e tag 'Sem classificação' com botão 'Classificar'", async () => {
+    it("renderiza músculos e permite definir classificação de exercício próprio", async () => {
       vi.mocked(api.listExercises).mockResolvedValueOnce({
         status: 200,
         data: [
@@ -153,9 +154,14 @@ describe("Task 3.1C - Grupos Musculares no Frontend", () => {
       expect(screen.getByText("Peito")).toBeTruthy();
       expect(screen.getByText(/Tríceps/)).toBeTruthy();
 
-      // Exercício customizado sem classificação exibe "Sem classificação" e link "Classificar"
-      expect(screen.getByText("Sem classificação")).toBeTruthy();
-      expect(screen.getByRole("button", { name: "Classificar" })).toBeTruthy();
+      const classify = screen.getByRole("button", {
+        name: "Definir grupo muscular",
+      });
+      expect(classify).toBeTruthy();
+      fireEvent.click(classify);
+      expect(
+        screen.getByRole("heading", { name: "Classificar Músculos" }),
+      ).toBeTruthy();
     });
 
     it("abre formulário de criação com seleção de músculo principal e auxiliares", async () => {
@@ -188,7 +194,9 @@ describe("Task 3.1C - Grupos Musculares no Frontend", () => {
       expect(screen.getByText("Novo Exercício")).toBeTruthy();
       expect(screen.getByLabelText(/Nome do exercício \*/i)).toBeTruthy();
       expect(screen.getByLabelText(/Músculo principal \*/i)).toBeTruthy();
-      expect(screen.getByText(/Músculos auxiliares \(opcional\)/i)).toBeTruthy();
+      expect(
+        screen.getByText(/Músculos auxiliares \(opcional\)/i),
+      ).toBeTruthy();
     });
   });
 });

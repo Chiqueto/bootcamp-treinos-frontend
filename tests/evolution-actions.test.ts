@@ -17,6 +17,7 @@ import {
   loadEvolutionDashboard,
   loadExerciseEvolutionPage,
   searchEvolutionExercises,
+  loadInitialEvolutionExercises,
 } from "@/app/stats/_actions";
 
 const weekly = {
@@ -123,5 +124,18 @@ describe("Evolution server actions", () => {
       cursor: "opaque-cursor",
       limit: 10,
     });
+  });
+
+  it("descoberta inicial usa apenas catálogo com histórico, sem N+1 de evolução", async () => {
+    vi.mocked(listExercises).mockResolvedValue({
+      status: 200,
+      data: [],
+      headers: new Headers(),
+    });
+    await loadInitialEvolutionExercises();
+    expect(listExercises).toHaveBeenCalledExactlyOnceWith({
+      onlyWithHistory: "true",
+    });
+    expect(getExerciseEvolution).not.toHaveBeenCalled();
   });
 });

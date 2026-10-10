@@ -12,6 +12,9 @@ vi.mock("@/app/stats/_actions", () => ({
   loadEvolutionDashboard: vi.fn(),
   searchEvolutionExercises: vi.fn(),
   loadExerciseEvolutionPage: vi.fn(),
+  loadInitialEvolutionExercises: vi
+    .fn()
+    .mockResolvedValue({ success: true, data: [] }),
 }));
 
 import type {
@@ -20,6 +23,8 @@ import type {
 } from "@/app/_lib/api/fetch-generated";
 import {
   loadEvolutionDashboard,
+  loadInitialEvolutionExercises,
+  loadExerciseEvolutionPage,
   searchEvolutionExercises,
 } from "@/app/stats/_actions";
 import { EvolutionDashboard } from "@/app/stats/_components/evolution-dashboard";
@@ -133,11 +138,11 @@ describe("Evolution dashboard", () => {
     expect(screen.getByText("35.000 kg")).toBeDefined();
     expect(screen.getByText("3h 30min")).toBeDefined();
     expect(
-      screen.getByRole("img", {
+      screen.getByRole("button", {
         name: /Semana de 21\/09: 0 kg, 0 séries, 0 treinos/i,
       }),
     ).toBeDefined();
-    const weeklyBars = screen.getAllByRole("img", { name: /Semana de/i });
+    const weeklyBars = screen.getAllByRole("button", { name: /Semana de/i });
     expect(weeklyBars[0].getAttribute("aria-label")).toContain("07/09");
     expect(weeklyBars[1].getAttribute("aria-label")).toContain("14/09");
   });
@@ -244,7 +249,13 @@ describe("Evolution dashboard", () => {
 });
 
 describe("Exercise evolution search", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(loadInitialEvolutionExercises).mockResolvedValue({
+      success: true,
+      data: [],
+    });
+  });
   afterEach(() => {
     cleanup();
     vi.useRealTimers();
@@ -255,10 +266,14 @@ describe("Exercise evolution search", () => {
     const search =
       deferred<Awaited<ReturnType<typeof searchEvolutionExercises>>>();
     vi.mocked(searchEvolutionExercises).mockReturnValue(search.promise);
-    render(<ExerciseSearch />);
+    await act(async () => {
+      render(<ExerciseSearch />);
+    });
 
     expect(
-      screen.getByText("Busque um exercício para ver sua evolução."),
+      screen.getByText(
+        "Digite o nome de um exercício para consultar a progressão.",
+      ),
     ).toBeDefined();
     fireEvent.change(screen.getByLabelText("Buscar exercício"), {
       target: { value: "supino" },
@@ -269,7 +284,7 @@ describe("Exercise evolution search", () => {
       await vi.advanceTimersByTimeAsync(300);
     });
     expect(searchEvolutionExercises).toHaveBeenCalledTimes(1);
-    expect(searchEvolutionExercises).toHaveBeenCalledWith("supino");
+    expect(searchEvolutionExercises).toHaveBeenCalledWith("supino", false);
     expect(screen.getByLabelText("Buscando exercícios")).toBeDefined();
 
     await act(async () => {
@@ -321,5 +336,75 @@ describe("Exercise evolution search", () => {
     expect(
       await screen.findByText("Não foi possível buscar exercícios."),
     ).toBeDefined();
+  });
+
+  it("preserva a descoberta de exercícios praticados e o filtro de catálogo", async () => {
+    vi.mocked(loadInitialEvolutionExercises).mockResolvedValue({
+      success: true,
+      data: [
+        {
+          id: "practiced",
+          name: "Supino praticado",
+          ownerUserId: null,
+          muscles: [],
+        },
+      ],
+    });
+    render(<ExerciseSearch />);
+    expect(
+      await screen.findByRole("link", { name: /Supino praticado/i }),
+    ).toHaveProperty(
+      "href",
+      expect.stringContaining("/stats/exercises/practiced"),
+    );
+    expect(loadExerciseEvolutionPage).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Todos" }));
+    expect(
+      screen.queryByRole("link", { name: /Supino praticado/i }),
+    ).toBeNull();
+    expect(
+      screen.getByText(
+        "Digite o nome de um exercício para consultar a progressão.",
+      ),
+    ).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: "Meus treinos" }));
+    expect(
+      screen.getByRole("link", { name: /Supino praticado/i }),
+    ).toBeDefined();
+  });
+
+  it("limpar a busca invalida a resposta antiga em voo", async () => {
+    vi.useFakeTimers();
+    const pending =
+      deferred<Awaited<ReturnType<typeof searchEvolutionExercises>>>();
+    vi.mocked(searchEvolutionExercises).mockReturnValueOnce(pending.promise);
+    await act(async () => {
+      render(<ExerciseSearch />);
+    });
+    fireEvent.change(screen.getByLabelText("Buscar exercício"), {
+      target: { value: "supino" },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+    fireEvent.change(screen.getByLabelText("Buscar exercício"), {
+      target: { value: "" },
+    });
+    await act(async () => {
+      pending.resolve({
+        success: true,
+        data: [
+          {
+            id: "old",
+            name: "Resultado antigo",
+            ownerUserId: null,
+            muscles: [],
+          },
+        ],
+      });
+    });
+    expect(screen.queryByRole("link", { name: /Resultado antigo/ })).toBeNull();
+    expect(screen.queryByLabelText("Buscando exercícios")).toBeNull();
+    expect(searchEvolutionExercises).toHaveBeenCalledTimes(1);
   });
 });

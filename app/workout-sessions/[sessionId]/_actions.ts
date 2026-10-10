@@ -2,9 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { customFetch } from "@/app/_lib/fetch";
 import {
   addExerciseToWorkoutSession,
+  cancelWorkoutSession,
   completeWorkoutSession,
   createExercise,
   createWorkoutSet,
@@ -15,6 +15,7 @@ import {
   updateExerciseMuscles,
   updateWorkoutSet,
   type AddExerciseToWorkoutSession201,
+  type CancelWorkoutSession200,
   type CompleteWorkoutSession200,
   type CreateExercise201,
   type CreateExerciseBodyPrimaryMuscleGroupsItem,
@@ -96,8 +97,7 @@ export async function deleteWorkoutSetAction(
     const response = await deleteWorkoutSet(setId);
     if (response.status !== 200) {
       const errorMsg =
-        (response.data as { error?: string })?.error ||
-        "Erro ao remover série";
+        (response.data as { error?: string })?.error || "Erro ao remover série";
       return { success: false, error: errorMsg };
     }
 
@@ -308,26 +308,19 @@ export async function removeExerciseFromWorkoutSessionAction(
  */
 export async function cancelWorkoutSessionAction(
   sessionId: string,
-): Promise<ActionResult<{ success: boolean; sessionId: string }>> {
+): Promise<ActionResult<CancelWorkoutSession200>> {
   try {
-    const response = await customFetch<{
-      status: number;
-      data: { success: boolean; sessionId: string } | { error?: string };
-    }>(`/workout-sessions/${sessionId}`, {
-      method: "DELETE",
-    });
+    const response = await cancelWorkoutSession(sessionId);
 
     if (response.status !== 200) {
-      const errorMsg =
-        (response.data as { error?: string })?.error ||
-        "Erro ao cancelar treino";
+      const errorMsg = response.data.error || "Erro ao cancelar treino";
       return { success: false, error: errorMsg };
     }
 
     revalidatePath("/");
     return {
       success: true,
-      data: response.data as { success: boolean; sessionId: string },
+      data: response.data,
     };
   } catch (err: unknown) {
     return {
@@ -336,4 +329,3 @@ export async function cancelWorkoutSessionAction(
     };
   }
 }
-

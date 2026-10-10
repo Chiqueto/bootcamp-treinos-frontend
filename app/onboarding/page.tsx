@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { requireAccountSetup } from "@/app/_lib/require-account-setup";
 import { headers } from "next/headers";
 import { authClient } from "@/app/_lib/auth-client";
 import { getUserTrainData } from "@/app/_lib/api/fetch-generated";
@@ -12,6 +13,7 @@ export default async function OnboardingPage() {
   });
 
   if (!session.data?.user) redirect("/auth");
+  await requireAccountSetup();
 
   const trainData = await getUserTrainData();
 

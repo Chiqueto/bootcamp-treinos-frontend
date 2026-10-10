@@ -77,7 +77,7 @@ export default async function WorkoutSummaryPage({
   let totalVolumeGrams = 0;
 
   const exerciseBreakdowns = workoutSession.sessionExercises.map((exercise) => {
-    let completedSetsCount = 0;
+    const completedSetsCount = 0;
     let maxWeightGrams = 0;
     let exerciseReps = 0;
 

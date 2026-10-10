@@ -2,10 +2,6 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
 import {
-  ArrowRight,
-  ChevronRight,
-  Dumbbell,
-  CalendarRange,
   AlertCircle,
   RotateCcw,
 } from "lucide-react";
@@ -13,7 +9,6 @@ import {
 import { authClient } from "@/app/_lib/auth-client";
 import {
   getPlanningOverview,
-  GetPlanningOverview200PeriodizationsItem,
   getUserTrainData,
 } from "@/app/_lib/api/fetch-generated";
 import { BottomNav } from "@/app/_components/bottom-nav";
